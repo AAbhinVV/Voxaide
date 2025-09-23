@@ -3,16 +3,42 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../../models/user.model.js'
 import { generateTokenAndSetCookie } from "../../utils/generateTokenAndSetCookie.js";
+import sanitize from "mongo-sanitize";
+import { registerSchema } from "../../config/zod.js";
 
 const register = async (req,res) => {
-    const {username, password, email, phone_number} = req.body;
+    const sanitizedBody = sanitize(req.body);
+
+    const validation = registerSchema.safeParse(sanitizedBody);
+
+    if(!validation.success){
+        const zodErrors = validation.error;
+
+        let firstErrorMessage = "Validaition failed";
+        let allError = [];
+
+        if(zodErrors?.issues && Array.isArray(zodErrors.issues)){
+            allError = zodErrors.issues.map((issue) => ({
+                field: issue.path ? issue.path.join(".") : "unknown",
+                message: issue.message || "validation Error",
+                code: issue.code,
+
+            }));
+
+            firstErrorMessage = allError[0]?.message || "Validation Error";
+        }
+        return res.status(400).json({success: false, message: "validation error"})
+    }
+
+    const {username, password, email, phone_number} = validation.data;
 
     try {
 
         if (!username || !email || !password || !phone_number){
                 return res.status(400).json({success: false, message: "All fields are required"})
-            }
+        }
         
+          
         const normalizedEmail = email.toLowerCase().trim(); 
         
         console.log("Normalized Email:", normalizedEmail); // Debugging line
