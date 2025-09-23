@@ -2,7 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import path from 'path';
-import notesController from '../controller/notesController';
+import notesController from '../controller/notes.controller.js';
+
 
 
 dotenv.config();
@@ -20,8 +21,8 @@ const upload = multer({storage})
 
 router.post('/voice', upload.single('audio'), notesController.uploadVoiceNote);
 
-route.get('/voiceNote/:id', notesController.getVoiceNoteById);
+router.get('/voiceNote/:id', notesController.getVoiceNoteById);
 
-route.get('/voiceNotes', notesController.getAllVoiceNotes);
+router.get('/voiceNotes', notesController.getAllVoiceNotes);
 
 export default router;

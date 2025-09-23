@@ -1,4 +1,4 @@
-import Note from '../../models/note.model.js';
+import Note from '../../models/notes.model.js';
 import path from 'path';
 
 

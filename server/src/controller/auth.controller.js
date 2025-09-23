@@ -5,28 +5,31 @@ import User from '../../models/user.model.js'
 import { generateTokenAndSetCookie } from "../../utils/generateTokenAndSetCookie.js";
 
 const register = async (req,res) => {
-    const {username, password, email, phone_number} = req.body
+    const {username, password, email, phone_number} = req.body;
 
     try {
 
         if (!username || !email || !password || !phone_number){
                 return res.status(400).json({success: false, message: "All fields are required"})
             }
+        
+        const normalizedEmail = email.toLowerCase().trim(); 
+        
+        console.log("Normalized Email:", normalizedEmail); // Debugging line
 
-
-
-        const userAlreadyExists = await User.findOne({email})
-        console.log("userAlreadyExists", userAlreadyExists);
+        const userAlreadyExists = await User.findOne({email:normalizedEmail});
+        
+        
 
         if(userAlreadyExists){
-            return res.status(400).json({success: true, message: "User already exists"})
+            return res.status(400).json({success: false, message: "User already exists", found: userAlreadyExists})
         }
 
-        const hashedpassword =  bcrypt.hashSync(password,10)
+        const hashedpassword =  bcrypt.hashSync(password,10);
         const verificationToken = generateVerificationToken();
 
         const user = new User({
-            email,
+            email: normalizedEmail,
             password: hashedpassword,
             username,
             phone_number,
@@ -37,7 +40,7 @@ const register = async (req,res) => {
         await user.save()
 
         //jwt 
-        generateTokenAndSetCookie(res,user._id)
+        const { accessToken, refreshToken} = generateTokenAndSetCookie(res,user._id)
 
         res.status(201).json({
         success: true,
@@ -76,42 +79,26 @@ const login = async (req,res) => {
         if(!user){return res.status(404).send({message: "User not Found"})}
         
 
-        const passwordIsInvalid = bcrypt.compareSync(password, user.password)
+        const isPasswordInvalid = bcrypt.compareSync(password, user.password)
 
-        if(!passwordIsInvalid){return res.status(404).send({message: 'Password is Invalid'})}
-        else{
-            const accessToken = jwt.sign({ _id: user.id.toString(), username: user.username,  }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-            const refreshToken = jwt.sign({ _id: user.id.toString(), username: user.username,  }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+        if(!isPasswordInvalid){return res.status(404).send({message: 'Password is Invalid'})}
+        const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
 
-            if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
-            
-            res.cookie('accesstoken', accessToken, {
-                    signed: true,
-                    httpOnly: true,
-                    // secure: true, 
-                    maxAge: 15 * 60 * 1000,
-                    // sameSite: 'Strict'
-                    path: "http://localhost:5173",
-
-            });
-            res.cookie('refreshToken', refreshToken, {
-                signed: true,
-                httpOnly: true,
-                // secure: true, 
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                // sameSite: 'Strict'
-                path: "http://localhost:5173",
-            });
+        if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
+        
+        
 
 
-            res.json({
-                success: true,
-                user,
-                access_token: accessToken,
-                
-                message: "Login Successful"
-            })  
-        }
+        res.status(201).json({
+            success: true,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+            access_token: accessToken,
+            refreshToken: refreshToken,
+            message: "Login Successful"
+        })
     } catch (error) {
         console.log(error.message)
         res.sendStatus(503)

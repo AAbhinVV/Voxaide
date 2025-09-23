@@ -1,6 +1,11 @@
-import MailtrapClient from "mailtrap";
+import {MailtrapClient} from 'mailtrap';
+import dotenv from 'dotenv';
 
-const TOKEN = "6d9e8354359aedcb41c98f84f21a3920";
+dotenv.config();
+
+const TOKEN = process.env.MAILTRAP_TOKEN;
+
+if(!TOKEN){console.error("Mailtrap token is not defined in environment variables");}
 
 const client = new MailtrapClient({
   token: TOKEN,
@@ -21,7 +26,7 @@ client
     from: sender,
     to: recipients,
     subject: "You are awesome!",
-    text: "Congrats for sending test email with Mailtrap!",
+    html: "Congrats for sending test email with Mailtrap!",
     category: "Integration Test",
   })
   .then(console.log, console.error);
