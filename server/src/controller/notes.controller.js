@@ -9,8 +9,12 @@ const uploadVoiceNote = async (req,res) => {
         }
 
         const note = new Note({
-            audioPath: req.file.path,
+            audiopath: req.file.path,
             filename: req.file.originalname,
+            userID: req.user?._id,
+            title: req.body.title,
+            tags: req/body.tags,
+            transcription: req.body.transcription,
         })
 
         await note.save();
@@ -19,7 +23,7 @@ const uploadVoiceNote = async (req,res) => {
                 success: true, 
                 message: "Audio recieved", 
                 noteId: note._id,
-                audioPath: note.audioPath,
+                audiopath: note.audiopath,
                 filename: req.file.originalname
             });
         }catch(error){
@@ -35,7 +39,7 @@ const getVoiceNoteById = async (req,res) => {
             return res.status(400).json({success: false, message: "note not found"});
         }
 
-        const absolutePath = path.resolve(__dirname, '../../'.note.audioPath);
+        const absolutePath = path.resolve(__dirname, '../../',note.audiopath);
 
         res.status(200).sendFile(absolutePath, (err) => {
             if(err){
@@ -56,5 +60,20 @@ const getAllVoiceNotes = async (req,res) => {
     }
 }
 
+const deleteVoiceNote = async (req,res) => {
+    try{
+        const noteId = req.params.id;
+        const note = await Note.findByIdAndDelete(noteId);
+        if(!note){
+            return res.status(400).json({success: false, message: "Note not found"});
+        }
+        res.status(200).json({success: true, message: "Note deleted successfully"});
+    }catch(error){
+        res.status(503).json({success: false, message: error.message});
+    }
+}
 
-export default{uploadVoiceNote, getVoiceNoteById, getAllVoiceNotes};
+
+
+
+export default{uploadVoiceNote, getVoiceNoteById, getAllVoiceNotes, deleteVoiceNote};

@@ -19,10 +19,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage})
 
-router.post('/voice', upload.single('audio'), notesController.uploadVoiceNote);
+router.post('/uploadVoice', upload.single('audio'), notesController.uploadVoiceNote);
 
 router.get('/voiceNote/:id', notesController.getVoiceNoteById);
 
 router.get('/voiceNotes', notesController.getAllVoiceNotes);
+
+router.delete('/deleteVoiceNote/:id', notesController.deleteVoiceNote);
 
 export default router;

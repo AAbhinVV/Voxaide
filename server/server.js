@@ -4,11 +4,23 @@ import cookieParser from 'cookie-parser'
 import authRoutes from './src/routes/authRoutes.js'
 import { connectDB } from './db/connectDB.js'
 import notesRoutes from './src/routes/notesRoutes.js'
+import {createClient} from 'redis'
 
 
 dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 5000;
+
+const redisUrl = process.env.REDIS_URL;
+
+if(!redisUrl){
+    console.error("missing redis url")
+    process.exit(1)
+}
+
+export const redisClient = createClient({url: redisUrl})
+
+redisClient.connect().then(() => console.log("Connected to Redis")).catch(console.error);
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))

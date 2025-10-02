@@ -5,6 +5,7 @@ import User from '../../models/user.model.js'
 import { generateTokenAndSetCookie } from "../../utils/generateTokenAndSetCookie.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema } from "../../config/zod.js";
+import { redisClient } from "../../server.js";
 
 const register = async (req,res) => {
     const sanitizedBody = sanitize(req.body);
@@ -26,11 +27,19 @@ const register = async (req,res) => {
             }));
 
             firstErrorMessage = allError[0]?.message || "Validation Error";
+
         }
         return res.status(400).json({success: false, message: "validation error"})
     }
 
     const {username, password, email, phone_number} = validation.data;
+
+    const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
+
+    if(await redisClient.get(rateLimitKey)){
+        return res.status(429).json({success: false, message: "Too many registration attempts. Please try again later."})   
+    }
+
 
     try {
 
