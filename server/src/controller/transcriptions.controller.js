@@ -1,16 +1,45 @@
-import Transcription from "../../models/transcription.model";
+import Transcription from "../../models/transcription.model.js";
+import Note from "../../models/notes.model.js";
+import { transcribeBuffer } from "../../utils/generateTranscription.js";
 
 const createTranscription = async (req, res) => {
     try {
-        const { noteId, text } = req.body;
-        if (!noteId || !text) {
-            return res.status(400).json({ success: false, message: "noteId and text are required" });
+        const { noteId } = req.body;
+        const hasBlob = !!req.file || !!req.body?.audio;
+
+        if (!noteId && !hasBlob) {
+            return res.status(400).json({ success: false, message: "Provide noteId or audio blob" });
         }
 
-        const transcription = new Transcription({ noteId, text });
-        await transcription.save();
-        res.status(201).json({ success: true, transcription });
+        let text = req.body?.text;
 
+        if (!text && hasBlob) {
+            const filename = req.file?.originalname || 'audio.webm';
+            const buffer = req.file ? req.file.buffer : Buffer.from(req.body.audio, 'base64');
+            text = await transcribeBuffer(buffer, filename);
+        }
+
+        if (!text) {
+            return res.status(400).json({ success: false, message: "No transcription text obtained" });
+        }
+
+        let targetNoteId = noteId;
+        if (!targetNoteId && req.file) {
+            // optional: create a note placeholder if only blob is sent
+            const note = new Note({ filename: filename, audiopath: '', transcription: text });
+            await note.save();
+            targetNoteId = note._id;
+        }
+
+        const transcription = new Transcription({ noteId: targetNoteId, text });
+        await transcription.save();
+
+        // also update note's transcription field if noteId provided
+        if (targetNoteId) {
+            await Note.findByIdAndUpdate(targetNoteId, { transcription: text });
+        }
+
+        res.status(201).json({ success: true, transcription });
     } catch (error) {
         res.status(503).json({ success: false, message: error.message });
     }

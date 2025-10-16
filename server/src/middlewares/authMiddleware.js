@@ -15,7 +15,7 @@ export default function authMiddleware(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     req.user = decoded
     next()
   } catch (err) {

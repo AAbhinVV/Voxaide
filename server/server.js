@@ -2,8 +2,11 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import authRoutes from './src/routes/authRoutes.js'
-import { connectDB } from './db/connectDB.js'
+import { connectDB } from './config/db/connectDB.js'
 import notesRoutes from './src/routes/notesRoutes.js'
+import transcriptionRoutes from './src/routes/transcriptionRoutes.js'
+import userRoutes from './src/routes/userRoutes.js'
+import path from 'path'
 import {createClient} from 'redis'
 
 
@@ -26,6 +29,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
+// serve uploaded files statically
+app.use('/uploads', express.static(path.resolve('uploads')))
 
 app.use((err, req, res, next) => {
     if(err instanceof SyntaxError && err.status === 400 && 'body' in err){
@@ -37,8 +42,9 @@ app.use((err, req, res, next) => {
 
 
 app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/users', authRoutes)
-app.use('/api/v1/notes', notesRoutes)   
+app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/notes', notesRoutes)
+app.use('/api/v1/transcriptions', transcriptionRoutes)
 
 app.listen(PORT, async ()=> {
     await connectDB();

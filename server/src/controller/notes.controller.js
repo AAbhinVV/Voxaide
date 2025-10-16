@@ -1,5 +1,6 @@
 import Note from '../../models/notes.model.js';
 import path from 'path';
+import { transcribeFilePath } from '../../utils/generateTranscription.js'
 
 
 const uploadVoiceNote = async (req,res) => {
@@ -11,13 +12,25 @@ const uploadVoiceNote = async (req,res) => {
         const note = new Note({
             audiopath: req.file.path,
             filename: req.file.originalname,
-            userID: req.user?._id,
+            userId: req.user?.userId,
             title: req.body.title,
-            tags: req/body.tags,
+            tags: req.body?.tags,
             transcription: req.body.transcription,
         })
 
         await note.save();
+
+        // if no transcription provided by client, attempt server-side transcription
+        if (!note.transcription) {
+            try {
+                const text = await transcribeFilePath(req.file.path)
+                note.transcription = text
+                await note.save()
+            } catch (e) {
+                // non-fatal
+                console.error('Transcription failed:', e.message)
+            }
+        }
 
             res.status(200).json({
                 success: true, 
@@ -39,7 +52,7 @@ const getVoiceNoteById = async (req,res) => {
             return res.status(400).json({success: false, message: "note not found"});
         }
 
-        const absolutePath = path.resolve(__dirname, '../../',note.audiopath);
+        const absolutePath = path.resolve(process.cwd(), note.audiopath);
 
         res.status(200).sendFile(absolutePath, (err) => {
             if(err){

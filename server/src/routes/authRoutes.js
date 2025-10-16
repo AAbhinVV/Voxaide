@@ -19,21 +19,21 @@ router.post('/logout', authController.logout)
 
 router.post("/generate-token", (req, res) => {
     try{
-        const refreshToken = req.signedCookies.refresh_token
+        const refreshToken = req.signedCookies.refreshToken
         if(!refreshToken) {res.status(403).json({message: "Forbidden"})}
         
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
             if(err) {return res.status(403).json({message: "Forbidden: Unauthorized refresh token"})}
 
-            const accessToken = jwt.sign({ _id: user.id, username: user.username, }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15min'})
+            const accessToken = jwt.sign({ userId: user.userId, username: user.username, }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'})
 
-            res.cookie('token', accessToken, {
+            res.cookie('accessToken', accessToken, {
                 signed: true, 
                 httpOnly: true,
                 // secure: process.env.NODE_ENV === 'production',
                 maxAge: 15 * 60 * 1000,
                 sameSite: "strict",
-                path: "http://localhost:5173"
+                path: "/"
             })
 
             return res.status(200).json({message: "token generated succesfully"})

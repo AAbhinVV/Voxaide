@@ -1,5 +1,4 @@
-
-export default function notesMiddleware (res,res,next){
+export default function notesMiddleware (req, res, next){
     if(!req.user){
         return res.status(401).json({ message: "Unauthorized"})
     }
@@ -7,7 +6,6 @@ export default function notesMiddleware (res,res,next){
     if(req.method === "POST" && !req.file){
         return res.status(400).json({ message: "Audio file is required"})
     }
-    
 
     next();
 }

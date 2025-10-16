@@ -105,18 +105,17 @@ const login = async (req,res) => {
     try {
 
         let query = {};
-
         if(email) query.email = email;
         if(username) query.username = username;
 
-        const user = await User.findOne({query})
+        const user = await User.findOne(query)
 
         if(!user){return res.status(404).send({message: "User not Found"})}
         
 
-        const isPasswordInvalid = bcrypt.compareSync(password, user.password)
+        const isPasswordValid = bcrypt.compareSync(password, user.password)
 
-        if(!isPasswordInvalid){return res.status(404).send({message: 'Password is Invalid'})}
+        if(!isPasswordValid){return res.status(401).send({message: 'Password is Invalid'})}
         const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
 
         if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
@@ -140,6 +139,14 @@ const login = async (req,res) => {
     }
 }
 
-const logout = (req, res) => {}
+const logout = (req, res) => {
+    try{
+        res.clearCookie('accessToken')
+        res.clearCookie('refreshToken')
+        return res.status(200).json({message: 'Logged out'})
+    }catch(error){
+        return res.status(503).json({message: error.message})
+    }
+}
 
 export default{register, login, logout};
