@@ -17,14 +17,7 @@ export const generateTokenAndSetCookie = (res, userId) => {
     throw new Error('No tokens generated');
   }
 
-  res.cookie('accessToken', accessToken, {
-    signed: true,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 15 * 60 * 1000,
-    sameSite: 'Strict',
-    path: "http://localhost:5173",
-  });
+  res.json({accessToken});
 
   res.cookie('refreshToken',refreshToken, {
     signed: true,

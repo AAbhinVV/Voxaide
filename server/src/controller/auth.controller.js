@@ -113,7 +113,7 @@ const login = async (req,res) => {
         if(!user){return res.status(404).send({message: "User not Found"})}
         
 
-        const isPasswordValid = bcrypt.compareSync(password, user.password)
+        const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if(!isPasswordValid){return res.status(401).send({message: 'Password is Invalid'})}
         const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
@@ -141,12 +141,47 @@ const login = async (req,res) => {
 
 const logout = (req, res) => {
     try{
-        res.clearCookie('accessToken')
-        res.clearCookie('refreshToken')
-        return res.status(200).json({message: 'Logged out'})
-    }catch(error){
+        const cookies = req.signedCookies;
+        if(!cookies?.refreshToken) return res.sendStatus(204); 
+        res.clearCookie('refreshToken', {
+            signed: true,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: "http://localhost:5173",
+        })
+
+        res.json({message: "Cookie Cleared"})
+    }
+    catch(error){
         return res.status(503).json({message: error.message})
     }
 }
 
-export default{register, login, logout};
+
+const refreshToken = (req, res) => {
+    try{
+        const refreshToken = req.signedCookies?.refreshToken
+        if(!refreshToken) {res.status(403).json({message: "Forbidden"})}
+        
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
+            if(err) {return res.status(403).json({message: "Forbidden: Unauthorized refresh token"})}
+
+            const founduser = await UserActivation.findOne({username: user.username, refreshToken: refreshToken})
+
+            if(!founduser){ return res.status(403).json({message: "Forbidden: Refresh token not found"})}
+
+            const accessToken = jwt.sign({ userId: user.userId, username: user.username, }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'})
+
+            res.json({accessToken})
+
+            return res.status(200).json({message: "token generated succesfully"})
+        })
+    }catch(error){
+        res.status(503).send(error.message)
+        }
+     
+}
+
+
+export default{register, login, logout, refreshToken};
