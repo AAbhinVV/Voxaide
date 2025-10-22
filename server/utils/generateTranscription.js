@@ -8,7 +8,7 @@ dotenv.config();
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
-
+ 
 export const transcribeBuffer = async (buffer, filename = 'audio.webm') => {
     const file = await toFile(buffer, filename)
     const result = await openai.audio.transcriptions.create({
