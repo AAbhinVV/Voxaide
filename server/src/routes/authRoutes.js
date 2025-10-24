@@ -1,5 +1,4 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import authController from '../controller/auth.controller.js'
 

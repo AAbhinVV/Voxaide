@@ -1,9 +1,9 @@
 import express, { application } from 'express';
 import dotenv from 'dotenv';
 import notesController from '../controller/notes.controller.js';
-import notesMiddleware from '../middlewares/notesMiddleware.js';
-import upload from '../middlewares/fileUploadMiddleware.js';
-import verifyJwt from '../middlewares/authMiddleware.js';
+import notesMiddleware from '../middlewares/notes.middleware.js';
+import upload from '../middlewares/multer.middleware.js';
+import verifyJwt from '../middlewares/auth.middleware.js';
 
 
 dotenv.config();
