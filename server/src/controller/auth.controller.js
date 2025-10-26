@@ -2,12 +2,13 @@ import { generateVerificationToken } from "../../utils/generateVerificationToken
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../../models/user.model.js'
-import { generateTokenAndSetCookie } from "../../utils/generateTokenAndSetCookie.js";
+import { generateAccessToken, generateTokenAndSetCookie, verifyRefreshToken } from "../../utils/generateTokenAndSetCookie.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema, loginSchema } from "../../config/zod.js";
 import { redisClient } from "../../server.js";
 import sendMail from "../../config/sendMail.js";
 import { getVerifyEmailHtml } from "../../config/html.js";
+
 
 
 const register = async (req,res) => {
@@ -265,6 +266,15 @@ const verifyOTP = async (req, res) => {
     }
 }
 
+const myProfile = async (req, res) => {
+    try {
+        const user = req.user;
+        res.json(user);
+    } catch (error) {   
+        res.status(500).json({message: error.message})
+    }   
+}
+
 const logout = async (req, res) => {
     try{
         const cookies = req.signedCookies;
@@ -287,13 +297,19 @@ const logout = async (req, res) => {
 
 const refreshToken = async (req, res) => {
     try{
-        const refreshToken = req.signedCookies?.refreshToken
+        const refreshToken = req.signedCookies?.refreshToken || req.cookies?.refreshToken;
         if(!refreshToken) {res.status(403).json({message: "Forbidden"})}
+
+        const decoded = await verifyRefreshToken(refreshToken);
+
+        if(!decoded){ return res.status(403).json({message: "Forbidden: Invalid refresh token"})}
+
+        generateAccessToken(decoded.userId, res);
         
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
             if(err) {return res.status(403).json({message: "Forbidden: Unauthorized refresh token"})}
 
-            const founduser = await UserActivation.findOne({username: user.username, refreshToken: refreshToken})
+            const founduser = await User.findOne({username: user.username, refreshToken: refreshToken})
 
             if(!founduser){ return res.status(403).json({message: "Forbidden: Refresh token not found"})}
 
