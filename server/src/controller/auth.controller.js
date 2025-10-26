@@ -4,8 +4,11 @@ import jwt from 'jsonwebtoken'
 import User from '../../models/user.model.js'
 import { generateTokenAndSetCookie } from "../../utils/generateTokenAndSetCookie.js";
 import sanitize from "mongo-sanitize";
-import { registerSchema } from "../../config/zod.js";
+import { registerSchema, loginSchema } from "../../config/zod.js";
 import { redisClient } from "../../server.js";
+import sendMail from "../../config/sendMail.js";
+import { getVerifyEmailHtml } from "../../config/html.js";
+
 
 const register = async (req,res) => {
     const sanitizedBody = sanitize(req.body);
@@ -15,7 +18,7 @@ const register = async (req,res) => {
     if(!validation.success){
         const zodErrors = validation.error;
 
-        let firstErrorMessage = "Validaition failed";
+        let firstErrorMessage = "Validation failed";
         let allError = [];
 
         if(zodErrors?.issues && Array.isArray(zodErrors.issues)){
@@ -43,7 +46,7 @@ const register = async (req,res) => {
 
     try {
 
-        if (!username || !email || !password || !phone_number){
+        if (!username || !email || !password){
                 return res.status(400).json({success: false, message: "All fields are required"})
         }
         
@@ -62,6 +65,22 @@ const register = async (req,res) => {
 
         const hashedpassword =  bcrypt.hashSync(password,10);
         const verificationToken = generateVerificationToken();
+        const verifyKey = `verify-token:${verificationToken}`;
+
+        const dataStore = JSON.stringify({
+            email: normalizedEmail,
+            username,
+            phone_number,
+        });
+
+        await redisClient.set(verifyKey, dataStore, {EX: 300 })
+
+        const subject = "Verify your email for account creation"
+        const html = getVerifyEmailHtml({email, verificationToken})
+
+        await sendMail({email, subject, html})
+
+        await redisClient.set(rateLimitKey, 'true', {Ex: 60});
 
         const user = new User({
             email: normalizedEmail,
@@ -92,54 +111,161 @@ const register = async (req,res) => {
     }
 }
 
-const login = async (req,res) => {
-    const{username, password, email} = req.body
+const verifyUser = async (req, res) => {
+    try {
+        const {token} = req.params;
 
-    if(!username && !email){
-        return res.status(400).json({message: "Username or email is required"})
+        if(!token){
+            return res.status(400).json({success: false, message: "Verification token is required"});
+        }
+
+        const verifyKey = `verify-token:${token}`;
+
+        const userDataJson = await redisClient.get(verifyKey);
+
+        if(!userDataJson){
+            return res.status(400).json({success: false, message: "Invalid or expired verification token"});
+        }
+
+        await redisClient.del(verifyKey);
+
+        const userData = JSON.parse(userDataJson);
+
+        const existingUser = await User.findOne({email: userData.email});
+    } catch (error) {
+        
     }
-    if(!password){
-        return res.status(400).json({message: "Password is required"})
+}
+
+const login = async (req,res) => {
+    const sanitizedBody = sanitize(req.body);
+
+    const validation = loginSchema.safeParse(sanitizedBody);
+
+    if(!validation.success){
+        const zodErrors = validation.error;
+
+        let firstErrorMessage = "Validation failed";
+        let allError = [];
+
+        if(zodErrors?.issues && Array.isArray(zodErrors.issues)){
+            allError = zodErrors.issues.map((issue) => ({
+                field: issue.path ? issue.path.join(".") : "unknown",
+                message: issue.message || "validation Error",
+                code: issue.code,
+
+            }));
+
+            firstErrorMessage = allError[0]?.message || "Validation Error";
+
+        }
+        return res.status(400).json({success: false, message: "validation error"})
     }
+
+    const{email, password} = validation.data;
+
+    const rateLimitKey = `login-rate-limit:${req.ip}:${email}`;
+
+    if(await redisClient.get(rateLimitKey)){
+        return res.status(429).json({success: false, message: "Too many login attempts. Please try again later."})   
+    }
+
+    await redisClient.set(rateLimitKey, 'true', {EX: 60});
 
     try {
 
-        let query = {};
-        if(email) query.email = email;
-        if(username) query.username = username;
+        if(!email){
+        return res.status(400).json({message: "Email is required"})
+        }
+        if(!password){
+        return res.status(400).json({message: "Password is required"})
+        }
 
-        const user = await User.findOne(query)
+        const user = await User.findOne({email});
 
-        if(!user){return res.status(404).send({message: "User not Found"})}
+        if(!user){return res.status(404).send({message: "Invalid credentials"})}
         
 
         const isPasswordValid = await bcrypt.compare(password, user.password)
 
-        if(!isPasswordValid){return res.status(401).send({message: 'Password is Invalid'})}
-        const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
+        if(!isPasswordValid){return res.status(401).send({message: 'Invalid credentials'})}
 
-        if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const otpKey = `otp:${email}`;
+
+        await redisClient.set(otpKey, otp, {EX: 300}); // OTP valid for 5 minutes
+
+        const subject = 'OTP for verification';
+
+        const html = getOtpHtml({email, otp})
+
+        await sendMail({email, subject, html});
+
+        await redisClient.set(rateLimitKey, 'true', {EX: 60});
+
+        res.json({message: "OTP sent to your email. Please verify to complete login."});
+
+        // const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
+
+        // if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
         
         
 
 
-        res.status(201).json({
-            success: true,
-            user: {
-                ...user._doc,
-                password: undefined,
-            },
-            access_token: accessToken,
-            refreshToken: refreshToken,
-            message: "Login Successful"
-        })
+        // res.status(201).json({
+        //     success: true,
+        //     user: {
+        //         ...user._doc,
+        //         password: undefined,
+        //     },
+        //     access_token: accessToken,
+        //     refreshToken: refreshToken,
+        //     message: "Login Successful"
+        // })
     } catch (error) {
         console.log(error.message)
         res.sendStatus(503)
     }
 }
 
-const logout = (req, res) => {
+const verifyOTP = async (req, res) => {
+    try {
+        const {email, otp} = req.body;
+
+        if(!email || !otp){
+            return res.status(400).json({success: false, message: "Please provide all details"});
+        }
+
+        const otpKey = `otp:${email}`;
+
+        const storedOtpString = await redisClient.get(otpKey);
+        if(!storedOtpString){
+            return res.status(400).json({success: false, message: "OTP expired"});
+        }
+
+        const storedOTP = JSON.parse(storedOtpString);
+
+        if(storedOTP !== otp){
+            return res.status(400).json({success: false, message: "Invalid OTP"});
+        }
+
+        await redisClient.del(otpKey);
+
+        let user = await User.findOne({email});
+
+        const tokenData = await generateTokenAndSetCookie(res, user._id);
+
+        res.status(200).json({
+            message: `Welcome ${user.username}`,
+            ...user._doc})
+    } catch (error) {
+        console.log(error.message)
+        res.sendStatus(503)
+    }
+}
+
+const logout = async (req, res) => {
     try{
         const cookies = req.signedCookies;
         if(!cookies?.refreshToken) return res.sendStatus(204); 
@@ -159,7 +285,7 @@ const logout = (req, res) => {
 }
 
 
-const refreshToken = (req, res) => {
+const refreshToken = async (req, res) => {
     try{
         const refreshToken = req.signedCookies?.refreshToken
         if(!refreshToken) {res.status(403).json({message: "Forbidden"})}
@@ -180,8 +306,7 @@ const refreshToken = (req, res) => {
     }catch(error){
         res.status(503).send(error.message)
         }
-     
 }
 
 
-export default{register, login, logout, refreshToken};
+export default{register, login, logout, refreshToken, verifyUser, verifyOTP};
