@@ -8,7 +8,6 @@ dotenv.config();
 
 const router = express.Router();
 
-router.use(verifyJwt);
 
 router.post('/create', upload.single('audio'), transcriptionController.createTranscription);
 router.get('/note/:noteId', transcriptionController.getTranscriptionByNoteId);

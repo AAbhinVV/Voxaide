@@ -8,6 +8,10 @@ import transcriptionRoutes from './src/routes/transcriptionRoutes.js'
 import userRoutes from './src/routes/userRoutes.js'
 import path from 'path'
 import {createClient} from 'redis'
+import requireAdmin from './src/middlewares/admin.middleware.js'
+import adminRoutes from './src/routes/adminRoutes.js'
+import verifyJwt from './src/middlewares/auth.middleware.js'
+import notesMiddleware from './src/middlewares/notes.middleware.js'
 
 
 dotenv.config()
@@ -43,8 +47,9 @@ app.use((err, req, res, next) => {
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/users', userRoutes)
-app.use('/api/v1/notes', notesRoutes)
-app.use('/api/v1/transcriptions', transcriptionRoutes)
+app.use('/api/v1/notes',verifyJwt, notesMiddleware, notesRoutes)
+app.use('/api/v1/transcriptions',verifyJwt, transcriptionRoutes)
+app.use('/api/v1/admin', verifyJwt, requireAdmin, adminRoutes);
 
 app.listen(PORT, async ()=> {
     await connectDB();

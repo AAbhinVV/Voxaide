@@ -8,6 +8,9 @@ const router = express.Router();
 
 router.use(verifyJwt);
 
+
+
+
 // basic user profile CRUD
 router.get('/me', userController.getMe);
 router.post('/me', userController.updateMe);

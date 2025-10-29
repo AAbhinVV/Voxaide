@@ -9,8 +9,7 @@ import verifyJwt from '../middlewares/auth.middleware.js';
 dotenv.config();
 const router = express.Router();
 
-router.use(verifyJwt);
-router.use(notesMiddleware);
+
 
 router.post('/uploadVoice',upload.single('audio'), notesController.uploadVoiceNote);
 

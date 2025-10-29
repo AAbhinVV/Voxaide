@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { redisClient } from '../server';
+import { redisClient } from '../server.js';
 
 export const generateTokenAndSetCookie = async (res, userId) => {
   const accessToken = jwt.sign(
