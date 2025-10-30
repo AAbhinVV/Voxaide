@@ -73,6 +73,7 @@ const register = async (req,res) => {
             email: normalizedEmail,
             username,
             phone_number,
+            role
         });
 
         await redisClient.set(verifyKey, dataStore, {EX: 300 })
@@ -89,6 +90,7 @@ const register = async (req,res) => {
             password: hashedpassword,
             username,
             phone_number,
+            role,
             verificationToken,
             verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000 // 1 hour
         })

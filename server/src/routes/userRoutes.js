@@ -14,11 +14,11 @@ router.use(verifyJwt);
 // basic user profile CRUD
 router.get('/me', userController.getMe);
 router.post('/me', userController.updateMe);
-router.patch('/me',  userController.partialUpdateMe);
+// router.patch('/me',  userController.partialUpdateMe);
 router.delete('/me',  userController.deleteMe);
 
-router.post('/me/avatar', upload.single('avatar'), userController.uploadAvatar);
+// router.post('/me/avatar', upload.single('avatar'), userController.uploadAvatar);
 
-router.get('/me/notes', userController.getMyNotes);
+// router.get('/me/notes', userController.getMyNotes);
 
 export default router;
