@@ -2,12 +2,13 @@ import { generateVerificationToken } from "../../utils/generateVerificationToken
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../../models/user.model.js'
-import { generateAccessToken, generateTokenAndSetCookie, verifyRefreshToken } from "../../utils/generateTokenAndSetCookie.js";
+import { generateAccessToken, generateTokenAndSetCookie, revokeRefreshToken, verifyRefreshToken } from "../../utils/generateTokenAndSetCookie.js";
 import sanitize from "mongo-sanitize";
 import { registerSchema, loginSchema } from "../../config/zod.js";
 import { redisClient } from "../../server.js";
 import sendMail from "../../config/sendMail.js";
 import { getVerifyEmailHtml } from "../../config/html.js";
+
 
 
 
@@ -36,7 +37,7 @@ const register = async (req,res) => {
         return res.status(400).json({success: false, message: "validation error"})
     }
 
-    const {username, password, email, phone_number} = validation.data;
+    const {username, password, email, phone_number, role} = validation.data;
 
     const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
 
@@ -277,6 +278,9 @@ const myProfile = async (req, res) => {
 
 const logout = async (req, res) => {
     try{
+        const userId = req.user._id;
+
+        await revokeRefreshToken(userId);
         const cookies = req.signedCookies;
         if(!cookies?.refreshToken) return res.sendStatus(204); 
         res.clearCookie('refreshToken', {
@@ -287,7 +291,9 @@ const logout = async (req, res) => {
             path: "http://localhost:5173",
         })
 
-        res.json({message: "Cookie Cleared"})
+        res.clearCookie('accessToken')
+
+        res.json({message: "Logged out successfully"});
     }
     catch(error){
         return res.status(503).json({message: error.message})
@@ -325,4 +331,6 @@ const refreshToken = async (req, res) => {
 }
 
 
-export default{register, login, logout, refreshToken, verifyUser, verifyOTP};
+
+
+export default{register, login, logout, refreshToken, verifyUser, verifyOTP, myProfile};

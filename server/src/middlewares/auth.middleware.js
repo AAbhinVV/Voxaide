@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { redisClient } from '../server'
-import User from '../models/User.js'
+import { redisClient } from '../../server.js'
+import User from '../../models/user.model.js'
 
 
 export default function verifyJwt(req, res, next) {
@@ -25,32 +25,33 @@ export default function verifyJwt(req, res, next) {
   }
 }
 
-export const isAuth = async (req, res, next) => {}
+export const isAuth = async (req, res, next) => {
 
-  try {
-    const token = req.cookies?.accessToken || req.signedCookies?.accessToken || req.headers.authorization?.split(' ')[1];
+    try {
+      const token = req.cookies?.accessToken || req.signedCookies?.accessToken || req.headers.authorization?.split(' ')[1];
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    if(!decoded){
-        return res.status(400).json({ message: 'token expired' })
-    }
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+      if(!decoded){
+          return res.status(400).json({ message: 'token expired' })
+      }
 
-    const cacheUser = await redisClient.get(`user:${decoded.userId}`)
-    if(cacheUser){
-      req.user = JSON.parse(cacheUser)
-      return next()
-    }
+      const cacheUser = await redisClient.get(`user:${decoded.userId}`)
+      if(cacheUser){
+        req.user = JSON.parse(cacheUser)
+        return next()
+      }
 
-    const user = await User.findById(decoded.userId).select('-password')
-    if(!user){
-        return res.status(400).json({ message: 'No user with this id' })
-    }
+      const user = await User.findById(decoded.userId).select('-password')
+      if(!user){
+          return res.status(400).json({ message: 'No user with this id' })
+      }
 
-    await redisClient.set(`user:${user._id}`, JSON.stringify(user), { EX: 3600})
+      await redisClient.set(`user:${user._id}`, JSON.stringify(user), { EX: 3600})
 
-    req.user = user;
+      req.user = user;
 
-    next()
-  } catch (err) {
-    return res.status(500).json({ message: 'Invalid token' })
+      next()
+    } catch (err) {
+      return res.status(500).json({ message: 'Invalid token' })
+  }
 }

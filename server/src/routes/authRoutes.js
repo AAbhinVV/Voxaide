@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import authController from '../controller/auth.controller.js'
+import { isAuth } from '../middlewares/auth.middleware.js'
 
 
 
@@ -17,7 +18,9 @@ router.post('/verify', authController.verifyOTP)
 
 router.post('/login', authController.login)
 
-router.post('/logout', authController.logout)
+router.post('/logout', isAuth, authController.logout)
+
+router.get('/me', isAuth, authController.myProfile)
 
 router.get("/refresh-token", authController.refreshToken)
 

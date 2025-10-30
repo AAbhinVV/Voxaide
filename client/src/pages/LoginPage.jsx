@@ -5,7 +5,7 @@ import { API_BASE_URL } from "../config";
 
 export default function Login(){
     const [formData, setFormData] = useState({
-        username: '',
+        email: '',
         password: ''
     })
     const [error, setError] = useState('')
@@ -49,15 +49,15 @@ export default function Login(){
                     )}
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
-                            <label htmlFor="username" className="sr-only">Username</label>
+                            <label htmlFor="email" className="sr-only">Email</label>
                             <input
-                                id="username"
-                                name="username"
+                                id="email"
+                                name="email"
                                 type="text"
                                 required
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Username"
-                                value={formData.username}
+                                placeholder="email"
+                                value={formData.email}
                                 onChange={handleChange}
                             />
                         </div>
