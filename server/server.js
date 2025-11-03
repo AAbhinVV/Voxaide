@@ -12,6 +12,7 @@ import requireAdmin from './src/middlewares/admin.middleware.js'
 import adminRoutes from './src/routes/adminRoutes.js'
 import verifyJwt from './src/middlewares/auth.middleware.js'
 import notesMiddleware from './src/middlewares/notes.middleware.js'
+import embeddingRoutes from './src/routes/embeddingRoutes.js'
 
 
 dotenv.config()
@@ -50,6 +51,7 @@ app.use('/api/v1/users', userRoutes)
 app.use('/api/v1/notes',verifyJwt, notesMiddleware, notesRoutes)
 app.use('/api/v1/transcriptions',verifyJwt, transcriptionRoutes)
 app.use('/api/v1/admin', verifyJwt, requireAdmin, adminRoutes);
+app.use('/api/v1/embedding', embeddingRoutes);
 
 app.listen(PORT, async ()=> {
     await connectDB();

@@ -31,12 +31,10 @@ export const transcribeFilePath = async (filePath) => {
 export const getEmbedding = async (text) => {
     const response = await openai.embeddings.create({
         model: "text-embedding-ada-002",
-        input: text
+        input: text,
+        encoding_format: "float",
     })
-    const embedding = response.data[0].embedding;
-    if(!embedding) throw Error('error generating embedding');
-  
-
-    return embedding;
+    
+    return response;
 
 }

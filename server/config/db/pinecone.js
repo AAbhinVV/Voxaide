@@ -9,4 +9,5 @@ if(!apiKey) {
 const pinecone = new Pinecone({apiKey});
 
 
-const noteIndex = pinecone.index('quickstart-js');
+//creating an index 
+const noteIndex = pinecone.index('quickstart');
