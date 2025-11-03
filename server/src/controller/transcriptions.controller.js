@@ -1,6 +1,6 @@
 import Transcription from "../../models/transcription.model.js";
 import Note from "../../models/notes.model.js";
-import { transcribeBuffer } from "../../utils/generateTranscription.js";
+import { transcribeBuffer } from "../../utils/openAI_func.js";
 
 const createTranscription = async (req, res) => {
     try {

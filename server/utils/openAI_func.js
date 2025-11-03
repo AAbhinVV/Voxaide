@@ -5,10 +5,14 @@ import { toFile } from 'openai/uploads'
 
 dotenv.config();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
- 
+const apiKey = process.env.OPENAI_API_KEY;
+
+if(!apiKey){throw new Error('No OpenAI API key provided');}
+
+
+const openai = new OpenAI({apiKey});
+
+
 export const transcribeBuffer = async (buffer, filename = 'audio.webm') => {
     const file = await toFile(buffer, filename)
     const result = await openai.audio.transcriptions.create({
@@ -22,4 +26,17 @@ export const transcribeFilePath = async (filePath) => {
     const buffer = fs.readFileSync(filePath)
     const filename = filePath.split('/').pop() || 'audio.webm'
     return await transcribeBuffer(buffer, filename)
+}
+
+export const getEmbedding = async (text) => {
+    const response = await openai.embeddings.create({
+        model: "text-embedding-ada-002",
+        input: text
+    })
+    const embedding = response.data[0].embedding;
+    if(!embedding) throw Error('error generating embedding');
+  
+
+    return embedding;
+
 }

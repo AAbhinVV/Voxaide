@@ -1,6 +1,6 @@
 import Note from '../../models/notes.model.js';
 import path from 'path';
-import { transcribeFilePath } from '../../utils/generateTranscription.js'
+import { transcribeFilePath } from '../../utils/openAI_func.js'
 
 
 const uploadVoiceNote = async (req,res) => {
