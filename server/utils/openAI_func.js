@@ -15,11 +15,11 @@ const openai = new OpenAI({apiKey});
 
 export const transcribeBuffer = async (buffer, filename = 'audio.webm') => {
     const file = await toFile(buffer, filename)
-    const result = await openai.audio.transcriptions.create({
+    const transcription = await openai.audio.transcriptions.create({
         file,
         model: "gpt-4o-transcribe",
     })
-    return result.text
+    return transcription.text
 }
 
 export const transcribeFilePath = async (filePath) => {

@@ -10,10 +10,10 @@ const router = express.Router();
 
 
 router.post('/create', upload.single('audio'), transcriptionController.createTranscription);
-router.get('/note/:noteId', transcriptionController.getTranscriptionByNoteId);
+router.get('/:note', transcriptionController.getTranscriptionByNoteId);
 router.get('/', transcriptionController.getAllTranscriptions);
-router.delete('/:noteId', transcriptionController.deleteTranscriptionById);
-router.put('/:noteId', transcriptionController.UpdateTranscriptionById);
+router.delete('/:note', transcriptionController.deleteTranscriptionById);
+router.put('/:note', transcriptionController.UpdateTranscriptionById);
 
 export default router;
 
