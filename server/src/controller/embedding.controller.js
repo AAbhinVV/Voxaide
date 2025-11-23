@@ -1,4 +1,4 @@
-import { getEmbedding } from '../utils/openAI_func.js';
+import { getEmbedding } from '../../utils/openAI_func.js';
 
 const generateEmbeds = async (req, res) => {
     const { text } = req.body;
@@ -15,4 +15,4 @@ const generateEmbeds = async (req, res) => {
     }
 }
 
-export default { generateEmbeds };
+export default generateEmbeds;

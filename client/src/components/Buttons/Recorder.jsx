@@ -1,11 +1,15 @@
 import React, { useState, useRef } from 'react'
-import { CirclePause, Play } from 'lucide-react';
+import { CirclePause, Play, Upload } from 'lucide-react';
+import axios from 'axios';
+
 
 
 const Recorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedUrl, setRecordedUrl] = useState('');
   const [seconds, setSeconds] = useState(0);
+  const [recordedBlob, setRecordedBlob] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
 
 
   //useRef either refers to a dom element or stores an initial mutable value to its only property 'current'  doesnt re-render like useState
@@ -33,11 +37,13 @@ const Recorder = () => {
         }, 1000)
 
         mediaRecorder.current.onstop = () => {
-          const recordedBlob = new Blob(chunks.current, {type: 'audio/mp3'});
-          const url = URL.createObjectURL(recordedBlob);
+          const blob = new Blob(chunks.current, {type: 'audio/webm'});
+          setRecordedBlob(blob);
+          const url = URL.createObjectURL(blob);
           console.log(url)
           setRecordedUrl(url);
 
+          
           chunks.current = [];
           clearInterval(timer);//cancels a pending timer created by setInterval 
         }
@@ -58,6 +64,22 @@ const Recorder = () => {
     }
   }
 
+  const uploadBlob = async () => {
+    if(!recordedBlob) return;
+   try {
+    setUploadStatus('Uploading');
+    const fd = new FormData();
+    fd.append('audioFile', recordedBlob, 'recoding.webm');
+    const response = await axios.post('http://localhost:5000/api/v1/notes/uploadVoice', fd)
+    setUploadStatus('Upload Successful');
+    console.log('Manual upload done', response.data);
+  } catch (error) {
+    setUploadStatus('Error');
+    console.error('Error uploading file', error);
+   }
+    
+  }
+
   const formatTime = (totalSeconds) => {
         const hours = Math.floor(totalSeconds / 3600)
         const minutes = Math.floor((totalSeconds % 3600)/60)
@@ -65,6 +87,8 @@ const Recorder = () => {
 
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`
     }
+
+ 
 
   return (
     <div className='w-full h-screen flex flex-col items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 gap-4'>
@@ -77,15 +101,27 @@ const Recorder = () => {
             {formatTime(seconds)}
         </h2>
 
-        {isRecording ? <button onClick={stopRecording} className='flex items-center justify-center text-[60px] bg-red-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
+        {isRecording ? 
+          <button onClick={stopRecording} className='flex items-center justify-center text-[60px] bg-red-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
             <CirclePause />
-        </button> : 
+          </button>
+          
+        : 
             <button onClick={startRecording} className='flex items-center justify-center text-[60px] bg-blue-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
-                <Play />
+                <Play /> 
             </button>
+            
         }
 
         {recordedUrl && <audio controls src={recordedUrl} />}
+        <button 
+        onClick={uploadBlob} 
+        disabled = {!recordedBlob || uploadStatus === 'Uploading'}
+        className='flex items-center justify-center text-[60px] bg-green-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
+            <Upload />
+        </button>
+
+        {uploadStatus && <p className='text-white text-[20px]'>{uploadStatus}</p>}
     </div>
   )
 }
