@@ -7,10 +7,8 @@ import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/navbar'
-import LoadingScreen from './components/LoadingScreen'
-import LoadScreen from './components/LoadScreen'
 import { LoaderOne } from './components/ui/loader'
-import Loader from './components/testloader.jsx'
+import Loader from './components/loadScreen'
 
 
 function App() {

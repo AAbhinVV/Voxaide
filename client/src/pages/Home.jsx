@@ -2,8 +2,8 @@ import React from 'react'
 import Navbar from '../components/navbar'
 import Recorder from '../components/Buttons/Recorder'
 import SiteLoading from '../components/SiteLoading'
-import LoadingScreen from '../components/LoadingScreen'
-import LoadScreen from '../components/LoadScreen'
+
+
 const Home = () => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
