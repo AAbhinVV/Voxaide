@@ -6,7 +6,7 @@ import {
   IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
-import { motion as Motion} from "motion/react";
+import { motion as Motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export function SidebarDemo() {

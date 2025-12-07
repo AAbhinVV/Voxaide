@@ -1,7 +1,6 @@
 import React from 'react'
-import Navbar from '../components/navbar'
-import Recorder from '../components/Buttons/Recorder'
-import SiteLoading from '../components/SiteLoading'
+
+
 
 
 const Home = () => {
