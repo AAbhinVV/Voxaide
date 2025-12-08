@@ -91,15 +91,13 @@ const Recorder = () => {
  
 
   return (
-    <div className='w-full h-screen flex flex-col items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 gap-4'>
+    <div className='flex flex-col items-center justify-center bg-gradient-to-r '>
+    
 
-    <h1 className='text-white text-[60px] font-black'>
-        Recorder
-    </h1>
-
-        <h2 className='text-[100px] text-white bg-black p-4 rounded-lg mx-4'>
+    
+        {/* <h2 className='text-[100px] text-white bg-black p-4 rounded-lg mx-4'>
             {formatTime(seconds)}
-        </h2>
+        </h2> */}
 
         {isRecording ? 
           <button onClick={stopRecording} className='flex items-center justify-center text-[60px] bg-red-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
@@ -107,8 +105,8 @@ const Recorder = () => {
           </button>
           
         : 
-            <button onClick={startRecording} className='flex items-center justify-center text-[60px] bg-blue-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
-                <Play /> 
+            <button onClick={startRecording} className='flex items-center justify-center  bg-blue-500 rounded-full p-4 text-white w-[100px] h-[100px]'>
+                <Play />  <span>Sart Recording</span>
             </button>
             
         }

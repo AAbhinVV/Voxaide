@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import { motion as Motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import Dashboard from "../pages/Dashboard";
 
 export function SidebarDemo() {
   const links = [
@@ -44,10 +45,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-        // for your use case, use `h-screen` instead of `h-[60vh]`
-        "h-[60vh]"
-      )}>
+        "mx-auto flex w-full max-w-full flex-1 flex-col overflow-hidden border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800","h-screen")}>
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
@@ -65,7 +63,7 @@ export function SidebarDemo() {
                 href: "#",
                 icon: (
                   <img
-                    src="https://assets.aceternity.com/manu.png"
+                    src="../assets/user.jpg"
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
@@ -107,7 +105,7 @@ export const LogoIcon = () => {
 };
 
 // Dummy dashboard component with content
-const Dashboard = () => {
+const Dashboard2 = () => {
   return (
     <div className="flex flex-1">
       <div

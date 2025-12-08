@@ -4,10 +4,10 @@ import './App.css'
 import Register from './pages/RegisterPage'
 import Login from './pages/LoginPage'
 import Dashboard from './pages/Dashboard'
-import Home from './pages/Home'
 import ProtectedRoute from './components/ProtectedRoute'
 import {SidebarDemo} from './components/Navbar'
 import Loader from './components/SiteLoad'
+import Recorder from './components/Buttons/Recorder'
 
 
 function App() {
@@ -21,14 +21,14 @@ function App() {
       
 
       <BrowserRouter>
-        <SidebarDemo />
+        {/* <SidebarDemo /> */}
         <Routes>
-          <Route path="/" index element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
+          {/* <Route element={<ProtectedRoute />}> */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/recorder" element={<Recorder />} />
+          {/* </Route> */}
         </Routes>
 
         
