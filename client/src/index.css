@@ -74,6 +74,23 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+
+  /* VOXAIDE Brand Colors */
+  --voxaide-bg-from: #dbeafe;
+  --voxaide-bg-via: #f8fafc;
+  --voxaide-bg-to: #faf5ff;
+  --voxaide-slate-50: #f8fafc;
+  --voxaide-slate-100: #f1f5f9;
+  --voxaide-slate-200: #e2e8f0;
+  --voxaide-slate-300: #cbd5e1;
+  --voxaide-slate-400: #94a3b8;
+  --voxaide-slate-500: #64748b;
+  --voxaide-slate-600: #475569;
+  --voxaide-slate-700: #334155;
+  --voxaide-slate-800: #1e293b;
+  --voxaide-blue-50: #eff6ff;
+  --voxaide-purple-50: #faf5ff;
 }
 
 .dark {
