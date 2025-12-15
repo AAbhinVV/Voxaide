@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Register from './pages/RegisterPage'
 import Login from './pages/LoginPage'
-import Dashboard from './pages/Dashboard'
+import Dashboard from './pages/Dashboards/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
-import {SidebarDemo} from './components/Navbar'
-import Loader from './components/SiteLoad'
+import {SidebarDemo} from './components/Sidebar'
+import Loader from './components/Loader'
 import Recorder from './components/Buttons/Recorder'
 
 
@@ -17,23 +17,7 @@ function App() {
     return <Loader onComplete={() => setShowLoader(false)} />;
   }
   return (
-    <>
-      
-
-      <BrowserRouter>
-        {/* <SidebarDemo /> */}
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          {/* <Route element={<ProtectedRoute />}> */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/recorder" element={<Recorder />} />
-          {/* </Route> */}
-        </Routes>
-
-        
-      </BrowserRouter>
-    </>
+    <SidebarDemo />
   )
 }
 
