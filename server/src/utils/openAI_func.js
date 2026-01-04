@@ -2,9 +2,10 @@ import fs from "fs";
 import { OpenAI } from "openai";
 import dotenv from "dotenv";
 import { toFile } from 'openai/uploads'
+import constants from "constants";
 
 dotenv.config();
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = constants.openai_api_key;
 
 if(!apiKey){throw new Error('No OpenAI API key provided');}
 

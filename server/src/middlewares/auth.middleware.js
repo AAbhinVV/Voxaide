@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { redisClient } from '../../server.js'
 import User from '../../models/user.model.js'
+import constants from '../config/constant.js'
 
 
 export default function verifyJwt(req, res, next) {
@@ -17,7 +18,7 @@ export default function verifyJwt(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const decoded = jwt.verify(token, constants.access_token)
     req.user = decoded
     next()
   } catch (err) {
@@ -30,7 +31,7 @@ export const isAuth = async (req, res, next) => {
     try {
       const token = req.cookies?.accessToken || req.signedCookies?.accessToken || req.headers.authorization?.split(' ')[1];
 
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+      const decoded = jwt.verify(token, constants.access_token)
       if(!decoded){
           return res.status(400).json({ message: 'token expired' })
       }

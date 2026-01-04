@@ -15,8 +15,6 @@ router.post('/uploadVoice',upload.single('audio'), notesController.uploadVoiceNo
 
 router.get('/:voiceNote', notesController.getVoiceNoteById);
 
-router.get('/', notesController.getAllVoiceNotes);
-
 router.delete('/:voiceNote', notesController.deleteVoiceNote);
 
 export default router;

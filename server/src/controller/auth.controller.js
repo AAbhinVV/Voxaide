@@ -194,80 +194,79 @@ const login = async (req,res) => {
 
         if(!isPasswordValid){return res.status(401).send({message: 'Invalid credentials'})}
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        const otpKey = `otp:${email}`;
+        /***********OTP LOGIC*************/
+        // const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        // const otpKey = `otp:${email}`;
+        // await redisClient.set(otpKey, otp, {EX: 300}); // OTP valid for 5 minutes
+        // const subject = 'OTP for verification';
+        // const html = getOtpHtml({email, otp})
+        // await sendMail({email, subject, html});
 
-        await redisClient.set(otpKey, otp, {EX: 300}); // OTP valid for 5 minutes
 
-        const subject = 'OTP for verification';
+        // await redisClient.set(rateLimitKey, 'true', {EX: 60});
 
-        const html = getOtpHtml({email, otp})
+        // res.json({message: "OTP sent to your email. Please verify to complete login."});
 
-        await sendMail({email, subject, html});
+        const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
 
-        await redisClient.set(rateLimitKey, 'true', {EX: 60});
-
-        res.json({message: "OTP sent to your email. Please verify to complete login."});
-
-        // const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
-
-        // if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
+        if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
         
         
 
 
-        // res.status(201).json({
-        //     success: true,
-        //     user: {
-        //         ...user._doc,
-        //         password: undefined,
-        //     },
-        //     access_token: accessToken,
-        //     refreshToken: refreshToken,
-        //     message: "Login Successful"
-        // })
+        res.status(201).json({
+            success: true,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+            access_token: accessToken,
+            refreshToken: refreshToken,
+            message: "Login Successful"
+        })
     } catch (error) {
         console.log(error.message)
         res.sendStatus(503)
     }
 }
 
-const verifyOTP = async (req, res) => {
-    try {
-        const {email, otp} = req.body;
+// const verifyOTP = async (req, res) => {
+//     try {
+//         const {email, otp} = req.body;
 
-        if(!email || !otp){
-            return res.status(400).json({success: false, message: "Please provide all details"});
-        }
+//         if(!email || !otp){
+//             return res.status(400).json({success: false, message: "Please provide all details"});
+//         }
 
-        const otpKey = `otp:${email}`;
+//         const otpKey = `otp:${email}`;
 
-        const storedOtpString = await redisClient.get(otpKey);
-        if(!storedOtpString){
-            return res.status(400).json({success: false, message: "OTP expired"});
-        }
+//         const storedOtpString = await redisClient.get(otpKey);
 
-        const storedOTP = JSON.parse(storedOtpString);
+//         if(!storedOtpString){
+//             return res.status(400).json({success: false, message: "OTP expired"});
+//         }
 
-        if(storedOTP !== otp){
-            return res.status(400).json({success: false, message: "Invalid OTP"});
-        }
+//         const storedOTP = JSON.parse(storedOtpString);
 
-        await redisClient.del(otpKey);
+//         if(storedOTP !== otp){
+//             return res.status(400).json({success: false, message: "Invalid OTP"});
+//         }
 
-        let user = await User.findOne({email});
+//         await redisClient.del(otpKey);
 
-        const tokenData = await generateTokenAndSetCookie(res, user._id);
+//         let user = await User.findOne({email});
 
-        res.status(200).json({
-            message: `Welcome ${user.username}`,
-            ...user._doc})
-    } catch (error) {
-        console.log(error.message)
-        res.sendStatus(503)
-    }
-}
+//         const tokenData = await generateTokenAndSetCookie(res, user._id);
+
+//         res.status(200).json({
+//             message: `Welcome`,
+//             ...user._doc})
+//     } catch (error) {
+//         console.log(error.message)
+//         res.sendStatus(503)
+//     }
+// }
 
 const myProfile = async (req, res) => {
     try {

@@ -13,13 +13,14 @@ import adminRoutes from './src/routes/adminRoutes.js'
 import verifyJwt from './src/middlewares/auth.middleware.js'
 import notesMiddleware from './src/middlewares/notes.middleware.js'
 import embeddingRoutes from './src/routes/embeddingRoutes.js'
+import constants from 'constants'
 
 
 dotenv.config()
 const app = express()
-const PORT = process.env.PORT || 5000;
+const PORT = constants.port || 5000;
 
-const redisUrl = process.env.REDIS_URL;
+const redisUrl = constants.redis_url;
 
 if(!redisUrl){
     console.error("missing redis url")
@@ -32,7 +33,7 @@ redisClient.connect().then(() => console.log("Connected to Redis")).catch(consol
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(cookieParser(process.env.COOKIE_SECRET))
+app.use(cookieParser(constants.cookie_secret))
 
 // serve uploaded files statically
 app.use('/uploads', express.static(path.resolve('uploads')))
@@ -48,6 +49,7 @@ app.use((err, req, res, next) => {
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/audio', userRoutes)
 app.use('/api/v1/notes',verifyJwt, notesMiddleware, notesRoutes)
 app.use('/api/v1/transcriptions',verifyJwt, transcriptionRoutes)
 app.use('/api/v1/admin', verifyJwt, requireAdmin, adminRoutes);
