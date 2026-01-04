@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { Mail, Lock, User, Phone, ArrowRight, ArrowLeft } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 export default function VoxaideAuth() {
 
     //routing
     const [searchParams, setSearhcParasms] = useSearchParams();
     const isLogin = searchParams.get("mode") !== "register";
-
-
-
-    const [isLogin, setIsLogin] = useState(true);
+ 
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -18,6 +16,7 @@ export default function VoxaideAuth() {
         phone: ""
     });
     const [errors, setErrors] = useState({});
+    
 
     // Add CSS animation for bubbles
     useEffect(() => {
@@ -84,6 +83,11 @@ export default function VoxaideAuth() {
         setErrors(newErrors);
         return;
         }
+        
+        
+
+
+        
         alert(`Login successful!\nEmail: ${formData.email}`);
         setFormData({ username: "", email: "", password: "", phone: "" });
     };
