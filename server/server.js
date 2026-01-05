@@ -1,15 +1,15 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
-import authRoutes from './src/routes/authRoutes.js'
+import authRoutes from './src/routes/auth.routes.js'
 import { connectDB } from './config/db/connectDB.js'
-import notesRoutes from './src/routes/notesRoutes.js'
-import transcriptionRoutes from './src/routes/transcriptionRoutes.js'
-import userRoutes from './src/routes/userRoutes.js'
+import notesRoutes from './src/routes/voiceNotes.routes.js'
+import transcriptionRoutes from './src/routes/transcription.routes.js'
+import userRoutes from './src/routes/user.routes.js'
 import path from 'path'
 import {createClient} from 'redis'
 import requireAdmin from './src/middlewares/admin.middleware.js'
-import adminRoutes from './src/routes/adminRoutes.js'
+import adminRoutes from './src/routes/admin.routes.js'
 import verifyJwt from './src/middlewares/auth.middleware.js'
 import notesMiddleware from './src/middlewares/notes.middleware.js'
 import embeddingRoutes from './src/routes/embeddingRoutes.js'
@@ -55,7 +55,7 @@ app.use('/api/v1/transcriptions',verifyJwt, transcriptionRoutes)
 app.use('/api/v1/admin', verifyJwt, requireAdmin, adminRoutes);
 app.use('/api/v1/embedding', embeddingRoutes);
 
-app.listen(PORT, async ()=> {
+app.listen(PORT, async () => {
     await connectDB();
     console.log(`Server started on PORT: ${PORT}`)
 })
