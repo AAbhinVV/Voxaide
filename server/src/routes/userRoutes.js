@@ -13,7 +13,7 @@ router.use(verifyJwt);
 
 // basic user profile CRUD
 router.get('/me', userController.getMe);
-router.post('/me', userController.updateMe);
+// router.post('/me', userController.updateMe);
 // router.patch('/me',  userController.partialUpdateMe);
 router.delete('/me',  userController.deleteMe);
 
