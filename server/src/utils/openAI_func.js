@@ -42,11 +42,53 @@ export const getEmbedding = async (text) => {
 
 export const generateNotes = async (trancriptionText) => {
     const response = await client.responses.create({
-    model: "gpt-5",
-    reasoning: {efforts: "low"},
+    model: "gpt-4.1-mini",
+    temperature: 0.2,
     input: [{
-        
-    }      
-    ]
+        role: "system",
+        content:  
+        `You are an assistant that converts meeting transcripts into structured notes.
+
+        You MUST return valid JSON only.
+        Do NOT include markdown.
+        Do NOT include explanations.
+        Do NOT include extra text.
+
+        The JSON must strictly match this schema:
+        {
+        "title": string,
+        "summary": string,
+        "bulletPoints": string[],
+        "actionItems": string[]
+        }
+        `.trim()
+    },{
+        role: "user",
+        content: `Transcription: ${trancriptionText}`.trim()
+    }]
+
+    
 });
-}
+
+    const outputText = response.output_text;
+
+    let notes;
+    try {
+        notes = JSON.parse(outputText);
+    } catch (error) {
+        throw new Error("AI returned invalid json for notes");
+    }
+
+    if(!notes.title || !notes.summary || !Array.isArray(notes.bulletPoints) || !Array.isArray(notes.actionItems)){
+        throw new Error("AI notes output failed schema validation");
+    }
+
+    return {
+        title: notes.title.trim(),
+        summary: notes.summary.trim(),
+        bulletPoints: notes.bulletPoints.map(point => point.trim()).filter(Boolean),
+        actionItems: notes.actionItems.map(item => item.trim()).filter(Boolean)
+    };
+
+    
+};

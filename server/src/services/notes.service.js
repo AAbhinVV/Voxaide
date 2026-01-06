@@ -1,7 +1,8 @@
-import transcriptionModel from "../models/transcription.model"
-import noteModel from "../models/note.model";
+import transcriptionModel from "../models/transcription.model.js"
+import noteModel from "../models/note.model.js";
+import { generateNotes } from "../utils/openAI_func.js";
 
-const notesGenerator = async (transcriptionId, userId, ) => {
+const notesGenerator = async (transcriptionId, userId ) => {
     const transcription = await transcriptionModel.findOne({_id: transcriptionId, userId: userId});
     
     if(!transcription){
@@ -17,6 +18,23 @@ const notesGenerator = async (transcriptionId, userId, ) => {
         return notes;
     }
 
+    const generatedNotes = await generateNotes(transcription.text);
+
+    const newNotes = new noteModel({
+        userId,
+        transcriptionId,
+        title: generatedNotes.title,
+        summary: generatedNotes.summary,
+        bulletPoints: generatedNotes.bulletPoints,
+        actionItems: generatedNotes.actionItems
+    })
+
+    await newNotes.save();
+
+    return newNotes;
+
 
 
 }
+
+export default notesGenerator;
