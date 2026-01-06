@@ -12,15 +12,18 @@
   "dependencies": {
     "@langchain/google-genai": "^1.0.0",
     "@langchain/openai": "^1.0.0",
-    "@pinecone-database/pinecone": "^6.1.2",
+    "@langchain/pinecone": "^1.0.1",
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^5.1.2",
     "@prisma/client": "^6.11.1",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "crypto": "^1.0.1",
-    "dotenv": "^17.0.1",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
+    "langchain": "^1.2.4",
     "mailtrap": "^4.2.0",
     "mongo-sanitize": "^1.1.0",
     "mongodb": "^6.19.0",
@@ -31,6 +34,7 @@
     "pg": "^8.15.6",
     "prisma": "^6.7.0",
     "redis": "^5.8.2",
+    "tiktoken": "^1.0.22",
     "zod": "^4.1.11"
   },
   "devDependencies": {
