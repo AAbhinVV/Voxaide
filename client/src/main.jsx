@@ -8,7 +8,8 @@ import VoxaideDashboard from './pages/Dashboards/Dashboard.jsx'
 import Login from './pages/LoginPage.jsx'
 import Register from './pages/RegisterPage.jsx'
 import NotesDashboard from './pages/Dashboards/NotesDashboard.jsx'
-
+import store from './store/store.js'
+import { Provider } from 'react-redux'
 
 
 const router = createBrowserRouter(
@@ -26,6 +27,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store = {store}>
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 )
