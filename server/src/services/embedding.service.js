@@ -60,7 +60,7 @@ const generateChunksAndEmbeddings = async ({
 
     //********************************************storing in pinecone************************************************
     const pinecone= new PineconeClient({
-        apiKey: constants.pinecone_api_key,
+        apiKey: constants.pinecone_api_key
     })
 
     const pineconeIndex = pinecone.Index("voxaide");

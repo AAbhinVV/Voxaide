@@ -28,16 +28,7 @@ export const transcribeFilePath = async (filePath) => {
     return await transcribeBuffer(buffer, filename)
 }
 
-export const getEmbedding = async (text) => {
-    const response = await client.embeddings.create({
-        model: "text-embedding-ada-002",
-        input: text,
-        encoding_format: "float",
-    })
-    
-    return response;
 
-}
 
 
 export const generateNotes = async (trancriptionText) => {
@@ -92,3 +83,4 @@ export const generateNotes = async (trancriptionText) => {
 
     
 };
+
