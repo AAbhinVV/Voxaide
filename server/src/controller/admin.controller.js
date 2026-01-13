@@ -25,7 +25,7 @@ const getUserById = async (req, res) => {
 const updateUserById = async (req, res) => {
     try {
         const { id } = req.params
-        const { username, email, phone_number, role, isVerified } = req.body
+        const { username, email,  role, isVerified } = req.body
 
         const updates = {}
         if (typeof username !== 'undefined') updates.username = username

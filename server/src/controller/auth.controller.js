@@ -37,13 +37,15 @@ const register = async (req,res) => {
         return res.status(400).json({success: false, message: "validation error"})
     }
 
-    const {username, password, email, phone_number, role} = validation.data;
+    const {email, username, password, role} = validation.data;
 
     const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
 
     if(await redisClient.get(rateLimitKey)){
         return res.status(429).json({success: false, message: "Too many registration attempts. Please try again later."})   
     }
+
+     await redisClient.set(rateLimitKey, 'true', {EX: 60});
 
 
     try {
@@ -72,27 +74,25 @@ const register = async (req,res) => {
         const dataStore = JSON.stringify({
             email: normalizedEmail,
             username,
-            phone_number,
             role
         });
 
         await redisClient.set(verifyKey, dataStore, {EX: 300 })
 
-        const subject = "Verify your email for account creation"
-        const html = getVerifyEmailHtml({email, verificationToken})
+        // const subject = "Verify your email for account creation"
+        // const html = getVerifyEmailHtml({email, verificationToken})
 
-        await sendMail({email, subject, html})
+        // await sendMail({email, subject, html})
 
-        await redisClient.set(rateLimitKey, 'true', {Ex: 60});
+       
 
         const user = new User({
             email: normalizedEmail,
-            password: hashedpassword,
+            passwordHash: hashedpassword,
             username,
-            phone_number,
             role,
             verificationToken,
-            verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000 // 1 hour
+            verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000 // 1 day
         })
 
         await user.save()
@@ -104,7 +104,7 @@ const register = async (req,res) => {
         success: true,
         user: {
             ...user._doc,
-            password: undefined, 
+            passwordHash: undefined, 
         },
         access_token: accessToken,
         refresh_token: refreshToken,
@@ -136,8 +136,25 @@ const verifyUser = async (req, res) => {
         const userData = JSON.parse(userDataJson);
 
         const existingUser = await User.findOne({email: userData.email});
-    } catch (error) {
+
+        if(!existingUser){
+            return res.status(404).json({success: false, message: "User not found"});
+        }
+
+        if(existingUser.isverified){
+            return res.status(200).json({success: true, message: "User already verified"});
+
+        }
+
+        existingUser.isVerified = true;
+        existingUser.verifiedAt = new Date();
+
+        await existingUser.save();
+
+        return res.status(200).json({success: true, message: "Account verified successfully"});
         
+    } catch (error) {
+        res.status(500).json({success:false, message: error.message})
     }
 }
 
@@ -190,7 +207,7 @@ const login = async (req,res) => {
         if(!user){return res.status(404).send({message: "Invalid credentials"})}
         
 
-        const isPasswordValid = await bcrypt.compare(password, user.password)
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHash)
 
         if(!isPasswordValid){return res.status(401).send({message: 'Invalid credentials'})}
 
@@ -219,7 +236,7 @@ const login = async (req,res) => {
             success: true,
             user: {
                 ...user._doc,
-                password: undefined,
+                passwordHash: undefined,
             },
             access_token: accessToken,
             refreshToken: refreshToken,
