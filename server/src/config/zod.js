@@ -12,4 +12,6 @@ const loginSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 characters long"),
 })
 
-export {registerSchema, loginSchema}
+const querySchema = z.object({query: z.string()})
+
+export {registerSchema, loginSchema, querySchema}

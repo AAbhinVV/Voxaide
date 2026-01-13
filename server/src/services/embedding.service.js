@@ -1,10 +1,9 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { encoding_for_model } from "tiktoken";
-import { PineconeStore } from "@langchain/pinecone";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import constants from "../config/constant.js";
-import TrancriptionChunk from "../models/chunks.model.js";
+import TranscriptionChunk from "../models/chunks.model.js";
 
 
 
@@ -13,6 +12,8 @@ import TrancriptionChunk from "../models/chunks.model.js";
  * @param {ObjectId} mongoDocId - MongoDB document _id
  * @param {string} text - transcription or document text
  * @param {Object} extraMetadata - optional metadata
+ * @param {ObjectId} userId
+ * @param {ObjectId} transcriptionId
  */
 const generateChunksAndEmbeddings = async ({
     transcriptionId,
@@ -23,12 +24,12 @@ const generateChunksAndEmbeddings = async ({
     const encoder = encoding_for_model("text-embedding-3-large");
 
     const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 200,
+        chunkSize: 600,
+        chunkOverlap: 120,
         separators: ["\n\n", "\n", " ", ""],
         lengthFunction: (text) => {
-            const tokens = encoder.encode(text).length;
-            return tokens;
+             encoder.encode(text).length;
+            
         }
     })
 
@@ -64,24 +65,39 @@ const generateChunksAndEmbeddings = async ({
 
     const pineconeIndex = pinecone.Index("voxaide");
 
-    const vectorStore = new PineconeStore(embeddings, {
-        pineconeIndex,
-        maxConcurrency: 10,
-    })
+    const vectorStore = Promise.all(
+        savedChunks.map(async (chunk) => {
+            const embedding = await embeddings.embedDocuments(chunk.text);
+
+            return{
+                id: chunk._id.toString(),
+                valued: embedding,
+                metadata: {
+                    userId: userId.toString(),
+                    transcriptionId: transcriptionId.toString(),
+                    chunkIndex: chunk.chunkIndex,
+                    type: "transcription_chunk"
+                }
+            }
+        })
+    );
+
+    await index.upsert(vectorStore);
 
 
-     const metadatas = chunks.map((_, index) => ({
-    mongoDocId: mongoDocId.toString(),
-    chunkIndex: index,
-    userId: userId?.toString(),
-    source,
-    }));
-
-    await vectorStore.addTexts(chunks, metadatas);
+    const mongoStore = savedChunks.map((chunk) => ({
+        updateOne: {
+            filter: { _id: chunk._id },
+            update: { embeddingId: chunk._id.toString()}
+        }
+    }))
+    
+    await TranscriptionChunk.bulkWrite(mongoStore);
+    
 
     return {
         mongoDocId,
-        totalChunks: chunks.length
+        totalChunks: savedChunks.length
     }
 
     
