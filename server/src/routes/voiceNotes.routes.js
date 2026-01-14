@@ -1,7 +1,7 @@
 import express, { application } from 'express';
 import dotenv from 'dotenv';
 import voiceNotesController from '../controller/voiceNotes.controller.js'
-import upload from '../middlewares/multer.middleware.js';
+import upload from '../services/voiceNote.service.js';
 import { isAuth } from '../middlewares/auth.middleware.js';
 import { embedLimiter } from '../middlewares/rateLimiter.middleware.js';
 

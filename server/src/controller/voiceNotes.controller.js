@@ -1,6 +1,6 @@
 import voiceNote from '../models/voiceNote.model.js';
 import path from 'path';
-import { transcribeFilePath } from '../../utils/openAI_func.js'
+
 
 
 const createVoiceNote = async (req,res) => {
@@ -9,33 +9,28 @@ const createVoiceNote = async (req,res) => {
             return res.status(400).json({message: "No file uploaded"});
         }
 
+        const userId = req.user._id;
+
         const voiceNoteInstance = new voiceNote({
+            userId,
             filename: req.file.originalname,
             duration: req.body.duration,
+            s3Key: req.file.key,
+            s3Url: req.file.location,
+            contentType: req.file.mimetype,
+            size: req.file.size,
             status: 'UPLOADED'
         })
 
         await voiceNoteInstance.save();
 
-        // if no transcription provided by client, attempt server-side transcription
-        if (!voiceNoteInstance.transcription) {
-            try {
-                const text = await transcribeFilePath(req.file.path)
-                voiceNoteInstance.transcription = text
-                await voiceNoteInstance.save()
-            } catch (e) {
-                // non-fatal
-                console.error('Transcription failed:', e.message)
-                
-            }
-        }
+        startTranscriptionJob(voiceNoteInstance._id);
 
-            res.status(200).json({
-                success: true, 
-                message: "Audio recieved", 
-                noteId: voiceNoteInstance._id,
-                filename: req.file.originalname
-            });
+        res.status(201).json({
+            success: true, 
+            message: "Audio received", 
+            voiceNoteId: voiceNoteInstance._id
+        });
         }catch(error){
             res.status(503).json({success: false, message:error.message});
         }
@@ -44,7 +39,7 @@ const createVoiceNote = async (req,res) => {
 const getVoiceNoteById = async (req,res) => {
     const noteId = req.params.id;
     try {
-        const note = await Note.findById(noteId);
+        const note = await voiceNote.findById(noteId);
         if(!note){
             return res.status(400).json({success: false, message: "note not found"});
         }
@@ -63,7 +58,7 @@ const getVoiceNoteById = async (req,res) => {
 
 const getAllVoiceNotes = async (req,res) => {
     try{
-        const note = await Note.find();
+        const note = await voiceNote.find();
         res.status(200).json({success: true, notes: note});
     }catch(error){
         res.status(503).json({success: false, message:error.message});
@@ -73,7 +68,7 @@ const getAllVoiceNotes = async (req,res) => {
 const deleteVoiceNote = async (req,res) => {
     try{
         const noteId = req.params.id;
-        const note = await Note.findByIdAndDelete(noteId);
+        const note = await voiceNote.findByIdAndDelete(noteId);
         if(!note){
             return res.status(400).json({success: false, message: "Note not found"});
         }

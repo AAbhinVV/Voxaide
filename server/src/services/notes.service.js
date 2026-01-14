@@ -1,4 +1,4 @@
-import transcriptionModel from "../models/transcription.model.js"
+import transcriptionModel from "../models/transcription.model.js";
 import noteModel from "../models/note.model.js";
 import { generateNotes } from "../utils/openAI_func.js";
 
