@@ -3,7 +3,7 @@ import path from 'path';
 import { transcribeFilePath } from '../../utils/openAI_func.js'
 
 
-const uploadVoiceNote = async (req,res) => {
+const createVoiceNote = async (req,res) => {
     try{
         if(!req.file) {
             return res.status(400).json({message: "No file uploaded"});
@@ -90,4 +90,4 @@ const deleteVoiceNote = async (req,res) => {
 
 
 
-export default{uploadVoiceNote, getVoiceNoteById, getAllVoiceNotes, deleteVoiceNote};
+export default{createVoiceNote, getVoiceNoteById, getAllVoiceNotes, deleteVoiceNote};

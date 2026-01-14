@@ -5,6 +5,6 @@ import { queryLimiter } from '../middlewares/rateLimiter.middleware.js'
 
 const router = express.Router()
 
-router.post('/query', isAuth, queryLimiter, queryController)
+router.post('/', isAuth, queryLimiter, queryController)
 
 export default router;

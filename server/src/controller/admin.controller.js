@@ -2,7 +2,7 @@ import User from '../../models/user.model.js'
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password')
+        const users = await User.find().select('-passwordHash')
         return res.status(200).json({ success: true, users })
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Failed to fetch users' })
@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const { id } = req.params
-        const user = await User.findById(id).select('-password')
+        const user = await User.findById(id).select('-passwordHash')
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
@@ -38,7 +38,7 @@ const updateUserById = async (req, res) => {
             id,
             { $set: updates },
             { new: true, runValidators: true, context: 'query' }
-        ).select('-password')
+        ).select('-passwordHash')
 
         if (!updated) {
             return res.status(404).json({ success: false, message: 'User not found' })

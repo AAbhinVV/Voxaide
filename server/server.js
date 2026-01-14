@@ -8,11 +8,10 @@ import transcriptionRoutes from './src/routes/transcription.routes.js'
 import userRoutes from './src/routes/user.routes.js'
 import path from 'path'
 import {createClient} from 'redis'
-import requireAdmin from './src/middlewares/admin.middleware.js'
 import adminRoutes from './src/routes/admin.routes.js'
-import verifyJwt from './src/middlewares/auth.middleware.js'
-import notesMiddleware from './src/middlewares/notes.middleware.js'
-import embeddingRoutes from './src/routes/embeddingRoutes.js'
+import voiceNotesRoutes from './src/routes/voiceNotes.routes.js'
+import queryRoutes from './src/routes/query.routes.js'
+
 import constants from 'constants'
 
 
@@ -49,11 +48,12 @@ app.use((err, req, res, next) => {
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/users', userRoutes)
-app.use('/api/v1/audio', userRoutes)
-app.use('/api/v1/notes',verifyJwt, notesMiddleware, notesRoutes)
-app.use('/api/v1/transcriptions',verifyJwt, transcriptionRoutes)
-app.use('/api/v1/admin', verifyJwt, requireAdmin, adminRoutes);
-app.use('/api/v1/embedding', embeddingRoutes);
+app.use('/api/v1/voice-notes', voiceNotesRoutes)
+app.use('/api/v1/notes', notesRoutes)
+app.use('/api/v1/transcriptions', transcriptionRoutes)
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/query', queryRoutes);
+
 
 app.listen(PORT, async () => {
     await connectDB();

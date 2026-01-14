@@ -6,7 +6,7 @@ import { notesLimiter } from '../middlewares/rateLimiter.middleware.js'
 
 const router = express.Router();
 
-router.post('/notes/generate', isAuth, notesLimiter, createNotes);
-router.get('/notes/:id', isAuth, getNoteById);
+router.post('/generate', isAuth, notesLimiter, createNotes);
+router.get('/:id', isAuth, getNoteById);
 
 export default router;

@@ -1,11 +1,15 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import adminController from '../controller/admin.controller.js';
+import requireAdmin from '../middlewares/admin.middleware.js';
+import { isAuth } from '../middlewares/auth.middleware.js';
 // Note: Global middleware `verifyJwt` and `requireAdmin` are already applied in server.js
 
 dotenv.config();
 
 const router = express.Router();
+
+router.use(isAuth);
+router.use(requireAdmin);
 
 
 // admin routes (protected upstream)
