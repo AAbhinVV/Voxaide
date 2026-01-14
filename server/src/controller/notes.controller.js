@@ -2,7 +2,7 @@ import notesGenerator from "../services/notes.service"
 
 const createNotes = async (req, res) => {
     const {transcriptionId} = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try{
         const notes = await notesGenerator(transcriptionId, userId);

@@ -187,11 +187,19 @@ const login = async (req,res) => {
 
     const rateLimitKey = `login-rate-limit:${req.ip}:${email}`;
 
-    if(await redisClient.get(rateLimitKey)){
-        return res.status(429).json({success: false, message: "Too many login attempts. Please try again later."})   
+    // if(await redisClient.get(rateLimitKey)){
+    //     return res.status(429).json({success: false, message: "Too many login attempts. Please try again later."})   
+    // }
+
+    // await redisClient.set(rateLimitKey, 'true', {EX: 60});
+
+    const attempts = await redisClient.get(rateLimitKey)
+
+    if(attempts && Number(attempts) >= 5){
+        return res.status(429).json({success: false, messsage: "Too many login attempts. Please try again in 10 minutes."})
     }
 
-    await redisClient.set(rateLimitKey, 'true', {EX: 60});
+     
 
     try {
 
@@ -202,9 +210,17 @@ const login = async (req,res) => {
         return res.status(400).json({message: "Password is required"})
         }
 
-        const user = await User.findOne({email});
+        const normalizedEmail = email.toLowerCase().trim();
 
-        if(!user){return res.status(404).send({message: "Invalid credentials"})}
+        const user = await User.findOne({normalizedEmail});
+
+        if(!user){
+            await redisClient.multi()
+                .incr(rateLimitKey)
+                .expire(rateLimitKey, 600) // 10 minutes       
+                .exec();
+            return res.status(404).send({message: "Invalid credentials"})
+        }
         
 
         const isPasswordValid = await bcrypt.compare(password, user.passwordHash)
@@ -225,13 +241,15 @@ const login = async (req,res) => {
 
         // res.json({message: "OTP sent to your email. Please verify to complete login."});
 
+        await redisClient.del(rateLimitKey); // Clear login attempts on successful login
+
         const { accessToken, refreshToken } = generateTokenAndSetCookie(res, user._id);
 
         if (!accessToken || !refreshToken) throw new ExpressError(500, 'No tokens generated');
         
         
 
-
+        
         res.status(201).json({
             success: true,
             user: {

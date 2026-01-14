@@ -29,6 +29,7 @@ const uploadVoiceNote = async (req,res) => {
             } catch (e) {
                 // non-fatal
                 console.error('Transcription failed:', e.message)
+                
             }
         }
 
