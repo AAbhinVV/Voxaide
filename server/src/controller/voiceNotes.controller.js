@@ -1,4 +1,4 @@
-import Note from '../../models/notes.model.js';
+import voiceNote from '../models/voiceNote.model.js';
 import path from 'path';
 import { transcribeFilePath } from '../../utils/openAI_func.js'
 
@@ -9,23 +9,20 @@ const createVoiceNote = async (req,res) => {
             return res.status(400).json({message: "No file uploaded"});
         }
 
-        const note = new Note({
-            audiopath: req.file.path,
+        const voiceNoteInstance = new voiceNote({
             filename: req.file.originalname,
-            userId: req.user?.userId,
-            title: req.body.title,
-            tags: req.body?.tags,
-            transcription: req.body.transcription,
+            duration: req.body.duration,
+            status: 'UPLOADED'
         })
 
-        await note.save();
+        await voiceNoteInstance.save();
 
         // if no transcription provided by client, attempt server-side transcription
-        if (!note.transcription) {
+        if (!voiceNoteInstance.transcription) {
             try {
                 const text = await transcribeFilePath(req.file.path)
-                note.transcription = text
-                await note.save()
+                voiceNoteInstance.transcription = text
+                await voiceNoteInstance.save()
             } catch (e) {
                 // non-fatal
                 console.error('Transcription failed:', e.message)
@@ -36,8 +33,7 @@ const createVoiceNote = async (req,res) => {
             res.status(200).json({
                 success: true, 
                 message: "Audio recieved", 
-                noteId: note._id,
-                audiopath: note.audiopath,
+                noteId: voiceNoteInstance._id,
                 filename: req.file.originalname
             });
         }catch(error){

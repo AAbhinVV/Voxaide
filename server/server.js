@@ -35,7 +35,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(cookieParser(constants.cookie_secret))
 
 // serve uploaded files statically
-app.use('/uploads', express.static(path.resolve('uploads')))
+// app.use('/uploads', express.static(path.resolve('uploads')))
 
 app.use((err, req, res, next) => {
     if(err instanceof SyntaxError && err.status === 400 && 'body' in err){
