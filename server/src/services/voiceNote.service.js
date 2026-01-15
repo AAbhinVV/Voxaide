@@ -1,6 +1,7 @@
 import multer from 'multer';
 import multers3, { AUTO_CONTENT_TYPE } from 'multer-s3';
 import { S3Client } from '@aws-sdk/client-s3';
+import constants from '../config/constants.js';
 
 const s3 = new S3Client({ region: constants.aws_region});
 

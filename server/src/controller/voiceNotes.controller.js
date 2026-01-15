@@ -1,17 +1,18 @@
-import voiceNote from '../models/voiceNote.model.js';
+import VoiceNote from '../models/voiceNote.model.js';
 import path from 'path';
+import startTranscriptionJob from '../services/transcription.service.js';
 
 
 
 const createVoiceNote = async (req,res) => {
     try{
         if(!req.file) {
-            return res.status(400).json({message: "No file uploaded"});
+            return res.status(400).json({success: false,message: "No file uploaded"});
         }
 
         const userId = req.user._id;
 
-        const voiceNoteInstance = new voiceNote({
+        const voiceNoteInstance = new VoiceNote({
             userId,
             filename: req.file.originalname,
             duration: req.body.duration,
@@ -24,7 +25,7 @@ const createVoiceNote = async (req,res) => {
 
         await voiceNoteInstance.save();
 
-        startTranscriptionJob(voiceNoteInstance._id);
+        startTranscriptionJob(voiceNoteInstance._id, userId);
 
         res.status(201).json({
             success: true, 

@@ -4,7 +4,7 @@ const TranscriptionSchema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true},
     voiceNoteId: { type: mongoose.Schema.Types.ObjectId, ref: 'VoiceNote', required: true, index: true },
     text: { type: String, required: true },
-    status: {type: String, enum: ["Pending", "COMPLETED", , "FAILED"], default: "Pending"},
+    status: {type: String, enum: ["Pending", "COMPLETED"], default: "Pending"},
 }, { 
     timestamps: true,
     collection: 'transcriptions'

@@ -71,7 +71,7 @@ const generateChunksAndEmbeddings = async ({
 
             return{
                 id: chunk._id.toString(),
-                valued: embedding,
+                values: embedding,
                 metadata: {
                     userId: userId.toString(),
                     transcriptionId: transcriptionId.toString(),
@@ -82,7 +82,7 @@ const generateChunksAndEmbeddings = async ({
         })
     );
 
-    await index.upsert(vectorStore);
+    await pineconeIndex.upsert(vectorStore);
 
 
     const mongoStore = savedChunks.map((chunk) => ({
@@ -103,3 +103,5 @@ const generateChunksAndEmbeddings = async ({
     
 
 }
+
+export default generateChunksAndEmbeddings;

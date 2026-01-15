@@ -1,4 +1,6 @@
-import { mongo } from "mongoose";
+import dotenv from 'dotenv';
+
+dotenv.config({path: '../../.env'});
 
 const constants = {
     port: process.env.PORT,
