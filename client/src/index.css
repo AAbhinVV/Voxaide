@@ -3,6 +3,84 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme{
+   /* Brand */
+  --color-brand-50:  #f8fafc;
+  --color-brand-100: #f1f5f9;
+  --color-brand-200: #e2e8f0;
+  --color-brand-300: #cbd5e1;
+  --color-brand-400: #94a3b8;
+  --color-brand-500: #64748b;
+  --color-brand-600: #475569;
+  --color-brand-700: #334155;
+  --color-brand-800: #1e293b;
+  --color-brand-900: #0f172a;
+
+  /* Surface */
+  --color-surface-50:  #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+
+  /* Text */
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+
+  /* Accent */
+  --color-accent: #6366f1;
+}
+
+@layer components {
+  .btn-primary {
+    background-color: var(--brand-700);
+    color: white;
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--brand-800);
+  }
+
+  .btn-secondary {
+    background-color: var(--brand-200);
+    color: var(--brand-700);
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .card {
+    background: linear-gradient(
+      to bottom right,
+      var(--surface-50),
+      var(--surface-100)
+    );
+    border-radius: 1.5rem;
+    border: 1px solid var(--brand-200);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .dark {
+  --surface-50:  #0f172a;
+  --surface-100: #1e293b;
+  --surface-200: #334155;
+
+  --text-primary:   #f8fafc;
+  --text-secondary: #cbd5e1;
+}
+
+}
+
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -41,7 +119,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-:root {
+/* :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -76,7 +154,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
 
-  /* VOXAIDE Brand Colors */
+  
   --voxaide-bg-from: #dbeafe;
   --voxaide-bg-via: #f8fafc;
   --voxaide-bg-to: #faf5ff;
@@ -91,7 +169,7 @@
   --voxaide-slate-800: #1e293b;
   --voxaide-blue-50: #eff6ff;
   --voxaide-purple-50: #faf5ff;
-}
+} */
 
 .dark {
   --background: oklch(0.145 0 0);

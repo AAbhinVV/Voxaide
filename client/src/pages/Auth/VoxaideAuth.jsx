@@ -6,7 +6,7 @@ import axios from "axios";
 export default function VoxaideAuth() {
 
     //routing
-    const [searchParams, setSearhcParasms] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const isLogin = searchParams.get("mode") !== "register";
  
     const [formData, setFormData] = useState({
