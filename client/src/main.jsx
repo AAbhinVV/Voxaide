@@ -18,7 +18,7 @@ const router = createBrowserRouter(
       {/* <Route index element = {<VoxaideDashboard />} /> */}
       {/* <Route path = "login" element = {<Login />} />
       <Route path = "signup" element = {<Register />} /> */}
-      <Route path = "notes" element = {<NotesDashboard />} />
+      <Route path = "notes" element = {<VoxaideDashboard />} />
       {/* <Route path  = "notes/:id" element = {<NotesDashboard />} /> */}
 
     </Route>
@@ -27,7 +27,7 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Provider store = {store}>
+    <Provider store = {store} className = "bg-bg-app">
       <RouterProvider router={router} />
     </Provider>
   </StrictMode>,

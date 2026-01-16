@@ -5,12 +5,12 @@ import './App.css'
 import Dashboard from './pages/Dashboards/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import {SidebarDemo} from './components/Sidebar'
-import Loader from './components/Loader'
+import Loader from './components/Loader.jsx'
 import Recorder from './components/Buttons/Recorder'
 
 
 function App() {
-    const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
 
   if (showLoader) {
     return <Loader onComplete={() => setShowLoader(false)} />;
