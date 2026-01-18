@@ -22,29 +22,31 @@ export const LayoutTextFlip = ({
     <>
       <motion.span
         layoutId="subtext"
-        className="text-2xl font-bold tracking-tight drop-shadow-lg md:text-4xl">
+        className="text-2xl tracking-normal drop-shadow-lg md:text-3xl font-body font-medium ">
         {text}
       </motion.span>
-      <motion.span
-        layout
-        className="relative w-fit overflow-hidden rounded-md border border-transparent bg-white px-4 py-2 font-sans text-2xl font-bold tracking-tight text-black shadow-sm ring shadow-black/10 ring-black/10 drop-shadow-lg md:text-4xl dark:bg-neutral-900 dark:text-white dark:shadow-sm dark:ring-1 dark:shadow-white/10 dark:ring-white/10">
-        <AnimatePresence mode="popLayout">
-          <motion.span
-            key={currentIndex}
-            initial={{ y: -40, filter: "blur(10px)" }}
-            animate={{
-              y: 0,
-              filter: "blur(0px)",
-            }}
-            exit={{ y: 50, filter: "blur(10px)", opacity: 0 }}
-            transition={{
-              duration: 0.5,
-            }}
-            className={cn("inline-block whitespace-nowrap")}>
-            {words[currentIndex]}
-          </motion.span>
-        </AnimatePresence>
-      </motion.span>
+      <motion.div className="">
+        <motion.span
+          layout
+          className=" relative backdrop-blur-2xl bg-transparent w-auto overflow-hidden rounded-4xl text-black bg-white px-4 py-2 font-body text-2xl font-medium tracking-normal shadow-2xl ring shadow-black/10 ring-black/10 drop-shadow-lg md:text-3xl dark:bg-neutral-900 dark:text-white dark:shadow-sm dark:ring-1 dark:shadow-white/10 dark:ring-white/10">
+          <AnimatePresence mode="popLayout">
+            <motion.span
+              key={currentIndex}
+              initial={{ y: -40, filter: "blur(10px)" }}
+              animate={{
+                y: 0,
+                filter: "blur(0px)",
+              }}
+              exit={{ y: 50, filter: "blur(10px)", opacity: 0 }}
+              transition={{
+                duration: 0.5,
+              }}
+              className={cn("inline-block whitespace-nowrap")}>
+              {words[currentIndex]}
+            </motion.span>
+          </AnimatePresence>
+        </motion.span>
+      </motion.div>
     </>
   );
 };
