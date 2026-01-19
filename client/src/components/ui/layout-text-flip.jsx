@@ -1,52 +1,55 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export const LayoutTextFlip = ({
-  text = "Build Amazing",
-  words = ["Landing Pages", "Component Blocks", "Page Sections", "3D Shaders"],
-  duration = 3000
+	text = "Build Amazing",
+	words = ["Landing Pages", "Component Blocks", "Page Sections", "3D Shaders"],
+	duration = 3000,
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+	const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length);
-    }, duration);
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length);
+		}, duration);
 
-    return () => clearInterval(interval);
-  }, []);
+		return () => clearInterval(interval);
+	}, []);
 
-  return (
-    <>
-      <motion.span
-        layoutId="subtext"
-        className="text-2xl tracking-normal drop-shadow-lg md:text-3xl font-body font-medium ">
-        {text}
-      </motion.span>
-      <motion.div className="">
-        <motion.span
-          layout
-          className=" relative backdrop-blur-2xl bg-transparent w-auto overflow-hidden rounded-4xl text-black bg-white px-4 py-2 font-body text-2xl font-medium tracking-normal shadow-2xl ring shadow-black/10 ring-black/10 drop-shadow-lg md:text-3xl dark:bg-neutral-900 dark:text-white dark:shadow-sm dark:ring-1 dark:shadow-white/10 dark:ring-white/10">
-          <AnimatePresence mode="popLayout">
-            <motion.span
-              key={currentIndex}
-              initial={{ y: -40, filter: "blur(10px)" }}
-              animate={{
-                y: 0,
-                filter: "blur(0px)",
-              }}
-              exit={{ y: 50, filter: "blur(10px)", opacity: 0 }}
-              transition={{
-                duration: 0.5,
-              }}
-              className={cn("inline-block whitespace-nowrap")}>
-              {words[currentIndex]}
-            </motion.span>
-          </AnimatePresence>
-        </motion.span>
-      </motion.div>
-    </>
-  );
+	return (
+		<>
+			<motion.span
+				layoutId="subtext"
+				className="text-2xl tracking-normal drop-shadow-lg md:text-3xl font-body font-medium "
+			>
+				{text}
+			</motion.span>
+			<motion.div className="">
+				<motion.span
+					layout
+					className=" relative backdrop-blur-2xl bg-transparent w-auto overflow-hidden rounded-4xl text-black bg-white px-4 py-2 font-body text-2xl font-medium tracking-normal shadow-2xl ring shadow-black/10 ring-black/10 drop-shadow-lg md:text-3xl dark:bg-neutral-900 dark:text-white dark:shadow-sm dark:ring-1 dark:shadow-white/10 dark:ring-white/10"
+				>
+					<AnimatePresence mode="popLayout">
+						<motion.span
+							key={currentIndex}
+							initial={{ y: -40, filter: "blur(10px)" }}
+							animate={{
+								y: 0,
+								filter: "blur(0px)",
+							}}
+							exit={{ y: 50, filter: "blur(10px)", opacity: 0 }}
+							transition={{
+								duration: 0.5,
+							}}
+							className={cn("inline-block whitespace-nowrap")}
+						>
+							{words[currentIndex]}
+						</motion.span>
+					</AnimatePresence>
+				</motion.span>
+			</motion.div>
+		</>
+	);
 };
