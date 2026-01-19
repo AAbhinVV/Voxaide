@@ -16,6 +16,12 @@ const authSlice = createSlice({
 			state.userInfo = action.payload.userInfo;
 			state.accessToken = action.payload.accessToken;
 		},
+
+		signup: (state, action) => {
+			state.isAuthenticated = true;
+			state.userInfo = action.payload.userInfo;
+			state.accessToken = action.payload.accessToken;
+		}
 	},
 });
 
