@@ -1,5 +1,5 @@
-import Transcription from "../../models/transcription.model.js";
 import Note from "../../models/notes.model.js";
+import Transcription from "../../models/transcription.model.js";
 import { transcribeBuffer } from "../../utils/openAI_func.js";
 
 // const createTranscription = async (req, res) => {
@@ -46,16 +46,21 @@ import { transcribeBuffer } from "../../utils/openAI_func.js";
 // };
 
 const getTranscriptionById = async (req, res) => {
-    const { noteId } = req.params;
-    try {
-        const transcriptions = await Transcription.find({ noteId: noteId });
-        if (!transcriptions || transcriptions.length === 0) {
-            return res.status(404).json({ success: false, message: "No transcriptions found for this note" });  
-        }
-        res.status(200).json({ success: true, transcriptions });
-    } catch (error) {
-        res.status(503).json({ success: false, message: error.message });
-    }
+	const { noteId } = req.params;
+	try {
+		const transcriptions = await Transcription.find({ noteId: noteId });
+		if (!transcriptions || transcriptions.length === 0) {
+			return res
+				.status(404)
+				.json({
+					success: false,
+					message: "No transcriptions found for this note",
+				});
+		}
+		res.status(200).json({ success: true, transcriptions });
+	} catch (error) {
+		res.status(503).json({ success: false, message: error.message });
+	}
 };
 
 // const getAllTranscriptions = async (req,res) => {
@@ -65,18 +70,18 @@ const getTranscriptionById = async (req, res) => {
 //             return res.status(404).json({success: false, message: "no Transcriptions found"});
 //             }
 //         res.status(200).json({success: true, transcriptions});
-//     }catch(error){  
+//     }catch(error){
 //         res.status(503).json({success: false, message:error.message});
 //     }
-// };  
+// };
 
-// const deleteTranscriptionById = async (req,res) => { 
+// const deleteTranscriptionById = async (req,res) => {
 //     try{
 //         const { noteId } = req.params;
 //         const transcription = await Transcription.findByIdAndDelete(noteId);
 //         if(!transcription){
 //             return res.status(400).json({success: false, message: "Transcription not found"});
-//         }   
+//         }
 //         res.status(200).json({success: true, message: "Transcription deleted successfully"});
 //     }catch(error){
 //         res.status(503).json({success: false, message:error.message});
@@ -91,16 +96,16 @@ const getTranscriptionById = async (req, res) => {
 //         if(!transcription){
 //             return res.status(400).json({success: false, message: "Transcription not found"});
 //         }
-//         return res.status(200).json({success: true, transcription});    
+//         return res.status(200).json({success: true, transcription});
 //     }catch(error){
 //         res.status(503).json({success: false, message:error.message});
 //     }
 // };
 
 export default {
-    // createTranscription,
-    getTranscriptionById,
-//     getAllTranscriptions,
-//     deleteTranscriptionById,
-//     UpdateTranscriptionById
- };
+	// createTranscription,
+	getTranscriptionById,
+	//     getAllTranscriptions,
+	//     deleteTranscriptionById,
+	//     UpdateTranscriptionById
+};

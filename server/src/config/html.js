@@ -1,5 +1,5 @@
 export const getOtpHtml = ({ email, otp }) => {
-  const html = `<!DOCTYPE html>
+	const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -160,15 +160,15 @@ export const getOtpHtml = ({ email, otp }) => {
   </table>
 </body>
 </html>`;
-  return html;
+	return html;
 };
 
 export const getVerifyEmailHtml = ({ email, token }) => {
-  const appName = process.env.APP_NAME || "Authentication App";
-  const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const verifyUrl = `${baseUrl.replace(/\/+$/, "")}/token/${encodeURIComponent(token)}`;
+	const appName = process.env.APP_NAME || "Authentication App";
+	const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+	const verifyUrl = `${baseUrl.replace(/\/+$/, "")}/token/${encodeURIComponent(token)}`;
 
-  const html = `<!DOCTYPE html>
+	const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -319,5 +319,5 @@ export const getVerifyEmailHtml = ({ email, token }) => {
   </table>
 </body>
 </html>`;
-  return html;
+	return html;
 };

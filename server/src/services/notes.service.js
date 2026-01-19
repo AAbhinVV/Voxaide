@@ -1,40 +1,43 @@
-import transcriptionModel from "../models/transcription.model.js";
 import noteModel from "../models/note.model.js";
+import transcriptionModel from "../models/transcription.model.js";
 import { generateNotes } from "../utils/openAI_func.js";
 
-const notesGenerator = async (transcriptionId, userId ) => {
-    const transcription = await transcriptionModel.findOne({_id: transcriptionId, userId: userId});
-    
-    if(!transcription){
-        throw new Error("Transcription not found");
-    }
+const notesGenerator = async (transcriptionId, userId) => {
+	const transcription = await transcriptionModel.findOne({
+		_id: transcriptionId,
+		userId: userId,
+	});
 
-    if(transcription.status !== 'COMPLETED'){
-        throw new Error("Transcription not completed yet");
-    }
+	if (!transcription) {
+		throw new Error("Transcription not found");
+	}
 
-    const notes = await noteModel.findOne({transcriptionId: transcriptionId, userId: userId});
-    if(notes){
-        return notes;
-    }
+	if (transcription.status !== "COMPLETED") {
+		throw new Error("Transcription not completed yet");
+	}
 
-    const generatedNotes = await generateNotes(transcription.text);
+	const notes = await noteModel.findOne({
+		transcriptionId: transcriptionId,
+		userId: userId,
+	});
+	if (notes) {
+		return notes;
+	}
 
-    const newNotes = new noteModel({
-        userId,
-        transcriptionId,
-        title: generatedNotes.title,
-        summary: generatedNotes.summary,
-        bulletPoints: generatedNotes.bulletPoints,
-        actionItems: generatedNotes.actionItems
-    })
+	const generatedNotes = await generateNotes(transcription.text);
 
-    await newNotes.save();
+	const newNotes = new noteModel({
+		userId,
+		transcriptionId,
+		title: generatedNotes.title,
+		summary: generatedNotes.summary,
+		bulletPoints: generatedNotes.bulletPoints,
+		actionItems: generatedNotes.actionItems,
+	});
 
-    return newNotes;
+	await newNotes.save();
 
-
-
-}
+	return newNotes;
+};
 
 export default notesGenerator;
