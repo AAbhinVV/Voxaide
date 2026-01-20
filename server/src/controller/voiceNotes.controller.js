@@ -1,6 +1,8 @@
-import path from "path";
 import VoiceNote from "../models/voiceNote.model.js";
 import startTranscriptionJob from "../services/transcription.service.js";
+import { getVoiceNoteFile, deleteVoiceNoteFile } from "../services/voiceNote.service.js";
+
+
 
 const createVoiceNote = async (req, res) => {
 	try {
@@ -38,48 +40,51 @@ const createVoiceNote = async (req, res) => {
 };
 
 const getVoiceNoteById = async (req, res) => {
-	const noteId = req.params.id;
+	const voiceNoteId = req.params.id;
+	const userId = req.user._id;
+
 	try {
-		const note = await VoiceNote.findById(noteId);
-		if (!note) {
-			return res
-				.status(400)
-				.json({ success: false, message: "note not found" });
-		}
+		const voiceNote = await getVoiceNoteFile(voiceNoteId, userId);
 
-		const absolutePath = path.resolve(process.cwd(), note.audiopath);
+		res.setHeader("Content-Type", voiceNote.contentType);
+		res.setHeader("Content-Disposition", `inline; filename="${voiceNote.filename}"`);
 
-		res.status(200).sendFile(absolutePath, (err) => {
-			if (err) {
-				console.error("Error sending file:", err);
-			}
-		});
+		res.send(voiceNote.buffer);
+
+		res.status(200).json({success:true, buffer: voiceNote.buffer, message: "Voice note fetched successfully"});
 	} catch (error) {
 		res.status(503).json({ success: false, message: error.message });
 	}
 }; // format this function
 
 const getAllVoiceNotes = async (req, res) => {
+	const userId = req.user._id;
+
+
 	try {
-		const note = await VoiceNote.find();
-		res.status(200).json({ success: true, notes: note });
+		const voiceNotes = await getAllVoiceNotesForUser(userId);
+
+		res.status(200).json({
+			success: true,
+			count: voiceNotes.length,
+			data: voiceNotes,
+			message: "Voice notes fetched successfully",
+		});
 	} catch (error) {
 		res.status(503).json({ success: false, message: error.message });
 	}
 }; // format this function
 
 const deleteVoiceNote = async (req, res) => {
+	
+	const voiceNoteId = req.params.id;
+	const userId = req.user._id;
+
 	try {
-		const noteId = req.params.id;
-		const note = await VoiceNote.findByIdAndDelete(noteId);
-		if (!note) {
-			return res
-				.status(400)
-				.json({ success: false, message: "Note not found" });
-		}
+		await deleteVoiceNoteFile(voiceNoteId, userId);
 		res
 			.status(200)
-			.json({ success: true, message: "Note deleted successfully" });
+			.json({ success: true, message: "Voice Note deleted successfully" });
 	} catch (error) {
 		res.status(503).json({ success: false, message: error.message });
 	}

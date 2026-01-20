@@ -4,6 +4,8 @@ import constants from "../config/constant";
 import transcriptionModel from "../models/transcription.model";
 import voiceNoteModel from "../models/voiceNote.model";
 import generateChunksAndEmbeddings from "./embedding.service.js";
+import streamToBuffer from "../utils/streamToBuffer.js";
+import {File} from "node:buffer";
 
 const s3 = new S3Client({ region: constants.aws_region });
 
@@ -30,14 +32,16 @@ const startTranscriptionJob = async (voiceNoteId, userId) => {
 		}),
 	);
 
-	const voiceNote = s3Response.Body;
+	const voiceNoteBuffer = await streamToBuffer(s3Response.Body);
 
 	if (!voiceNote) {
 		throw new Error("Voice note file not found in S3");
 	}
 
+	const file = new File([voiceNoteBuffer], voiceNoteInstance.filename || "audio.webm", { type: voiceNoteInstance.contentType });
+
 	const response = await client.audio.transcriptions.create({
-		file: voiceNote.Body,
+		file: file,
 		model: "gpt-4o-transcribe",
 	});
 
