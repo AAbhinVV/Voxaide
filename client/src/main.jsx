@@ -10,20 +10,20 @@ import {
 } from "react-router-dom";
 import App from "./App.jsx";
 import Layout from "./components/Layout/Layout.jsx";
-import VoxaideDashboard from "./pages/Dashboards/Dashboard.jsx";
 import NotesDashboard from "./pages/Dashboards/NotesDashboard.jsx";
 import Home from "./pages/Home.jsx";
 import store from "./store/store.js";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SingupPage from "./pages/Auth/SingupPage.jsx";
+import Dashboard from "./pages/Dashboards/Dashboard.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={<SingupPage />}>
+		<Route path="/" element={<Dashboard />}>
 			{/* <Route index element = {<VoxaideDashboard />} /> */}
 		{/* <Route path = "login" element = {<Login />} />
       	<Route path = "signup" element = {<Register />} />  */}
-		<Route path="notes" element={<VoxaideDashboard />} />
+		{/* <Route path="notes" element={<VoxaideDashboard />} /> */}
 			{/* <Route path  = "notes/:id" element = {<NotesDashboard />} /> */}
 		</Route>,	
 	),

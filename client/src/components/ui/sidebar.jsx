@@ -31,9 +31,9 @@ export const SidebarProvider = ({
 	);
 };
 
-export const Sidebar = ({ children, open, setOpen, animate }) => {
+export const Sidebar = ({ children, open, setOpen, animate, className = "" }) => {
 	return (
-		<SidebarProvider open={open} setOpen={setOpen} animate={animate}>
+		<SidebarProvider open={open} setOpen={setOpen} animate={animate} className={className}>
 			{children}
 		</SidebarProvider>
 	);
@@ -54,7 +54,7 @@ export const DesktopSidebar = ({ className, children, ...props }) => {
 		<>
 			<Motion.div
 				className={cn(
-					"h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
+					"h-full px-4 py-4 hidden  transition delay-105 duration-250 ease-in-out md:flex md:flex-col bg-neutral-500 dark:bg-neutral-800 w-[300px] shrink-0 rounded-tr-2xl h-screen",
 					className,
 				)}
 				animate={{
