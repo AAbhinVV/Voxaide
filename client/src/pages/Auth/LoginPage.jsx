@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Input } from "../../components/exports";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 function LoginPage() {
     const navigate = useNavigate();
     const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(loginSchema) });
+    const [hoverButton, setHoverButton] = useState(false);  
     
 
     
@@ -110,38 +111,94 @@ function LoginPage() {
         style={{ top: "30%", right: "0%" }}
       />
 
-        <div className=" inline-block z-10">
-            <h1 className="font-headings text-[64px] font-bold">Welcome Back</h1>
-            <h3 className="pl-[10px] text-lg text-text-secondary">Continue Recording</h3>
-        </div>
+      <motion.div className="inline-block z-10">
+          <h1 className="font-headings text-[64px] font-bold">
+            <motion.span 
+              initial={{opacity: 0, x: -20}}
+              animate={{opacity: 1, x: 0}}
+              transition={{ delay: 0.2, duration: 1 }}
+            >
+              Welcome
+            </motion.span>{" "}
+            <motion.span 
+              initial={{opacity: 0, x: -20}}
+              animate={{opacity: 1, x: 0}}
+              transition={{ delay: 0.4, duration: 1 }}
+            >
+              Back
+            </motion.span>
+            </h1>
+          <motion.h3 
+            initial = {{opacity:0, x:-10}}
+            animate={{opacity:1, x:0}}
+            transition={{ delay: 0.5, duration: 1 }}
+            className=" text-lg text-text-secondary">Continue Recording</motion.h3>
+          <motion.div 
+            initial = {{opacity: 0, width: 0}}
+            animate={{ width: "80%",opacity: 1}}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="div w-full h-[2.3px] bg-gradient-to-r from-accentGlow via-voiceAccent/50 to-transparent mt-3 rounded-full">
+          </motion.div>
+      </motion.div>
 
-            <div className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
-            <div className="absolute -inset-2 rounded-lg bg-linear-to-br from-white via-brand-accent to-white opacity-20 blur-sm"></div>
-                <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 relative ">
-                    <Input 
-                    label="Email" 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    className="border-2 focus:border-brand-primary outline-none rounded-lg"
-                    {...register("email")}
-                    />
-                    {errors.email && <p className="text-danger mt-8 text-center">{errors.email.message}</p> }
+      <motion.div 
+          initial={{opacity: 0, y:30}}
+          animate={({opacity: 1, y:0})}
+          transition = {{delay: 0.5, duration: 0.5}}
+          onMouseEnter={() => setHoverButton(true)}
+          onMouseLeave={() => setHoverButton(false)}
+          className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
 
-                    <Input 
-                    label="Password" 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    className="border-2 focus:border-brand-primary outline-none rounded-lg"
-                    {...register("password")}
-                    />
-                    {errors.password && <p className="text-danger mt-8 text-center">{errors.password.message}</p> }
+       
+        <AnimatePresence>
+          {hoverButton && 
+          <motion.div 
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
 
-                    <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98">Login</Button>
-                </form>
-            </div>
-            <div className="z-10">
-                <h2>Don't have an account? <a href="/register" className="text-brand-primary hover:text-brand-secondary">Register</a></h2>
-            </div>
+            className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-brand-primary/30 via-brand-secondary/30 to-voiceAccent/30 blur-3xl opacity-80 -z-10 "></motion.div>}
+        </AnimatePresence>
+
+        <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: [1,1,1],
+              }}
+              transition={{
+                duration: 0.5,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "reverse",
+              }}
+              className="absolute bg-gradient-to-br from-brand-primary/30 via-brand-secondary/30 to-voiceAccent/30 rounded-xl -z-10"
+            />
+
+        
+        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 ">
+              <Input 
+              label="Email" 
+              type="email" 
+              placeholder="Enter your email" 
+              className="border-2 focus:border-brand-primary outline-none rounded-lg"
+              {...register("email")}
+              />
+              {errors.email && <p className="text-danger mt-8 text-center">{errors.email.message}</p> }
+
+              <Input 
+              label="Password" 
+              type="password" 
+              placeholder="Enter your password" 
+              className="border-2 focus:border-brand-primary outline-none rounded-lg"
+              {...register("password")}
+              />
+              {errors.password && <p className="text-danger mt-8 text-center">{errors.password.message}</p> }
+
+              <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98 hover:-translate-y-1">Login</Button>
+          </form>
+      </motion.div>
+      <div className="z-10">
+          <h2>Don't have an account? <a href="/register" className="text-brand-primary transition ease-in-out delay-150 duration-300 hover:text-brand-secondary hover:brightness-200 ">Register</a></h2>
+      </div>
     </div>
   )
 }

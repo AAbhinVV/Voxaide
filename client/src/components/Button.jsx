@@ -1,4 +1,5 @@
 import React from 'react'
+import { motion } from 'motion/react';
 
 function Button({
     className = "",
@@ -7,7 +8,7 @@ function Button({
     ...props
 }) {
   return (
-    <button type={type} className={className} {...props}>{children}</button>
+    <motion.button type={type} className={className} {...props}>{children}</motion.button>
   )
 }
 

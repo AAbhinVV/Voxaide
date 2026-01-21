@@ -136,6 +136,25 @@ function SingupPage() {
                     />
                     {errors.username && <p className="text-danger mt-8 text-center">{errors.username.message}</p> }
 
+                    <Input
+                    label = "User"
+                    type = "radio"
+                    checked = {true}
+                    className=""
+                    {...register("role")}
+                    />
+                    {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
+
+                    <Input
+                    label = "Admin"
+                    type = "radio"
+                    checked = {true}
+                    className=""
+                    {...register("role")}
+                    />
+                    {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
+
+
                     <Input 
                     label="Password" 
                     type="password" 
