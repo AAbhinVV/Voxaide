@@ -15,10 +15,11 @@ import NotesDashboard from "./pages/Dashboards/NotesDashboard.jsx";
 import Home from "./pages/Home.jsx";
 import store from "./store/store.js";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
+import SingupPage from "./pages/Auth/SingupPage.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={<LoginPage />}>
+		<Route path="/" element={<SingupPage />}>
 			{/* <Route index element = {<VoxaideDashboard />} /> */}
 		{/* <Route path = "login" element = {<Login />} />
       	<Route path = "signup" element = {<Register />} />  */}

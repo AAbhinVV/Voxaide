@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { Button, Input } from "../../components/exports";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Button, Input, Select, CustomSelect } from "../../components/exports";
+import { motion, AnimatePresence } from "motion/react";
+import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+
+
 function SingupPage() {
     const navigate = useNavigate();
     const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(loginSchema) });
+    const [hoverButton, setHoverButton] = useState(false);
     
 
     
@@ -110,69 +113,147 @@ function SingupPage() {
         style={{ top: "30%", right: "0%" }}
       />
 
-        <div className=" inline-block z-10">
-            <h1 className="font-headings text-[64px] font-bold">Join Voxaide</h1>
-            <h3 className="pl-[10px] text-lg text-text-secondary">Start Recording</h3>
-        </div>
+      <motion.div className="inline-block z-10">
+        <h1 className="font-headings text-[64px] font-bold">
+          <motion.span 
+            initial={{opacity: 0, x: -20}}
+            animate={{opacity: 1, x: 0}}
+            transition={{ delay: 0.2, duration: 1 }}
+          >
+            Join
+          </motion.span>{" "}
+          <motion.span 
+            initial={{opacity: 0, x: -20}}
+            animate={{opacity: 1, x: 0}}
+            transition={{ delay: 0.4, duration: 1 }}
+          >
+            Voxaide
+          </motion.span>
+          </h1>
+        <motion.h3 
+          initial = {{opacity:0, x:-10}}
+          animate={{opacity:1, x:0}}
+          transition={{ delay: 0.5, duration: 1 }}
+          className=" text-lg text-text-secondary">Start Recording</motion.h3>
+        <motion.div 
+          initial = {{opacity: 0, width: 0}}
+          animate={{ width: "80%",opacity: 1}}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="div w-full h-[2.3px] bg-gradient-to-r from-accentGlow via-voiceAccent/50 to-transparent mt-3 rounded-full">
+        </motion.div>
+      </motion.div>
 
-            <div className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
-            <div className="absolute -inset-2 rounded-lg bg-linear-to-br from-white via-brand-accent to-white opacity-20 blur-sm"></div>
-                <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 relative ">
-                    <Input 
-                    label="Email" 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    className="border-2 focus:border-brand-primary outline-none rounded-lg"
-                    {...register("email")}
-                    />
-                    {errors.email && <p className="text-danger mt-8 text-center">{errors.email.message}</p> }
+      <motion.div 
+        initial={{opacity: 0, y:30}}
+        animate={({opacity: 1, y:0})}
+        transition = {{delay: 0.5, duration: 0.5}}
+        onMouseEnter={() => setHoverButton(true)}
+        onMouseLeave={() => setHoverButton(false)}
+        className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
 
-                    <Input 
-                    label="Username" 
-                    type="text" 
-                    placeholder="Enter your username" 
-                    className="border-2 focus:border-brand-primary outline-none rounded-lg"
-                    {...register("username")}
-                    />
-                    {errors.username && <p className="text-danger mt-8 text-center">{errors.username.message}</p> }
+      
+        <AnimatePresence>
+          {hoverButton && 
+          <motion.div 
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
 
-                    <Input
-                    label = "User"
-                    type = "radio"
-                    checked = {true}
-                    className=""
-                    {...register("role")}
-                    />
-                    {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
+            className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-brand-primary/30 via-brand-secondary/30 to-voiceAccent/30 blur-3xl opacity-80 -z-10 "></motion.div>}
+        </AnimatePresence>
 
-                    <Input
-                    label = "Admin"
-                    type = "radio"
-                    checked = {true}
-                    className=""
-                    {...register("role")}
-                    />
-                    {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
+        <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: [1,1,1],
+              }}
+              transition={{
+                duration: 0.5,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "reverse",
+              }}
+              className="absolute bg-gradient-to-br from-brand-primary/30 via-brand-secondary/30 to-voiceAccent/30 rounded-xl -z-10"/>
+
+        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 relative ">
+            <Input 
+            label="Email" 
+            type="email" 
+            placeholder="Enter your email" 
+            className="border-2 focus:border-brand-primary outline-none rounded-lg"
+            {...register("email")}
+            />
+            {errors.email && <p className="text-danger mt-8 text-center">{errors.email.message}</p> }
+
+            <Input 
+            label="Username" 
+            type="text" 
+            placeholder="Enter your username" 
+            className="border-2 focus:border-brand-primary outline-none rounded-lg"
+            {...register("username")}
+            />
+            {errors.username && <p className="text-danger mt-8 text-center">{errors.username.message}</p> }
+
+            <Select
+              label="Role"
+              options={["ADMIN", "USER"]}
+              className="border-2 focus:border-brand-primary outline-none rounded-lg"
+              {...register("role")}
+              defaultValue="user"
+            />
+            {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
+
+            {/* <CustomSelect
+              options={["USER", "ADMIN"]}
+              value={"Role"}
+              className="border-2 focus:border-brand-primary outline-none rounded-lg"
+              {...register("role")}
+              defaultValue="user"
+
+              />
+              {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> } */}
 
 
-                    <Input 
-                    label="Password" 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    className="border-2 focus:border-brand-primary outline-none rounded-lg"
-                    {...register("password")}
-                    />
-                    {errors.password && <p className="text-danger mt-8 text-center">{errors.password.message}</p> }
+            <Input 
+            label="Password" 
+            type="password" 
+            placeholder="Enter your password" 
+            className="border-2 focus:border-brand-primary outline-none rounded-lg"
+            {...register("password")}
+            />
+            {errors.password && <p className="text-danger mt-8 text-center">{errors.password.message}</p> }
 
+            <Input 
+            label="Confirm password" 
+            type="confirm-password" 
+            placeholder="Enter Password again" 
+            className="border-2 focus:border-brand-primary outline-none rounded-lg"
+            {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && <p className="text-danger mt-8 text-center">{errors.confirmPassword.message}</p> }
 
-                    <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98">Login</Button>
-                </form>
-            </div>
-            <div className="z-10">
-                <h2>Already have an account? <a href="/login" className="text-brand-primary hover:text-brand-secondary">Login</a></h2>
-            </div>
+            <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98">Sign Up</Button>
+        </form>
+      </motion.div>
+            <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
+            className="mt-8 text-center"
+          >
+            <p className="text-gray-400 flex items-center justify-center gap-2">
+          
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-brand-primary hover:text-indigo-300 font-medium transition-colors relative group"
+              >
+                Login
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-primary group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </p>
+          </motion.div>
     </div>
   )
 }
 
-export default LoginPage
+export default SingupPage;

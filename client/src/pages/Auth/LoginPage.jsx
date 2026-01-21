@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Button, Input } from "../../components/exports";
-import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
+import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -196,9 +197,28 @@ function LoginPage() {
               <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98 hover:-translate-y-1">Login</Button>
           </form>
       </motion.div>
-      <div className="z-10">
+      {/* <div className="z-10">
           <h2>Don't have an account? <a href="/register" className="text-brand-primary transition ease-in-out delay-150 duration-300 hover:text-brand-secondary hover:brightness-200 ">Register</a></h2>
-      </div>
+      </div> */}
+      <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
+            className="mt-8 text-center"
+          >
+            <p className="text-gray-400 flex items-center justify-center gap-2">
+          
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/signup"
+                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors relative group"
+              >
+                Sign up
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-indigo-400 group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </p>
+          </motion.div>
+      
     </div>
   )
 }
