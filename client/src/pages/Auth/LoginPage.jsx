@@ -211,10 +211,10 @@ function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/signup"
-                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors relative group"
+                className="text-indigo-400 hover:text-brand-primary font-medium transition-colors relative group"
               >
                 Sign up
-                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-indigo-400 group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
             </p>
           </motion.div>

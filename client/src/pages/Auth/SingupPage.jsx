@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Input, Select, CustomSelect } from "../../components/exports";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginSchema } from "../../config/zod";
+import { signUpSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 function SingupPage() {
     const navigate = useNavigate();
-    const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(loginSchema) });
+    const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(signUpSchema) });
     const [hoverButton, setHoverButton] = useState(false);
     
 
