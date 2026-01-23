@@ -2,6 +2,7 @@ import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload } from "lucide-react"
 import { useRef, useState } from "react";
 import{ motion } from "motion/react";
 import { SidebarDemo } from "../../components/Sidebar.jsx";
+import Card from "../../components/Card.jsx";
 
 export default function Dashboard() {
 	const [recordingState, setRecordingState] = useState("idle"); // idle, recording, paused, stopped
@@ -118,6 +119,45 @@ export default function Dashboard() {
 			setIsPlaying(!isPlaying);
 		}
 	};
+
+	const onExpand = () => {
+		alert("Expand note functionality would be implemented here!");
+	}
+
+	const NoteCard = [
+		{
+			title: "Note 1",
+			content: "A week ago a friend invited a couple of other couples over for dinner. Eventually, the food (but not the wine) was cleared off the table for what turned out to be some fierce Scrabbling. Heeding the strategy of going for the shorter, more valuable word over the longer cheaper word, our final play was “Bon,” which–as luck would have it!–happens to be a Japanese Buddhist festival, and not, as I had originally asserted while laying the tiles on the board, one half of a chocolate-covered cherry treat. Anyway, the strategy worked. My team only lost by 53 points instead of 58.Just the day before, our host had written of the challenges of writing short. In journalism–my friend’s chosen trade, and mostly my own, too–Mark Twain’s observation undoubtedly applies: “I didn’t have time to write a short letter, so I wrote a long one instead.” The principle holds across genres, in letters, reporting, and other writing. It’s harder to be concise than to blather. (Full disclosure, this blog post will clock in at a blather-esq",
+
+		},
+
+		{
+			title: "Note 2",
+			content: "A week ago a friend invited a couple of other couples over for dinner. Eventually, the food (but not the wine) was cleared off the table for what turned out to be some fierce Scrabbling. Heeding the strategy of going for the shorter, more valuable word over the longer cheaper word, our final play was “Bon,” which–as luck would have it!–happens to be a Japanese Buddhist festival, and not, as I had originally asserted while laying the tiles on the board, one half of a chocolate-covered cherry treat. Anyway, the strategy worked. My team only lost by 53 points instead of 58.Just the day before, our host had written of the challenges of writing short. In journalism–my friend’s chosen trade, and mostly my own, too–Mark Twain’s observation undoubtedly applies: “I didn’t have time to write a short letter, so I wrote a long one instead.” The principle holds across genres, in letters, reporting, and other writing. It’s harder to be concise than to blather. (Full disclosure, this blog post will clock in at a blather-esq",
+
+		},
+
+		{
+			title: "Note 3",
+			content: "A week ago a friend invited a couple of other couples over for dinner. Eventually, the food (but not the wine) was cleared off the table for what turned out to be some fierce Scrabbling. Heeding the strategy of going for the shorter, more valuable word over the longer cheaper word, our final play was “Bon,” which–as luck would have it!–happens to be a Japanese Buddhist festival, and not, as I had originally asserted while laying the tiles on the board, one half of a chocolate-covered cherry treat. Anyway, the strategy worked. My team only lost by 53 points instead of 58.Just the day before, our host had written of the challenges of writing short. In journalism–my friend’s chosen trade, and mostly my own, too–Mark Twain’s observation undoubtedly applies: “I didn’t have time to write a short letter, so I wrote a long one instead.” The principle holds across genres, in letters, reporting, and other writing. It’s harder to be concise than to blather. (Full disclosure, this blog post will clock in at a blather-esq content: A week ago a friend invited a couple of other couples over for dinner. Eventually, the food (but not the wine) was cleared off the table for what turned out to be some fierce Scrabbling. Heeding the strategy of going for the shorter, more valuable word over the longer cheaper word, our final play was “Bon,” which–as luck would have it!–happens to be a Japanese Buddhist festival, and not, as I had originally asserted while laying the tiles on the board, one half of a chocolate-covered cherry treat. Anyway, the strategy worked. My team only lost by 53 points instead of 58.Just the day before, our host had written of the challenges of writing short. In journalism–my friend’s chosen trade, and mostly my own, too–Mark Twain’s observation undoubtedly applies: “I didn’t have time to write a short letter, so I wrote a long one instead.” The principle holds across genres, in letters, reporting, and other writing. It’s harder to be concise than to blather. (Full disclosure, this blog post will clock in at a blather-esq",
+
+		},
+
+	];
+
+	const StatCard = [{
+		title: "Total Notes",
+		value: "150",
+	},
+	{
+		title: "Total Recordings",
+		value: "35",
+	},
+	{
+		title: "Time Saved",
+		value: "5hrs",
+	}
+]
 
 	return (
 		// <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex flex-col">
@@ -265,11 +305,53 @@ export default function Dashboard() {
 		// 	<div className="fixed top-20 left-20 w-64 h-64 bg-slate-400/10 rounded-full blur-3xl pointer-events-none" />
 		// 	<div className="fixed bottom-20 right-20 w-96 h-96 bg-slate-500/10 rounded-full blur-3xl pointer-events-none" />
 		// </div>
-		<div className="flex">
-			<SidebarDemo />
-			<motion.div>
-			 Hello from dashboard
-			</motion.div>
+		<div className="">
+			<SidebarDemo>
+				{/* Main Content */}
+				<main className="min-h-screen flex flex-col gap-6 p-8 w-full ml-[30px]">
+					<div className="isolate">
+						<div className="flex w-full h-auto justify-between items-start gap-8 mix-blend-multiply">
+							<div className="border-2 bg-gradient ">
+								<h1 className="text-[64px] font-headings font-medium tracking-widest">HOME</h1>
+								<div className="font-body tracking-wider mt-8">
+									<h2 className="text-3xl font-normal">Welcome Back, Abhinav!</h2>
+									<h4 className="text-md italic m-2 opacity-50">- last note created 2 hrs ago</h4>
+								</div>
+							</div>
+
+							<div>
+								{StatCard.map((stat) => {
+										return(
+											<Card title = {stat.title} content={stat.value} className="max-w-xs h-30" />
+										)
+									})}
+							</div>
+						</div>
+
+						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 pb-10">
+							<button className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
+								<svg 
+									xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
+									stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
+									d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
+								</svg>
+							</button>
+							<p>One tap to start thinking out loud</p>
+						</div>
+					</div>
+
+					<div className="w-full">
+						<div className="flex flex-row justify-between items-center">
+							{NoteCard.map((note) => {
+								return(
+									<Card title = {note.title} content={note.content} onExpand={onExpand} className="max-w-lg h-50 text-justify" />
+								)
+							})}
+						</div>
+					</div>
+				</main>
+
+  			</SidebarDemo> 	
 		</div>
 		
 	);
