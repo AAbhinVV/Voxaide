@@ -1,16 +1,24 @@
 import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
-import{ motion } from "motion/react";
+import{ motion, useAnimate } from "motion/react";
 import { SidebarDemo } from "../../components/Sidebar.jsx";
 import Card from "../../components/Card.jsx";
+import { LoaderOne, LoaderTwo } from "../../components/ui/loader.jsx";
+import { PulsatingButton } from "../../components/ui/pulsating-button.jsx";
+import {Spinner} from "@heroui/spinner";
 
 export default function Dashboard() {
 	const [recordingState, setRecordingState] = useState("idle"); // idle, recording, paused, stopped
 	const [recordingUrl, setRecordingUrl] = useState(null);
 	const [isPlaying, setIsPlaying] = useState(false);
+	const [loading, isLoading] = useState(true);
 	const audioRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const chunksRef = useRef([]);
+
+	setTimeout(() => {
+		isLoading(false);
+	}, 3000);
 
 	const startRecording = async () => {
 		try {
@@ -305,21 +313,43 @@ export default function Dashboard() {
 		// 	<div className="fixed top-20 left-20 w-64 h-64 bg-slate-400/10 rounded-full blur-3xl pointer-events-none" />
 		// 	<div className="fixed bottom-20 right-20 w-96 h-96 bg-slate-500/10 rounded-full blur-3xl pointer-events-none" />
 		// </div>
-		<div className="">
+		<motion.div>
+			
 			<SidebarDemo>
 				{/* Main Content */}
 				<main className="min-h-screen flex flex-col gap-6 p-8 w-full ml-[30px]">
 					<div className="isolate">
 						<div className="flex w-full h-auto justify-between items-start gap-8 mix-blend-multiply">
-							<div className="border-2 bg-gradient ">
-								<h1 className="text-[64px] font-headings font-medium tracking-widest">HOME</h1>
+							<div className="">
+								<motion.h1 
+								initial = {{ opacity: 0, y: 20 }}
+								animate = {{ opacity: 1, y: 0 }}
+								transition = {{ delay: 0.5, duration: 0.5 }}
+								className="text-lg font-headings font-medium tracking-widest">HOME</motion.h1>
 								<div className="font-body tracking-wider mt-8">
-									<h2 className="text-3xl font-normal">Welcome Back, Abhinav!</h2>
-									<h4 className="text-md italic m-2 opacity-50">- last note created 2 hrs ago</h4>
+									<motion.h2 
+									initial={{ opacity: 0, x: -20 }} 
+									animate={{ opacity: 1, x: 0 }} 
+									transition={{ delay: 0.7, duration: 0.5 }} 
+									className="text-6xl font-normal">
+										Welcome Back, 
+									<motion.span 
+									initial={{ opacity: 0, x: -10 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 0.9, duration: 0.5 }}
+									className="italic font-accent"> Abhinav!</motion.span></motion.h2>
+
+									{loading ? <LoaderOne  /> : 
+									<motion.h4 
+									initial={{ opacity: 0, x: -10 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 1.1, duration: 0.5 }}
+									className="text-lg italic m-2 opacity-50">- last note created 2 hrs ago</motion.h4>}
+									
 								</div>
 							</div>
 
-							<div>
+							<div className="grid grid-row-3 gap-3">
 								{StatCard.map((stat) => {
 										return(
 											<Card title = {stat.title} content={stat.value} className="max-w-xs h-30" />
@@ -328,14 +358,14 @@ export default function Dashboard() {
 							</div>
 						</div>
 
-						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 pb-10">
-							<button className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
+						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 ">
+							<PulsatingButton className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
 								<svg 
 									xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
 									stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
 									d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
 								</svg>
-							</button>
+							</PulsatingButton>
 							<p>One tap to start thinking out loud</p>
 						</div>
 					</div>
@@ -352,7 +382,7 @@ export default function Dashboard() {
 				</main>
 
   			</SidebarDemo> 	
-		</div>
+		</motion.div>
 		
 	);
 }

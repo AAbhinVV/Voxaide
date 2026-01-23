@@ -43,12 +43,15 @@ export function SidebarDemo({ children }) {
   ];
   const [open, setOpen] = useState(false);
   return (
-    <div
-      className={cn(
-        "flex w-full w-full divide-x-2 flex-1 flex-col overflow-hidden border border-neutral-200 bg-transparent md:flex-row dark:border-neutral-700 dark:bg-transparent",
-        // for your use case, use `h-screen` instead of `h-[60vh]`
-        "h-screen"
-      )}
+    <motion.div
+		initial = {{opacity: 0, x: -20}}
+		animate = {{opacity: 1, x: 0}}
+		transition={{ duration: 0.8, delay: 0.5}}
+		className={cn(
+			"flex w-full w-full divide-x-2 flex-1 flex-col overflow-hidden border border-neutral-200 bg-transparent md:flex-row dark:border-neutral-700 dark:bg-transparent",
+			// for your use case, use `h-screen` instead of `h-[60vh]`
+			"h-screen"
+		)}
 	>
 
       <Sidebar open={open} setOpen={setOpen}>
@@ -80,7 +83,7 @@ export function SidebarDemo({ children }) {
         </SidebarBody>
       </Sidebar>
       {children}
-    </div>
+    </motion.div>
   );
 }
 export const Logo = () => {
