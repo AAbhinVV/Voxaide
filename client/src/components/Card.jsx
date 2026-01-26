@@ -1,5 +1,5 @@
 import React from "react"
-import { MoveDown } from "lucide-react"
+import { MoveDown, ArrowBigDownDash } from "lucide-react"
 
 function Card({
   title = "",
@@ -22,8 +22,9 @@ function Card({
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-[2px] dark:to-neutral-800/90" />
       </div>
 
-      <button onClick={onExpand} className=" self-end mt-1 text-brand-primary hover:translate-y-0.5 transition " aria-label="Open full note" >
-        <MoveDown size={18} />
+      <button onClick={onExpand} className=" self-center mt-1 text-brand-primary hover:translate-y-0.5 transition " aria-label="Open full note" >
+        {/* <MoveDown size={18} /> */}
+        <ArrowBigDownDash size ={18} />
       </button>
     </div>
   )

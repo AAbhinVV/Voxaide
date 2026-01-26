@@ -1,8 +1,8 @@
-import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload } from "lucide-react";
+import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload, ArrowBigDownDash } from "lucide-react";
 import { useRef, useState } from "react";
 import{ motion, useAnimate } from "motion/react";
 import { SidebarDemo } from "../../components/Sidebar.jsx";
-import Card from "../../components/Card.jsx";
+import {StatusCard, Card} from "../../components/exports.js";
 import { LoaderOne, LoaderTwo } from "../../components/ui/loader.jsx";
 import { PulsatingButton } from "../../components/ui/pulsating-button.jsx";
 import {Spinner} from "@heroui/spinner";
@@ -15,6 +15,8 @@ export default function Dashboard() {
 	const audioRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const chunksRef = useRef([]);
+	const [delay, setDelay] = useState(0.4)
+	
 
 	setTimeout(() => {
 		isLoading(false);
@@ -129,7 +131,7 @@ export default function Dashboard() {
 	};
 
 	const onExpand = () => {
-		alert("Expand note functionality would be implemented here!");
+		
 	}
 
 	const NoteCard = [
@@ -350,31 +352,62 @@ export default function Dashboard() {
 							</div>
 
 							<div className="grid grid-row-3 gap-3">
-								{StatCard.map((stat) => {
+
+								{StatCard.map((stat, index) => {
 										return(
-											<Card title = {stat.title} content={stat.value} className="max-w-xs h-30" />
+											<motion.div
+												initial={{ opacity: 0, y: -30 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
+												key={index}
+											>
+
+												<StatusCard title = {stat.title} value={stat.value} className="max-w-xs h-30" />
+											</motion.div>
 										)
 									})}
 							</div>
 						</div>
 
 						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 ">
-							<PulsatingButton className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
-								<svg 
-									xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
-									stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
-									d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
-								</svg>
-							</PulsatingButton>
-							<p>One tap to start thinking out loud</p>
+							<motion.div
+								initial = {{opacity: 0, scale: 0}}
+								animate = {{opacity: 1, scale: 1}}
+								transition={{
+									duration: 0.6,
+									scale: {type: 'spring', visualDuration: 0.4, bounce: 0.3}
+								}}
+							>
+								<button className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
+									<svg 
+										xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
+										stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
+										d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
+									</svg>
+								</button>
+							</motion.div>
+							
+							<motion.p
+							intial = {{opacity: 0, y:-20}}
+							animate = {{opacity: 1, y:0}}
+							transition = {{delay: 0.8, duration: 1}}
+							className="text-lg italic opacity-50"
+							>One tap to start thinking out loud</motion.p>
 						</div>
 					</div>
 
 					<div className="w-full">
 						<div className="flex flex-row justify-between items-center">
-							{NoteCard.map((note) => {
+							{NoteCard.map((note, index) => {
 								return(
-									<Card title = {note.title} content={note.content} onExpand={onExpand} className="max-w-lg h-50 text-justify" />
+									<motion.div
+										key={index}
+										initial={{ opacity: 0, x: 30 }}
+										animate={{ opacity: 1, x: 0 }}
+										transition={{ delay: 0.4 + index * 0.2 }}
+									>
+										<Card title={note.title} content={note.content} onExpand={onExpand} className="max-w-lg h-50 text-justify" />
+									</motion.div>
 								)
 							})}
 						</div>

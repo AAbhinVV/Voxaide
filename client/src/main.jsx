@@ -19,7 +19,7 @@ import Dashboard from "./pages/Dashboards/Dashboard.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={<Dashboard />}>
+		<Route path="/" element={<SingupPage />}>
 			{/* <Route index element = {<VoxaideDashboard />} /> */}
 		{/* <Route path = "login" element = {<Login />} />
       	<Route path = "signup" element = {<Register />} />  */}
