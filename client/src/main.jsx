@@ -16,10 +16,15 @@ import store from "./store/store.js";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SingupPage from "./pages/Auth/SingupPage.jsx";
 import Dashboard from "./pages/Dashboards/Dashboard.jsx";
+import SidebarLayout from "./pages/SidebarLayout.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={<SingupPage />}>
+		<Route path="/" element={
+			<SidebarLayout>
+				<Dashboard />
+			</SidebarLayout>
+		}>
 			{/* <Route index element = {<VoxaideDashboard />} /> */}
 		{/* <Route path = "login" element = {<Login />} />
       	<Route path = "signup" element = {<Register />} />  */}

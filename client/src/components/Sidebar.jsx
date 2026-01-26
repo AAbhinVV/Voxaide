@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar.jsx";
-import { User } from "lucide-react";
-import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
-} from "@tabler/icons-react";
+import { Mic, User, House, Voicemail, NotepadText } from "lucide-react";
+// import {
+//   IconArrowLeft,
+//   IconBrandTabler,
+//   IconSettings,
+//   IconUserBolt,
+// } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -16,28 +16,32 @@ export function SidebarDemo({ children }) {
       label: "Home",
       href: "/dashboard",
       icon: (
-        <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <House className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+
       ),
     },
     {
       label: "Record",
       href: "/create",
       icon: (
-        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <Mic className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        
       ),
     },
     {
-      label: "Settings",
-      href: "#",
+      label: "Recordings",
+      href: "/recordings",
       icon: (
-        <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <Voicemail className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        
       ),
     },
     {
       label: "Notes",
       href: "/notes",
       icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <NotepadText className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        
       ),
     },
   ];

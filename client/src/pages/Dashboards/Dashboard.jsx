@@ -317,7 +317,7 @@ export default function Dashboard() {
 		// </div>
 		<motion.div>
 			
-			<SidebarDemo>
+			{/* <SidebarDemo> */}
 				{/* Main Content */}
 				<main className="min-h-screen flex flex-col gap-6 p-8 w-full ml-[30px]">
 					<div className="isolate">
@@ -414,7 +414,7 @@ export default function Dashboard() {
 					</div>
 				</main>
 
-  			</SidebarDemo> 	
+  			{/* </SidebarDemo> 	 */}
 		</motion.div>
 		
 	);
