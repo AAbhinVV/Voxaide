@@ -17,7 +17,6 @@ import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SingupPage from "./pages/Auth/SingupPage.jsx";
 import Dashboard from "./pages/Dashboards/Dashboard.jsx";
 import SidebarLayout from "./pages/SidebarLayout.jsx";
-import Recording from "./pages/Dashboards/Recording.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
