@@ -4,5 +4,6 @@ import Select from "./Select";
 import CustomSelect from "./CustomSelect";
 import StatusCard from "./StatusCard";
 import Card from "./Card";
+import PopUp from "./PopUp";
 
-export { Button, Input, Select, CustomSelect, StatusCard, Card };
+export { Button, Input, Select, CustomSelect, StatusCard, Card, PopUp };

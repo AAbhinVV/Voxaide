@@ -1,8 +1,8 @@
 import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload, ArrowBigDownDash } from "lucide-react";
 import { useRef, useState } from "react";
-import{ motion, useAnimate } from "motion/react";
+import{ AnimatePresence, motion, useAnimate } from "motion/react";
 import { SidebarDemo } from "../../components/Sidebar.jsx";
-import {StatusCard, Card} from "../../components/exports.js";
+import {StatusCard, Card, PopUp} from "../../components/exports.js";
 import { LoaderOne, LoaderTwo } from "../../components/ui/loader.jsx";
 import { PulsatingButton } from "../../components/ui/pulsating-button.jsx";
 import {Spinner} from "@heroui/spinner";
@@ -12,127 +12,129 @@ export default function Dashboard() {
 	const [recordingUrl, setRecordingUrl] = useState(null);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [loading, isLoading] = useState(true);
+	const [isVisible, setIsVisible] = useState(false);
 	const audioRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const chunksRef = useRef([]);
-	const [delay, setDelay] = useState(0.4)
 	
 
 	setTimeout(() => {
 		isLoading(false);
 	}, 3000);
 
-	const startRecording = async () => {
-		try {
-			// Check if MediaRecorder is supported
-			if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-				alert(
-					"Your browser doesn't support audio recording. Please use Chrome, Firefox, or Edge.",
-				);
-				return;
-			}
+	// const startRecording = async () => {
+	// 	try {
+	// 		// Check if MediaRecorder is supported
+	// 		if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+	// 			alert(
+	// 				"Your browser doesn't support audio recording. Please use Chrome, Firefox, or Edge.",
+	// 			);
+	// 			return;
+	// 		}
 
-			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+	// 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-			// Check for supported MIME types
-			let mimeType = "audio/webm";
-			if (!MediaRecorder.isTypeSupported("audio/webm")) {
-				if (MediaRecorder.isTypeSupported("audio/mp4")) {
-					mimeType = "audio/mp4";
-				} else if (MediaRecorder.isTypeSupported("audio/ogg")) {
-					mimeType = "audio/ogg";
-				}
-			}
+	// 		// Check for supported MIME types
+	// 		let mimeType = "audio/webm";
+	// 		if (!MediaRecorder.isTypeSupported("audio/webm")) {
+	// 			if (MediaRecorder.isTypeSupported("audio/mp4")) {
+	// 				mimeType = "audio/mp4";
+	// 			} else if (MediaRecorder.isTypeSupported("audio/ogg")) {
+	// 				mimeType = "audio/ogg";
+	// 			}
+	// 		}
 
-			mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
-			chunksRef.current = [];
+	// 		mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
+	// 		chunksRef.current = [];
 
-			mediaRecorderRef.current.ondataavailable = (e) => {
-				if (e.data.size > 0) {
-					chunksRef.current.push(e.data);
-				}
-			};
+	// 		mediaRecorderRef.current.ondataavailable = (e) => {
+	// 			if (e.data.size > 0) {
+	// 				chunksRef.current.push(e.data);
+	// 			}
+	// 		};
 
-			mediaRecorderRef.current.onstop = () => {
-				const blob = new Blob(chunksRef.current, { type: mimeType });
-				const url = URL.createObjectURL(blob);
-				setRecordingUrl(url);
-				stream.getTracks().forEach((track) => track.stop());
-			};
+	// 		mediaRecorderRef.current.onstop = () => {
+	// 			const blob = new Blob(chunksRef.current, { type: mimeType });
+	// 			const url = URL.createObjectURL(blob);
+	// 			setRecordingUrl(url);
+	// 			stream.getTracks().forEach((track) => track.stop());
+	// 		};
 
-			mediaRecorderRef.current.start(1000); // Collect data every second
-			setRecordingState("recording");
-		} catch (err) {
-			console.error("Error accessing microphone:", err);
-			if (
-				err.name === "NotAllowedError" ||
-				err.name === "PermissionDeniedError"
-			) {
-				alert(
-					"Microphone access denied. Please allow microphone permissions and try again.",
-				);
-			} else if (err.name === "NotFoundError") {
-				alert(
-					"No microphone found. Please connect a microphone and try again.",
-				);
-			} else {
-				alert("Could not access microphone: " + err.message);
-			}
-		}
-	};
+	// 		mediaRecorderRef.current.start(1000); // Collect data every second
+	// 		setRecordingState("recording");
+	// 	} catch (err) {
+	// 		console.error("Error accessing microphone:", err);
+	// 		if (
+	// 			err.name === "NotAllowedError" ||
+	// 			err.name === "PermissionDeniedError"
+	// 		) {
+	// 			alert(
+	// 				"Microphone access denied. Please allow microphone permissions and try again.",
+	// 			);
+	// 		} else if (err.name === "NotFoundError") {
+	// 			alert(
+	// 				"No microphone found. Please connect a microphone and try again.",
+	// 			);
+	// 		} else {
+	// 			alert("Could not access microphone: " + err.message);
+	// 		}
+	// 	}
+	// };
 
-	const pauseRecording = () => {
-		if (mediaRecorderRef.current && recordingState === "recording") {
-			mediaRecorderRef.current.pause();
-			setRecordingState("paused");
-		}
-	};
+	// const pauseRecording = () => {
+	// 	if (mediaRecorderRef.current && recordingState === "recording") {
+	// 		mediaRecorderRef.current.pause();
+	// 		setRecordingState("paused");
+	// 	}
+	// };
 
-	const resumeRecording = () => {
-		if (mediaRecorderRef.current && recordingState === "paused") {
-			mediaRecorderRef.current.resume();
-			setRecordingState("recording");
-		}
-	};
+	// const resumeRecording = () => {
+	// 	if (mediaRecorderRef.current && recordingState === "paused") {
+	// 		mediaRecorderRef.current.resume();
+	// 		setRecordingState("recording");
+	// 	}
+	// };
 
-	const stopRecording = () => {
-		if (mediaRecorderRef.current) {
-			mediaRecorderRef.current.stop();
-			mediaRecorderRef.current.stream
-				.getTracks()
-				.forEach((track) => track.stop());
-			setRecordingState("stopped");
-		}
-	};
+	// const stopRecording = () => {
+	// 	if (mediaRecorderRef.current) {
+	// 		mediaRecorderRef.current.stop();
+	// 		mediaRecorderRef.current.stream
+	// 			.getTracks()
+	// 			.forEach((track) => track.stop());
+	// 		setRecordingState("stopped");
+	// 	}
+	// };
 
-	const discardRecording = () => {
-		if (recordingUrl) {
-			URL.revokeObjectURL(recordingUrl);
-		}
-		setRecordingUrl(null);
-		setRecordingState("idle");
-		setIsPlaying(false);
-	};
+	// const discardRecording = () => {
+	// 	if (recordingUrl) {
+	// 		URL.revokeObjectURL(recordingUrl);
+	// 	}
+	// 	setRecordingUrl(null);
+	// 	setRecordingState("idle");
+	// 	setIsPlaying(false);
+	// };
 
-	const uploadRecording = () => {
-		alert("Upload functionality would be implemented here!");
-		// Implement your upload logic
-	};
+	// const uploadRecording = () => {
+	// 	alert("Upload functionality would be implemented here!");
+	// 	// Implement your upload logic
+	// };
 
-	const togglePlayPause = () => {
-		if (audioRef.current) {
-			if (isPlaying) {
-				audioRef.current.pause();
-			} else {
-				audioRef.current.play();
-			}
-			setIsPlaying(!isPlaying);
-		}
-	};
+	// const togglePlayPause = () => {
+	// 	if (audioRef.current) {
+	// 		if (isPlaying) {
+	// 			audioRef.current.pause();
+	// 		} else {
+	// 			audioRef.current.play();
+	// 		}
+	// 		setIsPlaying(!isPlaying);
+	// 	}
+	// };
 
 	const onExpand = () => {
-		
+		setIsVisible(!isVisible)
 	}
+
+	
 
 	const NoteCard = [
 		{
@@ -170,7 +172,161 @@ export default function Dashboard() {
 ]
 
 	return (
-		// <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex flex-col">
+		
+		<motion.div>
+			
+			{/* <SidebarDemo> */}
+				{/* Main Content */}
+				<main className="min-h-screen flex flex-col gap-6 p-8 w-full ml-[30px] ">
+					<div className="isolate">
+						<div className="flex w-full h-auto justify-between items-start gap-8 mix-blend-multiply">
+							<div className="">
+								<motion.h1 
+								initial = {{ opacity: 0, y: 20 }}
+								animate = {{ opacity: 1, y: 0 }}
+								transition = {{ delay: 0.5, duration: 0.5 }}
+								className="text-lg font-headings font-medium tracking-widest">HOME</motion.h1>
+								<div className="font-body tracking-wider mt-8">
+									<motion.h2 
+									initial={{ opacity: 0, x: -20 }} 
+									animate={{ opacity: 1, x: 0 }} 
+									transition={{ delay: 0.7, duration: 0.5 }} 
+									className="text-6xl font-normal">
+										Welcome Back, 
+									<motion.span 
+									initial={{ opacity: 0, x: -10 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 0.9, duration: 0.5 }}
+									className="italic font-accent"> Abhinav!</motion.span></motion.h2>
+
+									{loading ? <LoaderOne  /> : 
+									<motion.h4 
+									initial={{ opacity: 0, x: -10 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 1.1, duration: 0.5 }}
+									className="text-lg italic m-2 opacity-50">- last note created 2 hrs ago</motion.h4>}
+									
+								</div>
+							</div>
+
+							<div className="grid grid-row-3 gap-3">
+
+								{StatCard.map((stat, index) => {
+										return(
+											<motion.div
+												initial={{ opacity: 0, y: -30 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
+												key={index}
+											>
+
+												<StatusCard title = {stat.title} value={stat.value} className="max-w-lg w-full h-fit shadow-lg backdrop-blur-xl bg-white rounded-lgm-2 px-4 py-5" />
+											</motion.div>
+										)
+									})}
+							</div>
+						</div>
+
+						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 ">
+							<motion.div
+								initial = {{opacity: 0, scale: 0}}
+								animate = {{opacity: 1, scale: 1}}
+								transition={{
+									duration: 0.6,
+									scale: {type: 'spring', visualDuration: 0.4, bounce: 0.3}
+								}}
+							>
+								<button className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
+									<svg 
+										xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
+										stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
+										d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
+									</svg>
+								</button>
+							</motion.div>
+							
+							<motion.p
+							intial = {{opacity: 0, y:-20}}
+							animate = {{opacity: 1, y:0}}
+							transition = {{delay: 0.8, duration: 1}}
+							className="text-lg italic opacity-50"
+							>One tap to start thinking out loud</motion.p>
+						</div>
+					</div>
+
+					<div className="w-full">
+						<div className="flex flex-row justify-between items-center">
+							{NoteCard.map((note, index) => {
+								return(
+									<motion.div
+										key={index}
+										initial={{ opacity: 0, x: 30 }}
+										animate={{ opacity: 1, x: 0 }}
+										transition={{ delay: 0.4 + index * 0.2 }}
+									>
+										<Card title={note.title} content={note.content} onExpand={onExpand} className="max-w-lg h-50 text-justify" />
+									</motion.div>
+								)
+							})}
+						</div>
+					</div>
+
+					<div className="self-center">
+						<AnimatePresence>
+							{isVisible && (
+								<>
+								{/* Backdrop */}
+								<motion.div
+									transition={{duration: 0.5}}
+									exit = {{opacity: 0}}
+									className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+									
+								/>
+
+								{/* Modal container */}
+								<motion.div
+									className="fixed inset-0 z-50 flex items-center justify-center p-4"
+									initial={{ opacity: 0, scale: 0.9 }}
+									animate={{ opacity: 1, scale: 1 }}
+									
+									exit={{ opacity: 0, scale: 0.9 }}
+								>
+									<PopUp
+									title="Note 1"
+									recordDate="Recorded 2 hours ago"
+									content="Full transcription text here..."
+									removePopUp={onExpand}
+									/>
+								</motion.div>
+								</>
+							)}
+						</AnimatePresence>
+
+					</div>
+				</main>
+
+				
+
+  			{/* </SidebarDemo> 	 */}
+		</motion.div>
+		
+	);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex flex-col">
 		// 	{/* Header */}
 		// 	<header className="p-8">
 		// 		<div className="flex items-center gap-4">
@@ -315,107 +471,3 @@ export default function Dashboard() {
 		// 	<div className="fixed top-20 left-20 w-64 h-64 bg-slate-400/10 rounded-full blur-3xl pointer-events-none" />
 		// 	<div className="fixed bottom-20 right-20 w-96 h-96 bg-slate-500/10 rounded-full blur-3xl pointer-events-none" />
 		// </div>
-		<motion.div>
-			
-			{/* <SidebarDemo> */}
-				{/* Main Content */}
-				<main className="min-h-screen flex flex-col gap-6 p-8 w-full ml-[30px]">
-					<div className="isolate">
-						<div className="flex w-full h-auto justify-between items-start gap-8 mix-blend-multiply">
-							<div className="">
-								<motion.h1 
-								initial = {{ opacity: 0, y: 20 }}
-								animate = {{ opacity: 1, y: 0 }}
-								transition = {{ delay: 0.5, duration: 0.5 }}
-								className="text-lg font-headings font-medium tracking-widest">HOME</motion.h1>
-								<div className="font-body tracking-wider mt-8">
-									<motion.h2 
-									initial={{ opacity: 0, x: -20 }} 
-									animate={{ opacity: 1, x: 0 }} 
-									transition={{ delay: 0.7, duration: 0.5 }} 
-									className="text-6xl font-normal">
-										Welcome Back, 
-									<motion.span 
-									initial={{ opacity: 0, x: -10 }}
-									animate={{ opacity: 1, x: 0 }}
-									transition={{ delay: 0.9, duration: 0.5 }}
-									className="italic font-accent"> Abhinav!</motion.span></motion.h2>
-
-									{loading ? <LoaderOne  /> : 
-									<motion.h4 
-									initial={{ opacity: 0, x: -10 }}
-									animate={{ opacity: 1, x: 0 }}
-									transition={{ delay: 1.1, duration: 0.5 }}
-									className="text-lg italic m-2 opacity-50">- last note created 2 hrs ago</motion.h4>}
-									
-								</div>
-							</div>
-
-							<div className="grid grid-row-3 gap-3">
-
-								{StatCard.map((stat, index) => {
-										return(
-											<motion.div
-												initial={{ opacity: 0, y: -30 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
-												key={index}
-											>
-
-												<StatusCard title = {stat.title} value={stat.value} className="max-w-xs h-30" />
-											</motion.div>
-										)
-									})}
-							</div>
-						</div>
-
-						<div className="flex flex-col gap-8 items-center w-full font-body tracking-wider mix-blend-multiply -mt-20 ">
-							<motion.div
-								initial = {{opacity: 0, scale: 0}}
-								animate = {{opacity: 1, scale: 1}}
-								transition={{
-									duration: 0.6,
-									scale: {type: 'spring', visualDuration: 0.4, bounce: 0.3}
-								}}
-							>
-								<button className="bg-gradient-to-r from bg-brand-accent/40 via-transparent to-brand-accent/40 h-75 w-75 rounded-full items-center flex justify-center">
-									<svg 
-										xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" 
-										stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic-icon lucide-mic"><path d="M12 19v3"/><path 
-										d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
-									</svg>
-								</button>
-							</motion.div>
-							
-							<motion.p
-							intial = {{opacity: 0, y:-20}}
-							animate = {{opacity: 1, y:0}}
-							transition = {{delay: 0.8, duration: 1}}
-							className="text-lg italic opacity-50"
-							>One tap to start thinking out loud</motion.p>
-						</div>
-					</div>
-
-					<div className="w-full">
-						<div className="flex flex-row justify-between items-center">
-							{NoteCard.map((note, index) => {
-								return(
-									<motion.div
-										key={index}
-										initial={{ opacity: 0, x: 30 }}
-										animate={{ opacity: 1, x: 0 }}
-										transition={{ delay: 0.4 + index * 0.2 }}
-									>
-										<Card title={note.title} content={note.content} onExpand={onExpand} className="max-w-lg h-50 text-justify" />
-									</motion.div>
-								)
-							})}
-						</div>
-					</div>
-				</main>
-
-  			{/* </SidebarDemo> 	 */}
-		</motion.div>
-		
-	);
-}
