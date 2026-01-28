@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
-import {Card} from "../../components/exports.js"
+import {Card, PopUp} from "../../components/exports.js"
 
 
 
@@ -78,21 +78,56 @@ const NotesDashboard = () => {
 
 	return(
 
-		<motion.div
-			initial = {{opacity: 0, x: -20}}
-			animate = {{opacity: 1, x: 0}}
-			transition = {{delay: 0.3, duration: 0.4}}
+		<>
+			<motion.div
+			// initial = {{opacity: 0, x: -20}}
+			// animate = {{opacity: 1, x: 0}}
+			// transition = {{delay: 0.3, duration: 0.4}}
 			
-		>
-			<motion.div className= "grid grid-cols-4 gap-4">
-				{NoteCard.map((note, index) => {
-					<Card title={note.title} content={note.content} onExpand={onExpand}/>
-				})}
+			>
+				<motion.div className= "grid grid-cols-4 gap-4">
+					{NoteCard.map((note, index) => (
+						<Card key={index} title={note.title} content={note.content} onExpand={onExpand}/>
+					))}
 
+
+				</motion.div>
+
+				<div className="self-center">
+						<AnimatePresence>
+							{isVisible && (
+								<>
+								{/* Backdrop */}
+								<motion.div
+									transition={{duration: 0.5}}
+									exit = {{opacity: 0}}
+									className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+									
+								/>
+
+								{/* Modal container */}
+								<motion.div
+									className="fixed inset-0 z-50 flex items-center justify-center p-4"
+									initial={{ opacity: 0, scale: 0.9 }}
+									animate={{ opacity: 1, scale: 1 }}
+									
+									exit={{ opacity: 0, scale: 0.9 }}
+								>
+									<PopUp
+									title="Note 1"
+									recordDate="Recorded 2 hours ago"
+									content="Full transcription text here..."
+									removePopUp={onExpand}
+									/>
+								</motion.div>
+								</>
+							)}
+						</AnimatePresence>
+
+					</div>
 
 			</motion.div>
-
-		</motion.div>
+		</>
 
 	);
 };

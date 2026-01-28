@@ -5,10 +5,11 @@ function Button({
     className = "",
     children,
     type = "button",
+    onHover,
     ...props
 }) {
   return (
-    <motion.button type={type} className={className} {...props}>{children}</motion.button>
+    <motion.button type={type} className={className} {...props} whileHover={onHover}>{children}</motion.button>
   )
 }
 

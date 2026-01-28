@@ -185,32 +185,15 @@ function SingupPage() {
             {errors.email && <p className="text-danger mt-8 text-center">{errors.email.message}</p> }
 
             <Input 
-            label="Username" 
+            label="Display name" 
             type="text" 
-            placeholder="Enter your username" 
+            placeholder="Enter your display name" 
             className="border-2 focus:border-brand-primary outline-none rounded-lg"
-            {...register("username")}
+            {...register("displayNames")}
             />
-            {errors.username && <p className="text-danger mt-8 text-center">{errors.username.message}</p> }
+            {errors.displayName && <p className="text-danger mt-8 text-center">{errors.displayName.message}</p> }
 
-            <Select
-              label="Role"
-              options={["ADMIN", "USER"]}
-              className="border-2 focus:border-brand-primary outline-none rounded-lg"
-              {...register("role")}
-              defaultValue="user"
-            />
-            {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> }
-
-            {/* <CustomSelect
-              options={["USER", "ADMIN"]}
-              value={"Role"}
-              className="border-2 focus:border-brand-primary outline-none rounded-lg"
-              {...register("role")}
-              defaultValue="user"
-
-              />
-              {errors.role && <p className="text-danger mt-8 text-center">{errors.role.message}</p> } */}
+           
 
 
             <Input 
