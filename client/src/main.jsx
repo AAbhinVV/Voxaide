@@ -23,7 +23,7 @@ const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={
 			<SidebarLayout>
-				<UserProfile />
+				<Dashboard />
 			</SidebarLayout>
 		}>
 			{/* <Route index element = {<VoxaideDashboard />} /> */}

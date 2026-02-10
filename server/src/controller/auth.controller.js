@@ -34,7 +34,7 @@ const register = async (req, res) => {
 
 			firstErrorMessage = allError[0]?.message || "Validation Error";
 		}
-		return res.status(400).json({ success: false, message: firstErrorMessage });
+		return res.status(422).json({ success: false, message: firstErrorMessage });
 	}
 
 	const { email, username, password, role } = validation.data;

@@ -50,7 +50,7 @@ function UserProfile() {
                 </div>
                 <div className='flex flex-row w-full max-w-2xl items-center gap-20 justify-between'>
                     <label htmlFor={id} className='text-2xl font-body tracking-widest font-medium justify-self-start' >Email: </label>
-                    <input type="text" id={id} className='text-center text-2xl px-3 py-2 bg-black/20 border-transparent transition delay-150 duration-300 ease-in-out hover:border-black/50 border-2 focus:border-danger outline-none rounded-lg' value="Abhianv" readOnly/>                
+                    <input type="text" id={id} className='text-center text-2xl px-3 py-2 bg-black/20 border-transparent transition delay-150 duration-300 ease-in-out hover:border-black/50 border-2 focus:border-danger outline-none rounded-lg' value="abhij4242@gmail.com" readOnly/>                
                 </div>
                 <div className='flex flex-row w-full max-w-2xl items-center gap-20 justify-between'>
                     <label htmlFor={id} className='text-2xl font-body tracking-widest font-medium' >Password: </label>

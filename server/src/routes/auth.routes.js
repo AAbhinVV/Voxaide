@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
-import express from "express";
+import {Router} from "express";
 import authController from "../controller/auth.controller.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
 
 dotenv.config();
 
-const router = express.Router();
+const router = Router();
 
 router.post("/register", authController.register);
 
