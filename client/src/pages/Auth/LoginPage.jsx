@@ -1,29 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Input } from "../../components/exports";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "../../apis/apis";
+import { loginRequest, meRequest } from "../../apis/apis";
+
+
 
 
 function LoginPage() {
     const navigate = useNavigate();
-    const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(loginSchema) });
-    const [hoverButton, setHoverButton] = useState(false);  
+    const {register, handleSubmit, formState: { errors }, setError, clearErrors} = useForm({resolver: zodResolver(loginSchema) });
+    const [hoverButton, setHoverButton] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
     
 
     
 
-    const login = async (data) => {
-        setError("");
+    useEffect(()=> {
+      meRequest()
+        .then(() => navigate("/dashboard"))
+        .catch(() => {})
+    }, [navigate]);
+
+      const onSubmit = async (data) => {
+        if(isLoading) return;
+
+        setIsLoading(true);
+        clearErrors("root");
         try{
-          await login({ email: data.email, password: data.password });
+          const result = await loginRequest({ email: data.email, password: data.password });
+
+          if (!result?.success) {
+            throw new Error(result?.message || "Login failed");
+          }
 
           navigate("/dashboard");
+          
         }catch(error){
-            setError(error.message);
+            setError("root", { type: "server", message: error.message });
+        }finally{
+          setIsLoading(false);
         }
     }
     
@@ -178,7 +197,18 @@ function LoginPage() {
             />
 
         
-        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 ">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-10 ">
+
+              {errors.root && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-danger text-center"
+                >
+                  {errors.root.message}
+                </motion.p>
+              )}
+
               <Input 
               label="Email" 
               type="email" 
@@ -197,7 +227,7 @@ function LoginPage() {
               />
               {errors.password && <p className="text-danger mt-8 text-center">{errors.password.message}</p> }
 
-              <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98 hover:-translate-y-1">Login</Button>
+              <Button  disabled ={isLoading} className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98 hover:-translate-y-1">{isLoading ? "Loading ..." : "Login"}</Button>
           </form>
       </motion.div>
       {/* <div className="z-10">

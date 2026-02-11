@@ -11,23 +11,28 @@ import { signupRequest } from "../../apis/apis";
 
 function SingupPage() {
     const navigate = useNavigate();
-    const {register, handleSubmit, formState: { errors }, setError} = useForm({resolver: zodResolver(signUpSchema) });
+    const {register, handleSubmit, formState: { errors }, setError, clearErrors} = useForm({resolver: zodResolver(signUpSchema) });
     const [hoverButton, setHoverButton] = useState(false);
     
 
     
 
     const login = async (data) => {
-        setError("");
+        clearErrors("root");
         try{
-        await signupRequest({
+        const result = await signupRequest({
           username: data.displayNames ?? data.displayName ?? data.username,
           email: data.email,
           password: data.password,
         });
-            navigate("/login");
+
+        if(result?.success){
+          navigate("/login");
+          return;
+        }
+            
         }catch(error){
-            setError(error.message);
+            setError("root", { type: "server", message: error?.message || "Signup failed" });
         }
     }
     

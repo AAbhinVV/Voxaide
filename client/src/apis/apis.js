@@ -1,12 +1,14 @@
-import { toast } from '@heroui/theme';
+import { IconBrandWindows } from '@tabler/icons-react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'
 
 const baseURL = 'http://localhost:5000/api/v1';
 
 export const customAxios = axios.create({ baseURL });
 
 
+const refreshTokenRequest = async () => {
+    return axios.post(`${baseURL}/auth/refresh-token`, {}, { withCredentials: true });
+};
 
 customAxios.interceptors.response.use(
     (response) => response,
@@ -17,65 +19,40 @@ customAxios.interceptors.response.use(
         if (status === 403 && originalRequest && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                await generateRefreshToken();
+                await refreshTokenRequest();
                 return customAxios(originalRequest);
             } catch (refreshError) {
-                console.error('Refresh token failed:', refreshError);
+                await customAxios.post('/auth/logout', {}, { withCredentials: true });
+                window.location.href = '/auth/login'
+                return Promise.reject(refreshError);
             }
         }
 
-    return Promise.reject(error)
-}
-)
+        return Promise.reject(error);
+    },
+);
 
-export const login = async (userInputs, setUserInputs) => {
+export const loginRequest = async ({ email, password }) => {
+    const response = await customAxios.post(
+        '/auth/login',
+        { email, password },
+        { withCredentials: true },
+    );
 
-    const navigate = useNavigate();
+    return response.data;
+};
 
-   try{
-        const response = await customAxios.post('/auth/login', 
-            {email: userInputs.email, password: userInputs.password}, 
-            { withCredentials: true });
+export const signupRequest = async ({ username, email, password }) => {
+    const response = await customAxios.post(
+        '/auth/signup',
+        { username, email, password },
+        { withCredentials: true },
+    );
 
-        const {data} = response;
+    return response.data;
+};
 
-        const id = data?.user?.id;
-
-        if(id.status === 200){
-            window.location.assign(`/dashboard/${id}`);
-        }
-    }catch (error) {
-        console.log(error)
-    }finally{
-        setUserInputs({email: '', password: ''});
-    }
-}
-
-export const signup = async (userInputs, setUserInputs) => {
-    try {
-        const response = await customAxios.post('/auth/signup',
-            {username: userInputs.username, email: userInputs.email, password: userInputs.password},
-            {withCredentials:true}
-        )
-
-        const {data} = response;
-
-        const id = data?.user?.id;
-
-        if(id.status === 201){
-            window.location.assign(`/login`);
-        }
-    } catch (error)  {
-        console.log(error)
-    }finally{
-        setUserInputs({username: '', email: '', password: ''});
-        }
-}
-
-const generateRefreshToken = async () => {
-    try{
-        await customAxios.post('/auth/refresh-token', {}, { withCredentials: true });
-    }catch (error) {
-        console.log(error)
-    }
+export const meRequest = async () => {
+    const response = await customAxios.get('/auth/me', { withCredentials: true });
+    return response.data;
 }
