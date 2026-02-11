@@ -7,7 +7,7 @@ dotenv.config();
 
 const router = Router();
 
-router.post("/register", authController.register);
+router.post("/signup", authController.register);
 
 router.post("/verify/:token", authController.verifyUser);
 

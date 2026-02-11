@@ -21,17 +21,26 @@ import UserProfile from "./pages/Profile/UserProfile.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
-		<Route path="/" element={
-			<SidebarLayout>
-				<Dashboard />
-			</SidebarLayout>
-		}>
-			{/* <Route index element = {<VoxaideDashboard />} /> */}
-		{/* <Route path = "login" element = {<Login />} />
-      	<Route path = "signup" element = {<Register />} />  */}
-		{/* <Route path="notes" element={<VoxaideDashboard />} /> */}
-			{/* <Route path  = "notes/:id" element = {<NotesDashboard />} /> */}
-		</Route>,	
+		<>
+			<Route
+				path="/"
+				element={
+					<SidebarLayout>
+						<Dashboard />
+					</SidebarLayout>
+				}
+			/>
+			<Route
+				path="/dashboard"
+				element={
+					<SidebarLayout>
+						<Dashboard />
+					</SidebarLayout>
+				}
+			/>
+			<Route path="/login" element={<LoginPage />} />
+			<Route path="/signup" element={<SingupPage />} />
+		</>,
 	),
 );
 

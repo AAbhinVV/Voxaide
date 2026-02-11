@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { login } from "../../apis/apis";
 
 
 function LoginPage() {
@@ -18,7 +19,9 @@ function LoginPage() {
     const login = async (data) => {
         setError("");
         try{
-            navigate("/dashboard");
+          await login({ email: data.email, password: data.password });
+
+          navigate("/dashboard");
         }catch(error){
             setError(error.message);
         }
@@ -210,7 +213,7 @@ function LoginPage() {
           
               Don&apos;t have an account?{" "}
               <Link
-                href="/signup"
+                to="/signup"
                 className="text-indigo-400 hover:text-brand-primary font-medium transition-colors relative group"
               >
                 Sign up

@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { signUpSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signupRequest } from "../../apis/apis";
 
 
 
@@ -19,6 +20,11 @@ function SingupPage() {
     const login = async (data) => {
         setError("");
         try{
+        await signupRequest({
+          username: data.displayNames ?? data.displayName ?? data.username,
+          email: data.email,
+          password: data.password,
+        });
             navigate("/login");
         }catch(error){
             setError(error.message);
@@ -227,7 +233,7 @@ function SingupPage() {
           
               Already have an account?{" "}
               <Link
-                href="/login"
+                to="/login"
                 className="text-brand-primary hover:text-indigo-300 font-medium transition-colors relative group"
               >
                 Login
