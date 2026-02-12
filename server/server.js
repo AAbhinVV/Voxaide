@@ -2,9 +2,9 @@ import constants from "constants";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
-import path from "path";
+// import path from "path";
 import { createClient } from "redis";
-import { connectDB } from "./config/db/connectDB.js";
+import { connectDB } from "./src/config/db/connectDB.js"
 import adminRoutes from "./src/routes/admin.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import queryRoutes from "./src/routes/query.routes.js";

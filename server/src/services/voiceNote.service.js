@@ -1,18 +1,26 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import multer from "multer";
 import multers3, { AUTO_CONTENT_TYPE } from "multer-s3";
-import constants from "../config/constants.js";
+import constants from "../config/constant.js"
 import voiceNoteModel from "../models/voiceNote.model.js";
 import streamToBuffer from "../utils/streamToBuffer.js";
 import transcriptionModel from "../models/transcription.model.js";
 import TranscriptionChunk from "../models/chunks.model.js";
 import { Pinecone } from "@pinecone-database/pinecone";
+import dotenv from "dotenv";
+
+dotenv.config({path: "../../.env"});
 
 const s3 = new S3Client({ region: constants.aws_region });
 
-const pinecone = new PineconeClient({
-	apiKey: constants.pinecone_api_key,
+
+const pinecone = new Pinecone({
+	apiKey: constants.pinecone_api_key
 });
+
+if(!constants.pinecone_api_key){
+	throw new Error("Pinecone API key is not set in environment variables");
+}
 
 const pineconeIndex = pinecone.Index(constants.pinecone_index_name);
 

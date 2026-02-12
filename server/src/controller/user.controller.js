@@ -1,5 +1,5 @@
 import sanitize from "mongo-sanitize";
-import User from "../../models/user.model.js";
+import User from "../models/user.model.js"
 import { userSchema } from "../config/zod.js";
 
 const getMe = async (req, res) => {

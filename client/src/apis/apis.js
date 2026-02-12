@@ -52,6 +52,11 @@ export const signupRequest = async ({ username, email, password }) => {
     return response.data;
 };
 
+export const logoutRequest = async () => {
+    customAxios.post('/auth/logout', {}, { withCredentials: true });
+    
+}
+
 export const meRequest = async () => {
     const response = await customAxios.get('/auth/me', { withCredentials: true });
     return response.data;

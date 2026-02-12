@@ -1,4 +1,4 @@
-import { answerGenerationService } from "../services/query/query.service";
+import { answerGenerationService } from "../services/query/query.service.js";
 
 const queryController = async (req, res) => {
 	try {

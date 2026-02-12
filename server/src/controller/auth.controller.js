@@ -1,18 +1,13 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import sanitize from "mongo-sanitize";
-import { getVerifyEmailHtml } from "../../config/html.js";
-import sendMail from "../../config/sendMail.js";
-import { loginSchema, registerSchema } from "../../config/zod.js";
-import User from "../../models/user.model.js";
+// import { getVerifyEmailHtml } from "../../config/html.js";
+// import sendMail from "../../config/sendMail.js";
+import {loginSchema, registerSchema} from "../config/zod.js"
+import User from "../models/user.model.js"
 import { redisClient } from "../../server.js";
-import {
-	generateAccessToken,
-	generateTokenAndSetCookie,
-	revokeRefreshToken,
-	verifyRefreshToken,
-} from "../../utils/generateTokenAndSetCookie.js";
-import { generateVerificationToken } from "../../utils/generateVerificationToken.js";
+import { generateTokenAndSetCookie, generateAccessToken, verifyRefreshToken, revokeRefreshToken } from "../utils/generateTokenAndSetCookie.js"
+import { generateVerificationToken } from "../utils/generateVerificationToken.js"
 
 const register = async (req, res) => {
 	const sanitizedBody = sanitize(req.body);
@@ -352,7 +347,7 @@ const logout = async (req, res) => {
 
 		res.clearCookie("accessToken");
 
-		res.json({ message: "Logged out successfully" });
+		return res.json({ message: "Logged out successfully" });
 	} catch (error) {
 		return res.status(503).json({ message: error.message });
 	}
@@ -363,7 +358,7 @@ const refreshToken = async (req, res) => {
 		const refreshToken =
 			req.signedCookies?.refreshToken || req.cookies?.refreshToken;
 		if (!refreshToken) {
-			res.status(403).json({ message: "Forbidden" });
+			return res.status(403).json({ message: "Forbidden" });
 		}
 
 		const decoded = await verifyRefreshToken(refreshToken);
@@ -418,7 +413,6 @@ export default {
 	login,
 	logout,
 	refreshToken,
-	verifyUser,
-	verifyOTP,
 	myProfile,
+	verifyUser,
 };

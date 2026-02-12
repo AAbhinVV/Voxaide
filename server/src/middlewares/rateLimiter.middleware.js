@@ -1,4 +1,4 @@
-import { redisClient } from "../../server";
+import { redisClient } from "../../server.js";
 
 const createRateLimiter = (service, limit, window) => {
 	return async (req, res, next) => {

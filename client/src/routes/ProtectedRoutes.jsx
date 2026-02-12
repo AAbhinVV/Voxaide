@@ -1,14 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { isAuth } from "../../../server/src/middlewares/auth.middleware";
+import { useAuth } from "../hooks/AuthContext";
 
 function ProtectedRoutes() {
-    const {isAuthenticated, loading} = isAuth();
+    const {isAuthenticated, loading} = useAuth();
 
     if(loading){
-        return <div className="w-screen h-screen flex items-center justify-center">Checking Session...</div>;
+        return null
     }
 
-    if(isAuthenticated){
+    if(!isAuthenticated){
         return <Navigate to="/login" replace/>
     }
 

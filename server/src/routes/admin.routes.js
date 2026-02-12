@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import requireAdmin from "../middlewares/admin.middleware.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
+import adminController from "../controller/admin.controller.js"
 
 // Note: Global middleware `verifyJwt` and `requireAdmin` are already applied in server.js
 

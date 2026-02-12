@@ -1,7 +1,7 @@
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
-import constants from "../../config/constant";
-import { querySchema } from "../../config/zod";
+import constants from "../../config/constant.js"
+import {querySchema} from "../../config/zod.js"
 
 const retrieveRelevantChunks = async ({ userId, question }) => {
 	//retrieve query and create query embedding

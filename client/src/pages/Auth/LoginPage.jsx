@@ -6,12 +6,13 @@ import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginRequest, meRequest } from "../../apis/apis";
-
+import { useAuth } from "../../hooks/AuthContext";
 
 
 
 function LoginPage() {
     const navigate = useNavigate();
+    const {setIsAuthenticated} = useAuth();
     const {register, handleSubmit, formState: { errors }, setError, clearErrors} = useForm({resolver: zodResolver(loginSchema) });
     const [hoverButton, setHoverButton] = useState(false); 
     const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +32,13 @@ function LoginPage() {
         setIsLoading(true);
         clearErrors("root");
         try{
-          const result = await loginRequest({ email: data.email, password: data.password });
+          const result = await loginRequest(data);
 
           if (!result?.success) {
             throw new Error(result?.message || "Login failed");
           }
 
+          setIsAuthenticated(true);
           navigate("/dashboard");
           
         }catch(error){

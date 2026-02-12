@@ -13,27 +13,34 @@ function SingupPage() {
     const navigate = useNavigate();
     const {register, handleSubmit, formState: { errors }, setError, clearErrors} = useForm({resolver: zodResolver(signUpSchema) });
     const [hoverButton, setHoverButton] = useState(false);
+    const [loading, setLoading]  = useState(false);
     
 
-    
 
-    const login = async (data) => {
-        clearErrors("root");
-        try{
-        const result = await signupRequest({
-          username: data.displayNames ?? data.displayName ?? data.username,
-          email: data.email,
-          password: data.password,
-        });
+    const onSubmit = async (data) => {
+      if(loading) return;
 
-        if(result?.success){
-          navigate("/login");
-          return;
-        }
-            
-        }catch(error){
-            setError("root", { type: "server", message: error?.message || "Signup failed" });
-        }
+      setLoading(true);
+      clearErrors("root");
+      try{
+      const result = await signupRequest({
+        username: data.displayNames ?? data.displayName ?? data.username,
+        email: data.email,
+        password: data.password,
+      });
+
+      if(!result?.success){
+       throw new Error(result?.message || "Signup failed");
+      }
+
+      navigate("/login");
+          
+      }catch(error){
+          setError("root", { type: "server", message: error?.message || "Signup failed" });
+      }finally{
+        setLoading(false);
+      }
+      
     }
     
   return (
@@ -185,7 +192,17 @@ function SingupPage() {
               }}
               className="absolute bg-gradient-to-br from-brand-primary/30 via-brand-secondary/30 to-voiceAccent/30 rounded-xl -z-10"/>
 
-        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-4 p-10 relative ">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-10 relative ">
+              {errors.root && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-danger text-center"
+            >
+              {errors.root.message}
+            </motion.p>
+          )}
+
             <Input 
             label="Email" 
             type="email" 
@@ -225,7 +242,7 @@ function SingupPage() {
             />
             {errors.confirmPassword && <p className="text-danger mt-8 text-center">{errors.confirmPassword.message}</p> }
 
-            <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98">Sign Up</Button>
+            <Button className="bg-brand-primary text-white py-2 rounded-lg hover:bg-brand-secondary transition duration-200 hover:brightness-200 hover:scale-105 active:scale-98">{loading ? "Creating Account ..." : "Signup"}</Button>
         </form>
       </motion.div>
             <motion.div

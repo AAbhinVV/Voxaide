@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../../models/user.model.js";
+// import User from "../../models/user.model.js";
 import { redisClient } from "../../server.js";
 import constants from "../config/constant.js";
 

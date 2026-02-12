@@ -1,8 +1,8 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { OpenAI } from "openai";
-import constants from "../config/constant";
-import transcriptionModel from "../models/transcription.model";
-import voiceNoteModel from "../models/voiceNote.model";
+import constants from "../config/constant.js";
+import transcriptionModel from "../models/transcription.model.js";
+import voiceNoteModel from "../models/voiceNote.model.js";
 import generateChunksAndEmbeddings from "./embedding.service.js";
 import streamToBuffer from "../utils/streamToBuffer.js";
 import {File} from "node:buffer";
