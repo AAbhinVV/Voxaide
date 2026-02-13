@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 // import User from "../../models/user.model.js";
 import { redisClient } from "../../server.js";
-import constants from "../config/constant.js";
+import env from "../config/env.js";
 
 // export default function verifyJwt(req, res, next) {
 //   const authHeader = req.headers.authorization || req.headers.Authorization

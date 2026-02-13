@@ -11,6 +11,7 @@ import { generateVerificationToken } from "../utils/generateVerificationToken.js
 
 const register = async (req, res) => {
 	const sanitizedBody = sanitize(req.body);
+	console.log("Sanitized Body:", sanitizedBody.password); // Debugging line
 
 	const validation = registerSchema.safeParse(sanitizedBody);
 
@@ -32,20 +33,8 @@ const register = async (req, res) => {
 		return res.status(422).json({ success: false, message: firstErrorMessage });
 	}
 
-	const { email, username, password, role } = validation.data;
+	const { email, username, password } = validation.data;
 
-	const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
-
-	if (await redisClient.get(rateLimitKey)) {
-		return res
-			.status(429)
-			.json({
-				success: false,
-				message: "Too many registration attempts. Please try again later.",
-			});
-	}
-
-	await redisClient.set(rateLimitKey, "true", { EX: 60 });
 
 	try {
 		if (!username || !email || !password) {
@@ -70,6 +59,19 @@ const register = async (req, res) => {
 				});
 		}
 
+		const rateLimitKey = `register-rate-limit:${req.ip}:${email}`;
+
+		if (await redisClient.get(rateLimitKey)) {
+			return res
+				.status(429)
+				.json({
+					success: false,
+					message: "Too many registration attempts. Please try again later.",
+				});
+		}
+
+		await redisClient.set(rateLimitKey, "true", { EX: 60 });
+
 		const hashedpassword = bcrypt.hashSync(password, 10);
 		const verificationToken = generateVerificationToken();
 		const verifyKey = `verify-token:${verificationToken}`;
@@ -77,7 +79,7 @@ const register = async (req, res) => {
 		const dataStore = JSON.stringify({
 			email: normalizedEmail,
 			username,
-			role,
+			
 		});
 
 		await redisClient.set(verifyKey, dataStore, { EX: 300 });
@@ -91,7 +93,6 @@ const register = async (req, res) => {
 			email: normalizedEmail,
 			passwordHash: hashedpassword,
 			username,
-			role,
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 1 day
 		});

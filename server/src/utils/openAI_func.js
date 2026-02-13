@@ -1,11 +1,11 @@
-import constants from "constants";
+import env from "../config/env.js";
 import dotenv from "dotenv";
 import fs from "fs";
 import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 
 dotenv.config();
-const apiKey = constants.openai_api_key;
+const apiKey = env.openai_api_key;
 
 if (!apiKey) {
 	throw new Error("No OpenAI API key provided");

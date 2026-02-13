@@ -1,6 +1,6 @@
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
-import constants from "../../config/constant.js"
+import env from "../../config/env.js"
 import {querySchema} from "../../config/zod.js"
 
 const retrieveRelevantChunks = async ({ userId, question }) => {
@@ -21,7 +21,7 @@ const retrieveRelevantChunks = async ({ userId, question }) => {
 	//search pinecone for top k chunks using userId filter
 
 	const pinecone = new Pinecone({
-		apiKey: constants.pinecone_api_key,
+		apiKey: env.pinecone_api_key,
 	});
 
 	const pineconeIndex = pinecone.index("voxaide");

@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
-import constants from "../config/constant.js";
+import env from "../config/env.js";
 import {redisClient} from "../../server.js"
 
 export const generateTokenAndSetCookie = async (res, userId) => {
-	const accessToken = jwt.sign({ userId }, constants.access_token, {
+	const accessToken = jwt.sign({ userId }, env.access_token, {
 		expiresIn: "15m",
 	});
 
-	const refreshToken = jwt.sign({ userId }, constants.refresh_token, {
+	const refreshToken = jwt.sign({ userId }, env.refresh_token, {
 		expiresIn: "7d",
 	});
 
@@ -39,7 +39,7 @@ export const generateTokenAndSetCookie = async (res, userId) => {
 
 export const verifyRefreshToken = async (token) => {
 	try {
-		const decoded = jwt.verify(token, constants.refresh_token);
+		const decoded = jwt.verify(token, env.refresh_token);
 
 		const storedToken = await redisClient.get(`refreshToken:${decoded.userId}`);
 
@@ -53,7 +53,7 @@ export const verifyRefreshToken = async (token) => {
 };
 
 export const generateAccessToken = (userId, res) => {
-	const accessToken = jwt.sign({ userId }, constants.access_token, {
+	const accessToken = jwt.sign({ userId }, env.access_token, {
 		expiresIn: "15m",
 	});
 

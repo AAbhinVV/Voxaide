@@ -1,4 +1,4 @@
-import constants from "constants";
+import env from "./src/config/env.js"
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
@@ -15,25 +15,25 @@ import voiceNotesRoutes from "./src/routes/voiceNotes.routes.js";
 
 dotenv.config();
 const app = express();
-const PORT = constants.port || 5000;
+const PORT = env.port || 5000;
 
-const redisUrl = constants.redis_url;
+const redisUrl = env.redis_url;
 
 if (!redisUrl) {
 	console.error("missing redis url");
 	process.exit(1);
 }
 
-export const redisClient = createClient({ url: redisUrl });
+export const redisClient = createClient();
 
-redisClient
+await redisClient
 	.connect()
 	.then(() => console.log("Connected to Redis"))
 	.catch(console.error);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser(constants.cookie_secret));
+app.use(cookieParser(env.cookie_secret));
 
 // serve uploaded files statically
 // app.use('/uploads', express.static(path.resolve('uploads')))
@@ -52,6 +52,9 @@ app.use("/api/v1/notes", notesRoutes);
 app.use("/api/v1/transcriptions", transcriptionRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/query", queryRoutes);
+app.get("/api/v1/test", (req, res) => {
+	res.json({ message: "API is working" });
+});
 
 app.listen(PORT, async () => {
 	await connectDB();

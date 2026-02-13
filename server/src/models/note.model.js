@@ -6,13 +6,13 @@ const NoteSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true,
-			index: true,
+	
 		},
 		transcriptionId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Transcription",
 			required: true,
-			index: true,
+			
 			unique: true,
 		},
 		title: { type: String, required: true },

@@ -1,15 +1,15 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { OpenAI } from "openai";
-import constants from "../config/constant.js";
+import env from "../config/env.js";
 import transcriptionModel from "../models/transcription.model.js";
 import voiceNoteModel from "../models/voiceNote.model.js";
 import generateChunksAndEmbeddings from "./embedding.service.js";
 import streamToBuffer from "../utils/streamToBuffer.js";
 import {File} from "node:buffer";
 
-const s3 = new S3Client({ region: constants.aws_region });
+const s3 = new S3Client({ region: env.aws_region });
 
-const client = new OpenAI({ apiKey: constants.openai_api_key });
+const client = new OpenAI({ apiKey: env.openai_api_key });
 
 const startTranscriptionJob = async (voiceNoteId, userId) => {
 	const voiceNoteInstance = await voiceNoteModel.findOne({
@@ -27,14 +27,14 @@ const startTranscriptionJob = async (voiceNoteId, userId) => {
 
 	const s3Response = await s3.send(
 		new GetObjectCommand({
-			Bucket: constants.aws_bucket_name,
+			Bucket: env.aws_bucket_name,
 			Key: voiceNoteInstance.s3Key,
 		}),
 	);
 
 	const voiceNoteBuffer = await streamToBuffer(s3Response.Body);
 
-	if (!voiceNote) {
+	if (!voiceNoteBuffer) {
 		throw new Error("Voice note file not found in S3");
 	}
 

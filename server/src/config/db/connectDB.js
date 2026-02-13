@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+import env from "../env.js"
+
 export const connectDB = async () => {
 	try {
-		console.log("mongo_uri: ", process.env.MONGO_URI);
-		const conn = await mongoose.connect(process.env.MONGO_URI, {
+		
+		const conn = await mongoose.connect(env.mongo_uri, {
 			dbname: "voxiadeDB",
 		});
 		console.log(`MongoDB connected: ${conn.connection.host}`);

@@ -2,7 +2,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { encoding_for_model } from "tiktoken";
-import constants from "../config/constant.js";
+import env from "../config/env.js";
 import TranscriptionChunk from "../models/chunks.model.js";
 
 /**
@@ -52,7 +52,7 @@ const generateChunksAndEmbeddings = async ({
 
 	//********************************************storing in pinecone************************************************
 	const pinecone = new PineconeClient({
-		apiKey: constants.pinecone_api_key,
+		apiKey: env.pinecone_api_key,
 	});
 
 	const pineconeIndex = pinecone.Index("voxaide");

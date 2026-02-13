@@ -1,7 +1,7 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import multer from "multer";
 import multers3, { AUTO_CONTENT_TYPE } from "multer-s3";
-import constants from "../config/constant.js"
+import env from "../config/env.js"
 import voiceNoteModel from "../models/voiceNote.model.js";
 import streamToBuffer from "../utils/streamToBuffer.js";
 import transcriptionModel from "../models/transcription.model.js";
@@ -11,23 +11,23 @@ import dotenv from "dotenv";
 
 dotenv.config({path: "../../.env"});
 
-const s3 = new S3Client({ region: constants.aws_region });
+const s3 = new S3Client({ region: env.aws_region });
 
 
 const pinecone = new Pinecone({
-	apiKey: constants.pinecone_api_key
+	apiKey: env.pinecone_api_key,
 });
 
-if(!constants.pinecone_api_key){
+if(!env.pinecone_api_key){
 	throw new Error("Pinecone API key is not set in environment variables");
 }
 
-const pineconeIndex = pinecone.Index(constants.pinecone_index_name);
+const pineconeIndex = pinecone.Index(env.pinecone_index_name);
 
 export const upload = multer({
 	storage: multers3({
 		s3: s3,
-		bucket: constants.aws_bucket_name,
+		bucket: env.aws_bucket_name,
 		contentType: AUTO_CONTENT_TYPE,
 		metadata: (req, file, cb) => {
 			cb(null, {
@@ -64,7 +64,7 @@ export const getVoiceNoteFile = async (voiceNoteId, userId) => {
 
 	const s3Response = await s3.send(
 		new GetObjectCommand({
-			Bucket: constants.aws_bucket_name,
+			Bucket: env.aws_bucket_name,
 			Key: voiceNotesInstance.s3Key,
 		})
 	)
@@ -95,7 +95,7 @@ export const deleteVoiceNoteFile = async(voiceNoteId, userId) => {
 	
 	await s3.send(
 		new DeleteObjectCommand({
-			Bucket: constants.aws_bucket_name,
+			Bucket: process.env.AWS_BUCKET_NAME,
 			Key: voiceNote.s3Key,
 		})
 	)

@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
 	{
-		email: { type: String, required: true, unique: true, index: true },
-		username: { type: String, required: true, index: true },
+		email: { type: String, required: true},
+		username: { type: String, required: true},
 		passwordHash: { type: String, required: true },
 		role: { type: String, enum: ["USER", "ADMIN"], default: "USER" },
 		lastLogin: { type: Date, default: Date.now },
@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema(
 	},
 );
 
-UserSchema.index({ email: 1 });
+UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ username: 1 });
 
 export default mongoose.model("User", UserSchema);
