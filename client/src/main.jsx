@@ -18,6 +18,7 @@ import SidebarLayout from "./pages/SidebarLayout.jsx";
 import UserProfile from "./pages/Profile/UserProfile.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import {AuthProvider} from "./hooks/AuthContext.jsx";
+import PublicOnlyRoute from "./routes/PublicOnlyRoute.jsx";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -25,12 +26,10 @@ const router = createBrowserRouter(
 			<Route
 				path="/"
 				element={
-					<SidebarLayout>
 						<Home />
-					</SidebarLayout>
 				}
 			/>
-			<Route element = {ProtectedRoute} >
+			{/* <Route element = {ProtectedRoute} > */}
 				<Route
 				path="/dashboard"
 				element={
@@ -39,7 +38,19 @@ const router = createBrowserRouter(
 					</SidebarLayout>
 				}
 			/>
-			</Route>
+
+			{/* <Route element = {ProtectedRoute} > */}
+				<Route
+				path="/notes"
+				element={
+					<SidebarLayout>
+						<NotesDashboard />
+					</SidebarLayout>
+				}
+			/>
+
+
+			{/* </Route> */}
 			<Route path="/login" element={
 				<PublicOnlyRoute>
 					<LoginPage />

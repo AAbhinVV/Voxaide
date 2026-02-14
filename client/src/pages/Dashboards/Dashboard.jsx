@@ -1,11 +1,11 @@
 import { Mic, Pause, Play, Sidebar, Square, Trash2, Upload, ArrowBigDownDash } from "lucide-react";
 import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, color, motion } from "motion/react";
 import { SidebarDemo } from "../../components/Sidebar.jsx";
 import { StatusCard, Card, PopUp } from "../../components/exports.js";
 import { LoaderOne, LoaderTwo } from "../../components/ui/loader.jsx";
 import { PulsatingButton } from "../../components/ui/pulsating-button.jsx";
-import { Spinner } from "@heroui/spinner";
+import {Spinner} from "@heroui/spinner";
 import FlowingBubble from "../../components/FlowingBubble.jsx";
 
 export default function Dashboard() {
@@ -150,26 +150,29 @@ export default function Dashboard() {
 		{
 			title: "Total Notes",
 			value: "150",
+			color: "text-purple-600",
 		},
 		{
 			title: "Total Recordings",
 			value: "35",
+			color: "text-blue-600",
 		},
 		{
 			title: "Time Saved",
 			value: "5hrs",
+			color: "text-green-600",
 		},
 	];
 
 	return (
-		<motion.div className="min-h-fit bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40 overflow-y-hidden">
+		<motion.div className="h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40 overflow-hidden">
 			{/* Ambient background elements */}
 			<div className="fixed inset-0 pointer-events-none">
 				<div className=" top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-purple-200/20 via-blue-200/10 to-transparent rounded-full blur-3xl" />
 				<div className=" bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-200/20 via-purple-200/10 to-transparent rounded-full blur-3xl" />
 			</div>
 
-			<main className="relative min-h-screen flex flex-col max-w-[1800px] ">
+			<main className="relative h-full flex flex-col max-w-[1800px] overflow-hidden">
 				{/* Header Section */}
 				<div className="flex w-full justify-between items-start gap-8 flex-wrap lg:flex-nowrap">
 					<div className="flex-1 min-w-[300px]">
@@ -203,7 +206,7 @@ export default function Dashboard() {
 							</motion.h2>
 
 							{loading ? (
-								<LoaderOne />
+								<Spinner size ="sm" color = "primary"/>
 							) : (
 								<motion.p
 									initial={{ opacity: 0, x: -10 }}
@@ -235,10 +238,10 @@ export default function Dashboard() {
 							>
 								<div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 								<div className="relative bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-									<div className="text-xs font-mono tracking-wider text-slate-500 uppercase mb-2">
+									<div className="text-xs font-headings tracking-wider text-slate-500 uppercase mb-2">
 										{stat.title}
 									</div>
-									<div className="text-3xl font-light text-slate-800">
+									<div className={`text-3xl font-bold font-body ${stat.color}`}>
 										{stat.value}
 									</div>
 								</div>
