@@ -15,15 +15,21 @@ export const generateTokenAndSetCookie = async (res, userId) => {
 
 	await redisClient.set(
 		refreshTokenKey,
-		{ EX: 7 * 24 * 60 * 60 },
 		refreshToken,
+		{ EX: 7 * 24 * 60 * 60 },
 	);
 
 	if (!accessToken || !refreshToken) {
 		throw new Error("No tokens generated");
 	}
 
-	res.json({ accessToken });
+	res.cookie("accessToken", accessToken, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		maxAge: 15 * 60 * 1000, // 15 minutes
+		sameSite: "strict",
+		path: "/",
+	});
 
 	res.cookie("refreshToken", refreshToken, {
 		signed: true,
@@ -31,7 +37,7 @@ export const generateTokenAndSetCookie = async (res, userId) => {
 		secure: process.env.NODE_ENV === "production",
 		maxAge: 7 * 24 * 60 * 60 * 1000,
 		sameSite: "strict",
-		path: "http://localhost:5173",
+		path: "/",
 	});
 
 	return { accessToken, refreshToken };
@@ -57,7 +63,7 @@ export const generateAccessToken = (userId, res) => {
 		expiresIn: "15m",
 	});
 
-	res.json({ accessToken });
+	return accessToken
 };
 
 export const revokeRefreshToken = async (userId) => {

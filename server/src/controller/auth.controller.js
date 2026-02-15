@@ -230,7 +230,7 @@ const login = async (req, res) => {
 
 		const normalizedEmail = email.toLowerCase().trim();
 
-		const user = await User.findOne({ normalizedEmail });
+		const user = await User.findOne({ email:normalizedEmail });
 
 		if (!user) {
 			await redisClient
@@ -238,13 +238,13 @@ const login = async (req, res) => {
 				.incr(rateLimitKey)
 				.expire(rateLimitKey, 600) // 10 minutes
 				.exec();
-			return res.status(404).send({ message: "Invalid credentials" });
+			return res.status(404).json({ message: "Invalid credentials" });
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
 		if (!isPasswordValid) {
-			return res.status(401).send({ message: "Invalid credentials" });
+			return res.status(401).json({ message: "Invalid credentials" });
 		}
 
 		/***********OTP LOGIC*************/
@@ -261,13 +261,13 @@ const login = async (req, res) => {
 
 		await redisClient.del(rateLimitKey); // Clear login attempts on successful login
 
-		const { accessToken, refreshToken } = generateTokenAndSetCookie(
+		const { accessToken, refreshToken } = await generateTokenAndSetCookie(
 			res,
 			user._id,
 		);
 
 		if (!accessToken || !refreshToken)
-			throw new ExpressError(500, "No tokens generated");
+			throw new Error(500, "No tokens generated");
 
 		res.status(201).json({
 			success: true,
@@ -370,7 +370,7 @@ const refreshToken = async (req, res) => {
 				.json({ message: "Forbidden: Invalid refresh token" });
 		}
 
-		generateAccessToken(decoded.userId, res);
+		const accessToken = await generateAccessToken(decoded.userId, res);
 
 		jwt.verify(
 			refreshToken,
