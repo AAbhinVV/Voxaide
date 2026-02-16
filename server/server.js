@@ -24,7 +24,7 @@ if (!redisUrl) {
 	process.exit(1);
 }
 
-export const redisClient = createClient();
+export const redisClient = createClient({url: env.redisUrl});
 
 await redisClient
 	.connect()
