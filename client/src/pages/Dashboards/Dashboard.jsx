@@ -165,11 +165,11 @@ export default function Dashboard() {
 	];
 
 	return (
-		<motion.div className="h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40 overflow-hidden">
+		<motion.div className="h-screen bg-gradient-to-br from-page-grad-from via-page-grad-via to-page-grad-to overflow-hidden">
 			{/* Ambient background elements */}
 			<div className="fixed inset-0 pointer-events-none">
-				<div className=" top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-purple-200/20 via-blue-200/10 to-transparent rounded-full blur-3xl" />
-				<div className=" bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-200/20 via-purple-200/10 to-transparent rounded-full blur-3xl" />
+				<div className=" top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-brand-primary/10 via-accentGlow/5 to-transparent rounded-full blur-3xl" />
+				<div className=" bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-brand-secondary/10 via-brand-primary/5 to-transparent rounded-full blur-3xl" />
 			</div>
 
 			<main className="relative h-full flex flex-col max-w-[1800px] overflow-hidden">
@@ -182,7 +182,7 @@ export default function Dashboard() {
 							transition={{ delay: 0.2, duration: 0.6 }}
 							className="inline-block"
 						>
-							<div className="text-xs font-mono tracking-[0.3em] text-slate-400 mb-6 uppercase">
+							<div className="text-xs font-mono tracking-[0.3em] text-text-muted mb-6 uppercase">
 								Dashboard
 							</div>
 						</motion.div>
@@ -192,7 +192,7 @@ export default function Dashboard() {
 								initial={{ opacity: 0, x: -20 }}
 								animate={{ opacity: 1, x: 0 }}
 								transition={{ delay: 0.4, duration: 0.6 }}
-								className="text-5xl md:text-6xl lg:text-7xl font-light text-slate-800 leading-tight"
+								className="text-5xl md:text-6xl lg:text-7xl font-light text-text-primary leading-tight"
 							>
 								Welcome back,
 							</motion.h2>
@@ -212,7 +212,7 @@ export default function Dashboard() {
 									initial={{ opacity: 0, x: -10 }}
 									animate={{ opacity: 1, x: 0 }}
 									transition={{ delay: 0.6, duration: 0.6 }}
-									className="text-sm font-light text-slate-500 pt-4 flex items-center gap-2"
+									className="text-sm font-light text-text-secondary pt-4 flex items-center gap-2"
 								>
 									<span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
 									Last note created 2 hours ago
@@ -236,9 +236,9 @@ export default function Dashboard() {
 								key={index}
 								className="group relative"
 							>
-								<div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-								<div className="relative bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-									<div className="text-xs font-headings tracking-wider text-slate-500 uppercase mb-2">
+								<div className="absolute inset-0 bg-gradient-to-r from-brand-primary/20 to-accentGlow/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+								<div className="relative bg-glass-surface backdrop-blur-xl border border-glass-border rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+									<div className="text-xs font-headings tracking-wider text-text-secondary uppercase mb-2">
 										{stat.title}
 									</div>
 									<div className={`text-3xl font-bold font-body ${stat.color}`}>
@@ -271,7 +271,7 @@ export default function Dashboard() {
 						transition={{ delay: 1, duration: 0.6 }}
 						className="text-center space-y-2"
 					>
-						<p className="text-lg font-light text-slate-600">
+						<p className="text-lg font-light text-text-secondary">
 							One tap to start thinking out loud
 						</p>
 						
@@ -286,7 +286,7 @@ export default function Dashboard() {
 						transition={{ delay: 0.8, duration: 0.6 }}
 						className="mb-8"
 					>
-						<h3 className="text-xs font-mono tracking-[0.3em] text-slate-400 uppercase mb-6">
+						<h3 className="text-xs font-mono tracking-[0.3em] text-text-muted uppercase mb-6">
 							Recent Notes
 						</h3>
 					</motion.div>
@@ -300,30 +300,30 @@ export default function Dashboard() {
 								transition={{ delay: 0.9 + index * 0.1, duration: 0.5 }}
 								className="group relative"
 							>
-								<div className="absolute inset-0 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-								<div className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
+								<div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+								<div className="relative bg-glass-surface/85 dark:bg-glass-surface backdrop-blur-xl border border-glass-border rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
 									{/* Decorative corner accent */}
-									<div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-transparent rounded-bl-3xl" />
+									<div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-brand-primary/20 to-transparent rounded-bl-3xl" />
 									
 									<div className="relative space-y-4">
 										<div className="flex items-start justify-between">
-											<h4 className="text-lg font-medium text-slate-800">
+											<h4 className="text-lg font-medium text-text-primary">
 												{note.title}
 											</h4>
-											<div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-blue-400" />
+											<div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-primary to-accentGlow" />
 										</div>
 										
-										<p className="text-sm font-light text-slate-600 leading-relaxed line-clamp-6">
+										<p className="text-sm font-light text-text-secondary leading-relaxed line-clamp-6">
 											{note.content}
 										</p>
 										
 										<div className="pt-2 flex items-center justify-between">
-											<span className="text-xs font-mono text-slate-400">
+											<span className="text-xs font-mono text-text-muted">
 												2h ago
 											</span>
 											<button
 												onClick={onExpand}
-												className="text-xs font-mono text-purple-600 hover:text-purple-700 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+												className="text-xs font-mono text-text-accent hover:brightness-110 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
 											>
 												Expand →
 											</button>
@@ -345,7 +345,7 @@ export default function Dashboard() {
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
 								transition={{ duration: 0.3 }}
-								className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-40"
+								className="fixed inset-0 bg-black/60 backdrop-blur-md z-40"
 								onClick={onExpand}
 							/>
 
@@ -357,7 +357,7 @@ export default function Dashboard() {
 								exit={{ opacity: 0, scale: 0.95 }}
 								transition={{ duration: 0.3 }}
 							>
-								<div className="relative bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-auto">
+								<div className="relative bg-glass-surface/95 dark:bg-bg-card/95 backdrop-blur-2xl border border-glass-border rounded-3xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-auto">
 									<PopUp
 										title="Note 1"
 										recordDate="Recorded 2 hours ago"

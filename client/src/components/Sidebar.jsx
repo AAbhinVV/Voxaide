@@ -122,13 +122,15 @@
 
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar.jsx";
-import { User, House, Voicemail, NotepadText, Settings, LogOut, Bell } from "lucide-react";
+import { User, House, Voicemail, NotepadText, Settings, LogOut, Bell, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useThemeContext } from "../hooks/exports.js";
 
 export function SidebarDemo({ children }) {
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("/dashboard");
+  const { theme, toggleTheme } = useThemeContext();
 
   const links = [
     {
@@ -160,7 +162,7 @@ export function SidebarDemo({ children }) {
 		)}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10 bg-gradient-to-b from-[#5B21B6] via-[#4C1D95] to-[#3B0F7F] shadow-2xl">
+        <SidebarBody className="justify-between gap-10 bg-gradient-to-b from-sidebar-grad-from via-sidebar-grad-via to-sidebar-grad-to shadow-2xl">
           {/* Top Section */}
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {/* Logo with animation */}
@@ -206,6 +208,31 @@ export function SidebarDemo({ children }) {
                 href="/settings"
                 isOpen={open}
               />
+              <button
+                onClick={toggleTheme}
+                className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/60 transition-all hover:bg-white/5 hover:text-white/90 cursor-pointer"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5 transition-transform group-hover:scale-110 group-hover:rotate-45" />
+                ) : (
+                  <Moon className="h-5 w-5 transition-transform group-hover:scale-110 group-hover:-rotate-12" />
+                )}
+                {open && (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm font-medium"
+                  >
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </motion.span>
+                )}
+                {!open && (
+                  <div className="pointer-events-none absolute left-full ml-2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1.5 text-xs text-white opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+                  </div>
+                )}
+              </button>
             </motion.div>
           </div>
 
