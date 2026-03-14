@@ -293,44 +293,46 @@ export default function Dashboard() {
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{NoteCard.map((note, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0, y: 30 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.9 + index * 0.1, duration: 0.5 }}
-								className="group relative"
-							>
-								<div className="absolute inset-0 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-								<div className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
-									{/* Decorative corner accent */}
-									<div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-transparent rounded-bl-3xl" />
+							// <motion.div
+							// 	key={index}
+							// 	initial={{ opacity: 0, y: 30 }}
+							// 	animate={{ opacity: 1, y: 0 }}
+							// 	transition={{ delay: 0.9 + index * 0.1, duration: 0.5 }}
+							// 	className="group relative"
+							// >
+							// 	<div className="absolute inset-0 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+							// 	<div className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
+							// 		{/* Decorative corner accent */}
+							// 		<div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-transparent rounded-bl-3xl" />
 									
-									<div className="relative space-y-4">
-										<div className="flex items-start justify-between">
-											<h4 className="text-lg font-medium text-slate-800">
-												{note.title}
-											</h4>
-											<div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-blue-400" />
-										</div>
+							// 		<div className="relative space-y-4">
+							// 			<div className="flex items-start justify-between">
+							// 				<h4 className="text-lg font-medium text-slate-800">
+							// 					{note.title}
+							// 				</h4>
+							// 				<div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-blue-400" />
+							// 			</div>
 										
-										<p className="text-sm font-light text-slate-600 leading-relaxed line-clamp-6">
-											{note.content}
-										</p>
+							// 			<p className="text-sm font-light text-slate-600 leading-relaxed line-clamp-6">
+							// 				{note.content}
+							// 			</p>
 										
-										<div className="pt-2 flex items-center justify-between">
-											<span className="text-xs font-mono text-slate-400">
-												2h ago
-											</span>
-											<button
-												onClick={onExpand}
-												className="text-xs font-mono text-purple-600 hover:text-purple-700 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-											>
-												Expand →
-											</button>
-										</div>
-									</div>
-								</div>
-							</motion.div>
+							// 			<div className="pt-2 flex items-center justify-between">
+							// 				<span className="text-xs font-mono text-slate-400">
+							// 					2h ago
+							// 				</span>
+							// 				<button
+							// 					onClick={onExpand}
+							// 					className="text-xs font-mono text-purple-600 hover:text-purple-700 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+							// 				>
+							// 					Expand →
+							// 				</button>
+							// 			</div>
+							// 		</div>
+							// 	</div>
+							// </motion.div>
+							<Card  title={note.title} content={note.content} date={note.date} onExpand={onExpand}/>
+
 						))}
 					</div>
 				</div>
