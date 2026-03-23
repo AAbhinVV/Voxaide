@@ -1,14 +1,22 @@
 import { useEffect, useState, useContext, createContext, useRef, useCallback } from "react";
+import {
+	uploadVoiceNoteRequest,
+	getAllVoiceNotesRequest,
+	deleteVoiceNoteRequest,
+} from "../apis/recording/apis";
 
-const AuthContext = createContext(null);
+const AudioCtx = createContext(null);
 
-export const useAudioContext = () => useContext(AuthContext);
+export const useAudioContext = () => useContext(AudioCtx);
 
 export const AudioProvider = ({ children }) => {
 	const [recordingState, setRecordingState] = useState("idle");
 	const [recordingUrl, setRecordingUrl] = useState(null);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
+	const [uploadStatus, setUploadStatus] = useState("idle"); // idle | uploading | success | error
+	const [voiceNotes, setVoiceNotes] = useState([]);
+	const recordedBlobRef = useRef(null);
 	const audioRef = useRef(null);
 	const mediaRecorderRef = useRef(null);
 	const chunksRef = useRef([]);
@@ -72,6 +80,7 @@ export const AudioProvider = ({ children }) => {
 				const blob = new Blob(chunksRef.current, { type: mimeType });
 				const url = URL.createObjectURL(blob);
 				setRecordingUrl(url);
+				recordedBlobRef.current = blob;
 			};
 
 			mediaRecorderRef.current.start(1000);
@@ -120,7 +129,7 @@ export const AudioProvider = ({ children }) => {
 		}
 	};
 
-	const discardRecording = () => {
+	const resetRecording = () => {
 		if (recordingUrl) {
 			URL.revokeObjectURL(recordingUrl);
 		}
@@ -128,12 +137,50 @@ export const AudioProvider = ({ children }) => {
 		setRecordingState("idle");
 		setIsPlaying(false);
 		setElapsed(0);
+		setUploadStatus("idle");
 		streamRef.current = null;
+		recordedBlobRef.current = null;
 	};
 
-	const uploadRecording = () => {
-		alert("Upload functionality would be implemented here!");
-		discardRecording();
+	const discardRecording = () => {
+		resetRecording();
+	};
+
+	const uploadRecording = async () => {
+		if (!recordedBlobRef.current) return;
+		try {
+			setUploadStatus("uploading");
+			const formData = new FormData();
+			formData.append("audioFile", recordedBlobRef.current, "recording.webm");
+			await uploadVoiceNoteRequest(formData);
+			setUploadStatus("success");
+			// Refresh voice notes list after successful upload
+			await fetchVoiceNotes();
+			// Reset after a brief delay so user sees success state
+			setTimeout(() => resetRecording(), 1500);
+		} catch (err) {
+			console.error("Upload failed:", err);
+			setUploadStatus("error");
+		}
+	};
+
+	const fetchVoiceNotes = async () => {
+		try {
+			const data = await getAllVoiceNotesRequest();
+			setVoiceNotes(data);
+			return data;
+		} catch (err) {
+			console.error("Failed to fetch voice notes:", err);
+		}
+	};
+
+	const deleteVoiceNote = async (id) => {
+		try {
+			await deleteVoiceNoteRequest(id);
+			setVoiceNotes((prev) => prev.filter((note) => note._id !== id));
+		} catch (err) {
+			console.error("Failed to delete voice note:", err);
+		}
 	};
 
 	const togglePlayPause = () => {
@@ -148,12 +195,14 @@ export const AudioProvider = ({ children }) => {
 	};
 
 	return (
-		<AuthContext.Provider
+		<AudioCtx.Provider
 			value={{
 				recordingState,
 				recordingUrl,
 				isPlaying,
 				elapsed,
+				uploadStatus,
+				voiceNotes,
 				audioRef,
 				streamRef,
 				startRecording,
@@ -164,9 +213,11 @@ export const AudioProvider = ({ children }) => {
 				uploadRecording,
 				togglePlayPause,
 				formatTime,
+				fetchVoiceNotes,
+				deleteVoiceNote,
 			}}
 		>
 			{children}
-		</AuthContext.Provider>
+		</AudioCtx.Provider>
 	);
 };
