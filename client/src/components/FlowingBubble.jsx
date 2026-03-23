@@ -1,10 +1,17 @@
 import React from 'react';
 
-export default function FlowingBubble({ className = "" }) {
+export default function FlowingBubble({ className = "", onClick }) {
   return (
-    <div className={`relative ${className}`} style={{ width: '300px', height: '300px' }}>
+    <div
+      className={`relative ${className}`}
+      style={{ width: '300px', height: '300px' }}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
+    >
       {/* Main bubble container */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-105">
         <div className="relative w-full h-full">
           {/* Animated gradient layers */}
           <div className="flowing-bubble absolute inset-0 rounded-full" />

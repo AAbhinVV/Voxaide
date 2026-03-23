@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginRequest, meRequest } from "../../apis/apis";
+import { loginRequest, meRequest } from "../../apis/auth/apis";
 import { useAuth } from "../../hooks/AuthContext";
 
 

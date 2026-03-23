@@ -17,7 +17,7 @@ import Dashboard from "./pages/Dashboards/Dashboard.jsx";
 import SidebarLayout from "./pages/SidebarLayout.jsx";
 import UserProfile from "./pages/Profile/UserProfile.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import { AuthProvider, ThemeProvider } from "./hooks/exports.js"
+import { AuthProvider, ThemeProvider, AudioProvider } from "./hooks/exports.js"
 import PublicOnlyRoute from "./routes/PublicOnlyRoute.jsx";
 
 const router = createBrowserRouter(
@@ -69,7 +69,9 @@ createRoot(document.getElementById("root")).render(
 	<StrictMode>
 		<AuthProvider>
 			<ThemeProvider>
-				<RouterProvider router={router} />
+				<AudioProvider>
+					<RouterProvider router={router} />
+				</AudioProvider>
 			</ThemeProvider>
 		</AuthProvider>
 	</StrictMode>,

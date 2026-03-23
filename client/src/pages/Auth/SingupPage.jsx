@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { signUpSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupRequest } from "../../apis/apis";
+import { signupRequest } from "../../apis/auth/apis";
 
 
 
