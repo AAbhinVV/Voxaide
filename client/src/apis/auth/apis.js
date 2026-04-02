@@ -1,4 +1,3 @@
-import { IconBrandWindows } from '@tabler/icons-react';
 import axios from 'axios';
 
 const baseURL = 'http://localhost:5000/api/v1';
@@ -6,7 +5,7 @@ const baseURL = 'http://localhost:5000/api/v1';
 export const customAxios = axios.create({ baseURL });
 
 
-const refreshTokenRequest = async () => {
+const requestRefreshToken = async () => {
     return axios.post(`${baseURL}/auth/refresh-token`, {}, { withCredentials: true });
 };
 
@@ -19,11 +18,11 @@ customAxios.interceptors.response.use(
         if (status === 403 && originalRequest && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                await refreshTokenRequest();
+                await requestRefreshToken();
                 return customAxios(originalRequest);
             } catch (refreshError) {
                 await customAxios.post('/auth/logout', {}, { withCredentials: true });
-                window.location.href = '/auth/login'
+                window.location.href = '/login'
                 return Promise.reject(refreshError);
             }
         }
@@ -53,11 +52,21 @@ export const signupRequest = async ({ username, email, password }) => {
 };
 
 export const logoutRequest = async () => {
-    customAxios.post('/auth/logout', {}, { withCredentials: true });
-    
-}
+    const response = await customAxios.post('/auth/logout', {}, { withCredentials: true });
+    return response.data;
+};
 
 export const meRequest = async () => {
     const response = await customAxios.get('/auth/me', { withCredentials: true });
     return response.data;
-}
+};
+
+export const verifyUserRequest = async (token) => {
+    const response = await customAxios.post(`/auth/verify/${token}`, {}, { withCredentials: true });
+    return response.data;
+};
+
+export const refreshTokenRequest = async () => {
+    const response = await customAxios.post('/auth/refresh-token', {}, { withCredentials: true });
+    return response.data;
+};

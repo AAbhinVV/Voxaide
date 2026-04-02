@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import multer from "multer";
 import multers3, { AUTO_CONTENT_TYPE } from "multer-s3";
 import env from "../config/env.js"
@@ -82,48 +82,55 @@ export const getVoiceNoteFile = async (voiceNoteId, userId) => {
 	}
 }
 
-export const deleteVoiceNoteFile = async(voiceNoteId, userId) => {
-	
+export const deleteVoiceNoteFile = async (voiceNoteId, userId) => {
 	const voiceNote = await voiceNoteModel.findOne({
 		_id: voiceNoteId,
 		userId: userId,
-	})
-	
-	if(!voiceNote){
+	});
+
+	if (!voiceNote) {
 		throw new Error("Voice note not found. Recheck the ID");
 	}
-	
+
+	const transcription = await transcriptionModel.findOne({
+		voiceNoteId,
+		userId,
+	});
+
+	if (transcription) {
+		await TranscriptionChunk.deleteMany({
+			transcriptionId: transcription._id,
+			userId,
+		});
+
+		try {
+			await pineconeIndex.deleteMany({
+				filter: {
+					userId: userId.toString(),
+					transcriptionId: transcription._id.toString(),
+				},
+			});
+		} catch (e) {
+			console.error("Pinecone deleteMany failed:", e);
+		}
+
+		await transcriptionModel.deleteOne({ _id: transcription._id });
+	}
+
 	await s3.send(
 		new DeleteObjectCommand({
-			Bucket: process.env.AWS_BUCKET_NAME,
+			Bucket: env.aws_bucket_name,
 			Key: voiceNote.s3Key,
-		})
-	)
-
-	await transcriptionModel.deleteOne({
-		voiceNoteId: voiceNoteId,
-		userId: userId,
-	})
-
-	await TranscriptionChunk.deleteMany({
-		transcriptionId: voiceNote.transcriptionId,
-		userId: userId,
-	})
-
-	await pineconeIndex.deleteMany({
-		filter:{
-			userId: userId.toString(),
-			transcriptionId: voiceNote.transcriptionIdId.toString(),
-		}
-	})
+		}),
+	);
 
 	await voiceNoteModel.deleteOne({
 		_id: voiceNoteId,
 		userId: userId,
-	})
+	});
 
 	return true;
-}
+};
 
 
 export const getAllVoiceNotesForUser = async (userId) => {

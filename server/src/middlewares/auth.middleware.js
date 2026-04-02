@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-// import User from "../../models/user.model.js";
+import User from "../models/user.model.js";
 import { redisClient } from "../../server.js";
 import env from "../config/env.js";
 
@@ -32,9 +32,13 @@ export const isAuth = async (req, res, next) => {
 			req.signedCookies?.accessToken ||
 			req.headers.authorization?.split(" ")[1];
 
-		const decoded = jwt.verify(token, constants.access_token);
-		if (!decoded) {
-			return res.status(401).json({ message: "token expired" });
+		if (!token) {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
+
+		const decoded = jwt.verify(token, env.access_token);
+		if (!decoded?.userId) {
+			return res.status(401).json({ message: "Invalid token" });
 		}
 
 		const cacheUser = await redisClient.get(`user:${decoded.userId}`);
@@ -43,7 +47,7 @@ export const isAuth = async (req, res, next) => {
 			return next();
 		}
 
-		const user = await User.findById(decoded.userId).select("-password");
+		const user = await User.findById(decoded.userId).select("-passwordHash");
 		if (!user) {
 			return res.status(401).json({ message: "No user with this id" });
 		}
@@ -56,6 +60,6 @@ export const isAuth = async (req, res, next) => {
 
 		next();
 	} catch (err) {
-		return res.status(500).json({ message: "Invalid token" });
+		return res.status(401).json({ message: "Invalid or expired token" });
 	}
 };

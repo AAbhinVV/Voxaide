@@ -13,6 +13,7 @@ const requiredEnvVars = [
 	"REDIS_URL",
 	"FRONTEND_URL",
 	"PINECONE_API_KEY",
+	"PINECONE_INDEX_NAME",
 	"AWS_REGION",
 	"S3_BUCKET_NAME",
 ]
@@ -33,6 +34,7 @@ const env = Object.freeze({
 	redis_url: process.env.REDIS_URL,
 	frontend_url: process.env.FRONTEND_URL,
 	pinecone_api_key: process.env.PINECONE_API_KEY,
+	pinecone_index_name: process.env.PINECONE_INDEX_NAME,
 	aws_region: process.env.AWS_REGION,
 	aws_bucket_name: process.env.S3_BUCKET_NAME,
 });

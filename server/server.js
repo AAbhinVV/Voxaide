@@ -1,5 +1,6 @@
 import env from "./src/config/env.js"
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 // import path from "path";
@@ -10,7 +11,7 @@ import authRoutes from "./src/routes/auth.routes.js";
 import queryRoutes from "./src/routes/query.routes.js";
 import transcriptionRoutes from "./src/routes/transcription.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
-import notesRoutes from "./src/routes/voiceNotes.routes.js";
+import notesRoutes from "./src/routes/notes.routes.js";
 import voiceNotesRoutes from "./src/routes/voiceNotes.routes.js";
 
 dotenv.config();
@@ -24,7 +25,7 @@ if (!redisUrl) {
 	process.exit(1);
 }
 
-export const redisClient = createClient({url: env.redisUrl});
+export const redisClient = createClient({ url: env.redis_url });
 
 await redisClient
 	.connect()
@@ -33,6 +34,12 @@ await redisClient
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+	cors({
+		origin: env.frontend_url,
+		credentials: true,
+	}),
+);
 app.use(cookieParser(env.cookie_secret));
 
 // serve uploaded files statically

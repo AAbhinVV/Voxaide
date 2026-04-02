@@ -1,4 +1,5 @@
-import notesGenerator from "../services/notes.service";
+import noteModel from "../models/note.model.js";
+import notesGenerator from "../services/notes.service.js";
 
 const createNotes = async (req, res) => {
 	const { transcriptionId } = req.body;
@@ -10,7 +11,7 @@ const createNotes = async (req, res) => {
 		return res
 			.status(200)
 			.json({
-				succcess: true,
+				success: true,
 				message: "Notes generated successfully",
 				data: notes,
 			});

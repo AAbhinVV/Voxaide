@@ -18,6 +18,8 @@ router.post(
 
 router.get("/", voiceNotesController.getAllVoiceNotes);
 
+router.get("/:id/meta", voiceNotesController.getVoiceNoteMetaById);
+
 router.get("/:id", voiceNotesController.getVoiceNoteById);
 
 router.delete("/:id", voiceNotesController.deleteVoiceNote);

@@ -29,28 +29,27 @@ const router = createBrowserRouter(
 						<Home />
 				}
 			/>
-			{/* <Route element = {ProtectedRoute} > */}
-				<Route
+			<Route
 				path="/dashboard"
 				element={
-					<SidebarLayout>
-						<Dashboard />
-					</SidebarLayout>
+					<ProtectedRoute>
+						<SidebarLayout>
+							<Dashboard />
+						</SidebarLayout>
+					</ProtectedRoute>
 				}
 			/>
 
-			{/* <Route element = {ProtectedRoute} > */}
-				<Route
+			<Route
 				path="/notes"
 				element={
-					<SidebarLayout>
-						<NotesDashboard />
-					</SidebarLayout>
+					<ProtectedRoute>
+						<SidebarLayout>
+							<NotesDashboard />
+						</SidebarLayout>
+					</ProtectedRoute>
 				}
 			/>
-
-
-			{/* </Route> */}
 			<Route path="/login" element={
 				<PublicOnlyRoute>
 					<LoginPage />

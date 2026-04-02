@@ -1,6 +1,10 @@
 import VoiceNote from "../models/voiceNote.model.js";
 import startTranscriptionJob from "../services/transcription.service.js";
-import { getVoiceNoteFile, deleteVoiceNoteFile } from "../services/voiceNote.service.js";
+import {
+	getVoiceNoteFile,
+	deleteVoiceNoteFile,
+	getAllVoiceNotesForUser,
+} from "../services/voiceNote.service.js";
 
 
 
@@ -49,13 +53,37 @@ const getVoiceNoteById = async (req, res) => {
 		res.setHeader("Content-Type", voiceNote.contentType);
 		res.setHeader("Content-Disposition", `inline; filename="${voiceNote.filename}"`);
 
-		res.send(voiceNote.buffer);
-
-		res.status(200).json({success:true, buffer: voiceNote.buffer, message: "Voice note fetched successfully"});
+		return res.send(voiceNote.buffer);
 	} catch (error) {
 		res.status(503).json({ success: false, message: error.message });
 	}
 }; // format this function
+
+const getVoiceNoteMetaById = async (req, res) => {
+	const voiceNoteId = req.params.id;
+	const userId = req.user._id;
+
+	try {
+		const voiceNote = await VoiceNote.findOne({
+			_id: voiceNoteId,
+			userId,
+		}).select("-__v");
+
+		if (!voiceNote) {
+			return res
+				.status(404)
+				.json({ success: false, message: "Voice note not found" });
+		}
+
+		return res.status(200).json({
+			success: true,
+			data: voiceNote,
+			message: "Voice note metadata fetched successfully",
+		});
+	} catch (error) {
+		return res.status(503).json({ success: false, message: error.message });
+	}
+};
 
 const getAllVoiceNotes = async (req, res) => {
 	const userId = req.user._id;
@@ -93,6 +121,7 @@ const deleteVoiceNote = async (req, res) => {
 export default {
 	createVoiceNote,
 	getVoiceNoteById,
+	getVoiceNoteMetaById,
 	getAllVoiceNotes,
 	deleteVoiceNote,
 };

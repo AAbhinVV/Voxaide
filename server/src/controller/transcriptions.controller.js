@@ -46,15 +46,15 @@ import Transcription from "../models/transcription.model.js";
 // };
 
 const getTranscriptionById = async (req, res) => {
-	const { noteId } = req.params;
+	const { id: voiceNoteId } = req.params;
 	try {
-		const transcriptions = await Transcription.find({ noteId: noteId });
+		const transcriptions = await Transcription.find({ voiceNoteId });
 		if (!transcriptions || transcriptions.length === 0) {
 			return res
 				.status(404)
 				.json({
 					success: false,
-					message: "No transcriptions found for this note",
+					message: "No transcriptions found for this voice note",
 				});
 		}
 		res.status(200).json({ success: true, transcriptions });

@@ -100,7 +100,7 @@ const register = async (req, res) => {
 		await user.save();
 
 		//jwt
-		const { accessToken, refreshToken } = generateTokenAndSetCookie(
+		const { accessToken, refreshToken } = await generateTokenAndSetCookie(
 			res,
 			user._id,
 		);
@@ -155,7 +155,7 @@ const verifyUser = async (req, res) => {
 				.json({ success: false, message: "User not found" });
 		}
 
-		if (existingUser.isverified) {
+		if (existingUser.isVerified) {
 			return res
 				.status(200)
 				.json({ success: true, message: "User already verified" });

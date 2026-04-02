@@ -151,7 +151,7 @@ export const AudioProvider = ({ children }) => {
 		try {
 			setUploadStatus("uploading");
 			const formData = new FormData();
-			formData.append("audioFile", recordedBlobRef.current, "recording.webm");
+			formData.append("audio", recordedBlobRef.current, "recording.webm");
 			await uploadVoiceNoteRequest(formData);
 			setUploadStatus("success");
 			// Refresh voice notes list after successful upload
@@ -167,8 +167,9 @@ export const AudioProvider = ({ children }) => {
 	const fetchVoiceNotes = async () => {
 		try {
 			const data = await getAllVoiceNotesRequest();
-			setVoiceNotes(data);
-			return data;
+			const list = Array.isArray(data) ? data : data?.data ?? [];
+			setVoiceNotes(list);
+			return list;
 		} catch (err) {
 			console.error("Failed to fetch voice notes:", err);
 		}
