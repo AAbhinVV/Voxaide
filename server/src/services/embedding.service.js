@@ -25,7 +25,7 @@ const generateChunksAndEmbeddings = async ({
 		chunkOverlap: 120,
 		separators: ["\n\n", "\n", " ", ""],
 		lengthFunction: (text) => {
-			encoder.encode(text).length;
+			return encoder.encode(text).length;
 		},
 	});
 
@@ -57,13 +57,13 @@ const generateChunksAndEmbeddings = async ({
 
 	const pineconeIndex = pinecone.Index("voxaide");
 
-	const vectorStore = Promise.all(
+	const vectorStore = await Promise.all(
 		savedChunks.map(async (chunk) => {
 			const embedding = await embeddings.embedDocuments(chunk.text);
 
 			return {
 				id: chunk._id.toString(),
-				values: embedding,
+				values: embedding[0],
 				metadata: {
 					userId: userId.toString(),
 					transcriptionId: transcriptionId.toString(),
@@ -86,7 +86,7 @@ const generateChunksAndEmbeddings = async ({
 	await TranscriptionChunk.bulkWrite(mongoStore);
 
 	return {
-		mongoDocId,
+		mongoDocId: savedChunks[0]._id,
 		totalChunks: savedChunks.length,
 	};
 };

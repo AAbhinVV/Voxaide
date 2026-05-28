@@ -37,7 +37,7 @@ export const upload = multer({
 		},
 		key: (req, file, cb) => {
 			const ext = file.originalname.split(".").pop();
-			const random = Math.randomBytes(6).toString("hex");
+			const random = crypto.randomBytes(6).toString("hex");
 			const filename = `voicenotes/${req.user._id}/${Date.now()}-${random}.${ext}`;
 			cb(null, filename);
 		},

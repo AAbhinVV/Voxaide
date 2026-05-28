@@ -55,7 +55,7 @@ const register = async (req, res) => {
 				.json({
 					success: false,
 					message: "User already exists",
-					found: userAlreadyExists,
+
 				});
 		}
 
@@ -216,7 +216,7 @@ const login = async (req, res) => {
 			.status(429)
 			.json({
 				success: false,
-				messsage: "Too many login attempts. Please try again in 10 minutes.",
+				message: "Too many login attempts. Please try again in 10 minutes.",
 			});
 	}
 
@@ -267,7 +267,7 @@ const login = async (req, res) => {
 		);
 
 		if (!accessToken || !refreshToken)
-			throw new Error(500, "No tokens generated");
+			throw new Error("No tokens generated");
 
 		res.status(201).json({
 			success: true,
@@ -356,56 +356,34 @@ const logout = async (req, res) => {
 
 const refreshToken = async (req, res) => {
 	try {
-		const refreshToken =
+		const token =
 			req.signedCookies?.refreshToken || req.cookies?.refreshToken;
-		if (!refreshToken) {
-			return res.status(403).json({ message: "Forbidden" });
+
+		if (!token) {
+			return res.status(403).json({ message: "Forbidden: No refresh token" });
 		}
 
-		const decoded = await verifyRefreshToken(refreshToken);
+		const decoded = await verifyRefreshToken(token);
 
 		if (!decoded) {
 			return res
 				.status(403)
-				.json({ message: "Forbidden: Invalid refresh token" });
+				.json({ message: "Forbidden: Invalid or expired refresh token" });
 		}
 
-		const accessToken = await generateAccessToken(decoded.userId, res);
+		const accessToken = generateAccessToken(decoded.userId);
 
-		jwt.verify(
-			refreshToken,
-			process.env.REFRESH_TOKEN_SECRET,
-			async (err, user) => {
-				if (err) {
-					return res
-						.status(403)
-						.json({ message: "Forbidden: Unauthorized refresh token" });
-				}
+		res.cookie("accessToken", accessToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			maxAge: 15 * 60 * 1000,
+			sameSite: "strict",
+			path: "/",
+		});
 
-				const founduser = await User.findOne({
-					username: user.username,
-					refreshToken: refreshToken,
-				});
-
-				if (!founduser) {
-					return res
-						.status(403)
-						.json({ message: "Forbidden: Refresh token not found" });
-				}
-
-				const accessToken = jwt.sign(
-					{ userId: user.userId, username: user.username },
-					process.env.ACCESS_TOKEN_SECRET,
-					{ expiresIn: "15m" },
-				);
-
-				res.json({ accessToken });
-
-				return res.status(200).json({ message: "token generated succesfully" });
-			},
-		);
+		return res.status(200).json({ success: true, accessToken });
 	} catch (error) {
-		res.status(503).send(error.message);
+		return res.status(503).json({ message: error.message });
 	}
 };
 

@@ -45,7 +45,7 @@ const startTranscriptionJob = async (voiceNoteId, userId) => {
 		model: "gpt-4o-transcribe",
 	});
 
-	const transcription = response.output_text;
+	const transcription = response.text;
 
 	if (!transcription) {
 		throw new Error("Transcription failed");

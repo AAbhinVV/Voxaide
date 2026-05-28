@@ -1,8 +1,9 @@
 import OpenAI from "openai";
 import TranscriptionChunk from "../../models/chunks.model.js";
+import env from "../../config/env.js";
 
 const queryAnsweringService = async ({ userId, question, chunkIds }) => {
-	const openai = new OpenAI({ apiKey: constants.openai_api_key });
+	const openai = new OpenAI({ apiKey: env.openai_api_key });
 
 	const chunkTexts = await TranscriptionChunk.find({
 		_id: { $in: chunkIds },
@@ -27,10 +28,10 @@ const queryAnsweringService = async ({ userId, question, chunkIds }) => {
 	const userPrompt = `Context: ${context} Question: ${question}`;
 
 	const response = await openai.responses.create({
-		model: "gpt-5",
+		model: "gpt-4.1-mini",
 		input: [
-			{ role: "system", context: systemPrompt },
-			{ role: "user", context: userPrompt },
+			{ role: "system", content: systemPrompt },
+			{ role: "user", content: userPrompt },
 		],
 	});
 
