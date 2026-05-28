@@ -345,6 +345,7 @@ const logout = async (req, res) => {
 			sameSite: "Strict",
 			path: "http://localhost:5173",
 		});
+		
 
 		res.clearCookie("accessToken");
 
