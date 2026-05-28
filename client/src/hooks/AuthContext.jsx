@@ -8,19 +8,27 @@ export const useAuthContext = () => useContext(AuthContext);
 
 
 export const AuthProvider = ({children}) => {
+    const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         meRequest()
-            .then(() => setIsAuthenticated(true))
-            .catch(() => setIsAuthenticated(false))
+            .then((data) => {
+                setUser(data.user ?? data);
+                setIsAuthenticated(true);
+            })
+            .catch(() => {
+                setUser(null);
+                setIsAuthenticated(false);
+            })
             .finally(() => setLoading(false));
     }, [])
 
     const logout = async () => {
         try{ 
             await logoutRequest(); 
+            setUser(null);
             setIsAuthenticated(false); 
         }catch(error){ 
             console.error("Logout failed:", error);
@@ -28,7 +36,7 @@ export const AuthProvider = ({children}) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, loading, setIsAuthenticated, logout }}>
+        <AuthContext.Provider value={{ user, setUser, isAuthenticated, loading, setIsAuthenticated, logout }}>
             {children}
         </AuthContext.Provider>
     )

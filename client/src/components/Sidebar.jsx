@@ -125,6 +125,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar.jsx";
 import { User, House, Voicemail, NotepadText, Settings, LogOut, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { AuthProvider, useAuthContext } from "../hooks/AuthContext.jsx";
 
 export function SidebarDemo({ children }) {
   const [open, setOpen] = useState(false);
