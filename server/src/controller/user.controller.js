@@ -39,7 +39,11 @@ const updateMe = async (req, res) => {
 	try {
 		const { username, email } = validation.data;
 
-		if (!username || !email) {
+		const updates = {};
+		if (username) updates.username = username;
+		if (email) updates.email = email;
+
+		if (Object.keys(updates).length === 0) {
 			return res
 				.status(400)
 				.json({ success: false, message: "No data to update" });
@@ -47,9 +51,9 @@ const updateMe = async (req, res) => {
 
 		const updated = await User.findByIdAndUpdate(
 			req.user._id,
-			{ username, email },
+			updates,
 			{ new: true, runValidators: true },
-		).select("-password");
+		).select("-passwordHash");
 		if (!updated) return res.status(404).json({ message: "User not found" });
 		res.status(200).json({ success: true, user: updated });
 	} catch (error) {

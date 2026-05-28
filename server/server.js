@@ -45,13 +45,6 @@ app.use(cookieParser(env.cookie_secret));
 // serve uploaded files statically
 // app.use('/uploads', express.static(path.resolve('uploads')))
 
-app.use((err, req, res, next) => {
-	if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-		return res.status(400).json({ message: "Bad JSON" });
-	}
-	next(err);
-});
-
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/voice-notes", voiceNotesRoutes);
@@ -61,6 +54,14 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/query", queryRoutes);
 app.get("/api/v1/test", (req, res) => {
 	res.json({ message: "API is working" });
+});
+
+// Error handler — must be after all routes
+app.use((err, req, res, next) => {
+	if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+		return res.status(400).json({ message: "Bad JSON" });
+	}
+	next(err);
 });
 
 app.listen(PORT, async () => {

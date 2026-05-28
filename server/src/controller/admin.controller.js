@@ -36,8 +36,6 @@ const updateUserById = async (req, res) => {
 		const updates = {};
 		if (typeof username !== "undefined") updates.username = username;
 		if (typeof email !== "undefined") updates.email = email;
-		if (typeof phone_number !== "undefined")
-			updates.phone_number = phone_number;
 		if (typeof role !== "undefined") updates.role = role;
 		if (typeof isVerified !== "undefined") updates.isVerified = isVerified;
 
