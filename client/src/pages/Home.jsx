@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import React from "react";
+import { Link } from "react-router-dom";
 import TestImage from "../assets/testimage.jpg";
 import { LandingNavbar } from "../components/LandingNavbar.jsx";
 import { FlipWords } from "../components/ui/flip-words.jsx";
@@ -58,9 +59,9 @@ export default function Home() {
 								"#AA47FF",
 								]}
 							>
-								<button className="h-full w-full cursor-pointer rounded-full bg-black px-4 py-2 text-white shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 dark:from-black dark:via-black dark:to-neutral-900 dark:text-white dark:shadow-[0px_1px_0px_0px_var(--color-neutral-950)_inset,0px_1px_0px_0px_var(--color-neutral-800)]">
+								<Link to="/signup" className="h-full w-full cursor-pointer rounded-full bg-black px-4 py-2 text-white shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 dark:from-black dark:via-black dark:to-neutral-900 dark:text-white dark:shadow-[0px_1px_0px_0px_var(--color-neutral-950)_inset,0px_1px_0px_0px_var(--color-neutral-800)]">
 								Start publishing &rarr;
-								</button>
+								</Link>
 								
 							</NoiseBackground>
 
@@ -71,9 +72,11 @@ export default function Home() {
 							</span>
 							</button> */}
 
-							<ShimmerButton className="ml-6 px-8 py-2 rounded-2xl">
-								Get Started
-							</ShimmerButton>
+							<Link to="/signup">
+								<ShimmerButton className="ml-6 px-8 py-2 rounded-2xl">
+									Get Started
+								</ShimmerButton>
+							</Link>
 						</div>
 					</section>
 				</div>
@@ -87,7 +90,7 @@ export default function Home() {
 						/>
 					</motion.div>
 					<h3 className="text-2xl my-4 tracking-tight font-normal"> - so you can focus on thinking, not typing.</h3>
-					<span className="text-lg mt-2 font-body italic tracking-wide text-black/50">`Built for students, creators, and professionals who think faster than they type <br/>Just speak — Voxaide handles the rest.`</span>
+					<span className="text-lg mt-2 font-body italic tracking-wide text-black/50">Built for students, creators, and professionals who think faster than they type <br/>Just speak — Voxaide handles the rest.</span>
 				</div>
 				<img
 					src={TestImage}

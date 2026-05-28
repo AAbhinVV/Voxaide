@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Voicemail, Play, Pause, Trash2, FileText, Clock, Loader2, RefreshCw } from "lucide-react";
 import { useAudioContext } from "../../hooks/AudioContext.jsx";
@@ -7,6 +8,7 @@ import { getTranscriptionByIdRequest } from "../../apis/transcription/apis";
 import { generateNotesRequest } from "../../apis/notes/apis";
 
 function RecordingsList() {
+    const navigate = useNavigate();
     const { voiceNotes, fetchVoiceNotes, deleteVoiceNote } = useAudioContext();
     const [loading, setLoading] = useState(true);
     const [playingId, setPlayingId] = useState(null);
@@ -177,8 +179,11 @@ function RecordingsList() {
                                     )}
                                 </button>
 
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
+                                {/* Info — clickable to detail page */}
+                                <div
+                                    onClick={() => navigate(`/recordings/${vn._id}`)}
+                                    className="flex-1 min-w-0 cursor-pointer hover:text-purple-700 transition-colors"
+                                >
                                     <p className="font-medium text-gray-800 truncate">
                                         {vn.filename || "Voice Recording"}
                                     </p>

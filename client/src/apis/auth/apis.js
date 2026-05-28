@@ -15,7 +15,7 @@ customAxios.interceptors.response.use(
         const originalRequest = error?.config;
         const status = error?.response?.status;
 
-        if (status === 403 && originalRequest && !originalRequest._retry) {
+        if ((status === 401 || status === 403) && originalRequest && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
                 await requestRefreshToken();
