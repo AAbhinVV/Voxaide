@@ -14,7 +14,7 @@ export default function Home() {
 	const words = ["clean notes", "summaries", "action items"];
 
 	return (
-		<div className="flex flex-col h-screen w-screen overflow-x-hidden px-50 ">
+		<div className="flex flex-col h-screen w-screen overflow-x-hidden px-6 sm:px-12 md:px-24 lg:px-50 ">
 			<section className="border-[0.3px] rounded-b-2xl border-black/25 border-t-0">
 				<div className="flex w-full h-[100px] items-center justify-center mt-7">
 					<LandingNavbar />
