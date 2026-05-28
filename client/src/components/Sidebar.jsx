@@ -125,11 +125,13 @@ import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar.jsx";
 import { User, House, Voicemail, NotepadText, Settings, LogOut, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { AuthProvider, useAuthContext } from "../hooks/AuthContext.jsx";
+import { useAuth } from "../hooks/AuthContext.jsx";
+import { useAudioContext } from "../hooks/AudioContext.jsx";
 
 export function SidebarDemo({ children }) {
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("/dashboard");
+  const { voiceNotes } = useAudioContext();
 
   const links = [
     {
@@ -142,13 +144,13 @@ export function SidebarDemo({ children }) {
       label: "Recordings",
       href: "/recordings",
       icon: Voicemail,
-      badge: "35", // Show total recordings count
+      badge: voiceNotes.length > 0 ? String(voiceNotes.length) : null,
     },
     {
       label: "Notes",
       href: "/notes",
       icon: NotepadText,
-      badge: "150", // Show total notes count
+      badge: null,
     },
   ];
 
@@ -340,6 +342,14 @@ const SecondaryLink = ({ icon: Icon, label, href, isOpen, badge }) => {
 
 // User Profile Component
 const UserProfile = ({ isOpen }) => {
+  const { user, logout } = useAuth();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    logout();
+  };
+
   return (
     <div className="group relative">
       <a
@@ -363,10 +373,10 @@ const UserProfile = ({ isOpen }) => {
             className="flex flex-1 flex-col overflow-hidden"
           >
             <span className="truncate text-sm font-semibold text-white">
-              Abhinav
+              {user?.username || 'User'}
             </span>
             <span className="truncate text-xs text-white/60">
-              abhinav@voxaide.com
+              {user?.email || ''}
             </span>
           </motion.div>
         )}
@@ -374,6 +384,7 @@ const UserProfile = ({ isOpen }) => {
         {/* Logout Icon */}
         {isOpen && (
           <motion.button
+            onClick={handleLogout}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             whileHover={{ scale: 1.1 }}

@@ -29,7 +29,7 @@ export default function Home() {
 								</div>
 								<div>
 									<h1 className="text-6xl text-center font-headings mt-2 font-medium ">
-										Never Loose An Idea
+										Never Lose An Idea
 									</h1>
 								</div>
 							</div>
@@ -90,7 +90,7 @@ export default function Home() {
 					<span className="text-lg mt-2 font-body italic tracking-wide text-black/50">`Built for students, creators, and professionals who think faster than they type <br/>Just speak — Voxaide handles the rest.`</span>
 				</div>
 				<img
-					src="{TestImage}"
+					src={TestImage}
 					className="w-1/3 h-auto ml-20 rounded-3xl shadow-2xl shadow-black/10 border-2"
 				/>
 			</section>
