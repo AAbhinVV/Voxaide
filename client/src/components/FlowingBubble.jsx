@@ -49,7 +49,7 @@ export default function FlowingBubble({ className = "", onClick }) {
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-pink-500/30 blur-2xl animate-pulse" />
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes flow {
           0%, 100% {
             transform: scale(1) rotate(0deg);
