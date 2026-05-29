@@ -36,7 +36,8 @@ function SingupPage() {
       navigate("/login");
           
       }catch(error){
-          setError("root", { type: "server", message: error?.message || "Signup failed" });
+          const serverMsg = error?.response?.data?.message || error?.message || "Signup failed";
+          setError("root", { type: "server", message: serverMsg });
       }finally{
         setLoading(false);
       }

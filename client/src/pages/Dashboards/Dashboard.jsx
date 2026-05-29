@@ -53,26 +53,26 @@ export default function Dashboard() {
 		{
 			title: "Total Notes",
 			value: "150",
-			color: "text-purple-600",
+			color: "text-purple-600 dark:text-purple-400",
 		},
 		{
 			title: "Total Recordings",
 			value: "35",
-			color: "text-blue-600",
+			color: "text-blue-600 dark:text-blue-400",
 		},
 		{
 			title: "Time Saved",
 			value: "5hrs",
-			color: "text-green-600",
+			color: "text-green-600 dark:text-green-400",
 		},
 	];
 
 	return (
-		<motion.div className="h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40 overflow-hidden">
+		<motion.div className="h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/40 dark:from-[#0a0a1a] dark:via-[#0d0d2b] dark:to-[#10102a] overflow-hidden">
 			{/* Ambient background elements */}
 			<div className="fixed inset-0 pointer-events-none">
-				<div className=" top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-purple-200/20 via-blue-200/10 to-transparent rounded-full blur-3xl" />
-				<div className=" bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-200/20 via-purple-200/10 to-transparent rounded-full blur-3xl" />
+				<div className=" top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-purple-200/20 via-blue-200/10 to-transparent dark:from-purple-900/15 dark:via-indigo-900/10 dark:to-transparent rounded-full blur-3xl" />
+				<div className=" bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-200/20 via-purple-200/10 to-transparent dark:from-indigo-900/15 dark:via-purple-900/10 dark:to-transparent rounded-full blur-3xl" />
 			</div>
 
 			<main className="relative h-full flex flex-col max-w-[1800px] overflow-hidden">
@@ -96,7 +96,7 @@ export default function Dashboard() {
 										transition={{ delay: 0.2, duration: 0.6 }}
 										className="inline-block"
 									>
-										<div className="text-xs font-mono tracking-[0.3em] text-slate-400 mb-6 uppercase">
+										<div className="text-xs font-mono tracking-[0.3em] text-slate-400 dark:text-purple-400 mb-6 uppercase">
 											Dashboard
 										</div>
 									</motion.div>
@@ -106,7 +106,7 @@ export default function Dashboard() {
 											initial={{ opacity: 0, x: -20 }}
 											animate={{ opacity: 1, x: 0 }}
 											transition={{ delay: 0.4, duration: 0.6 }}
-											className="text-5xl md:text-6xl lg:text-7xl font-light text-slate-800 leading-tight"
+											className="text-5xl md:text-6xl lg:text-7xl font-light text-slate-800 dark:text-white/90 leading-tight"
 										>
 											Welcome back,
 										</motion.h2>
@@ -126,7 +126,7 @@ export default function Dashboard() {
 												initial={{ opacity: 0, x: -10 }}
 												animate={{ opacity: 1, x: 0 }}
 												transition={{ delay: 0.6, duration: 0.6 }}
-												className="text-sm font-light text-slate-500 pt-4 flex items-center gap-2"
+												className="text-sm font-light text-slate-500 dark:text-slate-400 pt-4 flex items-center gap-2"
 											>
 												<span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
 												Last note created 2 hours ago
@@ -151,8 +151,8 @@ export default function Dashboard() {
 											className="group relative"
 										>
 											<div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-											<div className="relative bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-												<div className="text-xs font-headings tracking-wider text-slate-500 uppercase mb-2">
+											<div className="relative bg-white/70 dark:bg-[#12122a]/80 backdrop-blur-xl border border-white/40 dark:border-purple-500/30 rounded-2xl p-5 shadow-lg hover:shadow-xl dark:shadow-purple-900/20 transition-all duration-300 hover:-translate-y-1">
+												<div className="text-xs font-headings tracking-wider text-slate-500 dark:text-slate-400 uppercase mb-2">
 													{stat.title}
 												</div>
 												<div className={`text-3xl font-bold font-body ${stat.color}`}>
@@ -165,7 +165,7 @@ export default function Dashboard() {
 							</div>
 
 							{/* Central Recording Bubble */}
-							<div className="flex flex-col items-center gap-8 lg:py-20 mix-blend-multiply -mt-40">
+							<div className="flex flex-col items-center gap-8 lg:py-20 mix-blend-multiply dark:mix-blend-normal -mt-40">
 								<motion.div
 									initial={{ opacity: 0, scale: 0 }}
 									animate={{ opacity: 1, scale: 1 }}
@@ -185,21 +185,21 @@ export default function Dashboard() {
 									transition={{ delay: 1, duration: 0.6 }}
 									className="text-center space-y-2"
 								>
-									<p className="text-lg font-light text-slate-600">
+									<p className="text-lg font-light text-slate-600 dark:text-slate-400">
 										One tap to start thinking out loud
 									</p>
 								</motion.div>
 							</div>
 
 							{/* Notes Section */}
-							<div className="w-full mix-blend-multiply -mt-20">
+							<div className="w-full mix-blend-multiply dark:mix-blend-normal -mt-20">
 								<motion.div
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ delay: 0.8, duration: 0.6 }}
 									className="mb-8"
 								>
-									<h3 className="text-xs font-mono tracking-[0.3em] text-slate-400 uppercase mb-6">
+									<h3 className="text-xs font-mono tracking-[0.3em] text-slate-400 dark:text-purple-400 uppercase mb-6">
 										Recent Notes
 									</h3>
 								</motion.div>
@@ -214,29 +214,29 @@ export default function Dashboard() {
 											className="group relative"
 										>
 											<div className="absolute inset-0 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-											<div className="relative bg-white/60 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
+											<div className="relative bg-white/60 dark:bg-[#12122a]/70 backdrop-blur-xl border border-white/50 dark:border-purple-500/25 rounded-3xl p-6 shadow-lg hover:shadow-2xl dark:shadow-purple-900/20 transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden">
 												{/* Decorative corner accent */}
 												<div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-transparent rounded-bl-3xl" />
 
 												<div className="relative space-y-4">
 													<div className="flex items-start justify-between">
-														<h4 className="text-lg font-medium text-slate-800">
+														<h4 className="text-lg font-medium text-slate-800 dark:text-white">
 															{note.title}
 														</h4>
 														<div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-blue-400" />
 													</div>
 
-													<p className="text-sm font-light text-slate-600 leading-relaxed line-clamp-6">
+													<p className="text-sm font-light text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-6">
 														{note.content}
 													</p>
 
 													<div className="pt-2 flex items-center justify-between">
-														<span className="text-xs font-mono text-slate-400">
+														<span className="text-xs font-mono text-slate-400 dark:text-slate-500">
 															2h ago
 														</span>
 														<button
 															onClick={onExpand}
-															className="text-xs font-mono text-purple-600 hover:text-purple-700 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+															className="text-xs font-mono text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 tracking-wide uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300"
 														>
 															Expand →
 														</button>
@@ -355,10 +355,10 @@ export default function Dashboard() {
 								transition={{ delay: 0.2, duration: 0.4 }}
 								className="text-center space-y-3"
 							>
-								<div className="text-xs font-mono tracking-[0.3em] text-slate-400 uppercase">
+								<div className="text-xs font-mono tracking-[0.3em] text-slate-400 dark:text-purple-400 uppercase">
 									Recording Complete
 								</div>
-								<div className="text-3xl md:text-4xl font-light text-slate-700">
+								<div className="text-3xl md:text-4xl font-light text-slate-700 dark:text-white/80">
 									{formatTime(elapsed)}
 								</div>
 							</motion.div>
@@ -381,11 +381,11 @@ export default function Dashboard() {
 								{/* Discard Button */}
 								<button
 									onClick={discardRecording}
-									className="group relative flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+									className="group relative flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/60 dark:bg-[#12122a]/70 backdrop-blur-xl border border-white/40 dark:border-purple-500/25 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
 								>
 									<div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400/10 to-rose-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 									<Trash2 className="w-5 h-5 text-red-500 relative z-10" />
-									<span className="text-sm font-medium text-slate-700 relative z-10">
+									<span className="text-sm font-medium text-slate-700 dark:text-white/80 relative z-10">
 										Discard
 									</span>
 								</button>
@@ -427,7 +427,7 @@ export default function Dashboard() {
 								exit={{ opacity: 0, scale: 0.95 }}
 								transition={{ duration: 0.3 }}
 							>
-								<div className="relative bg-white/90 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-auto">
+								<div className="relative bg-white/90 dark:bg-[#12122a]/95 backdrop-blur-2xl border border-white/60 dark:border-purple-500/30 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-auto">
 									<PopUp
 										title="Note 1"
 										recordDate="Recorded 2 hours ago"
