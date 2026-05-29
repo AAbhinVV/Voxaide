@@ -1,15 +1,14 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { OpenAI } from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import env from "../config/env.js";
 import transcriptionModel from "../models/transcription.model.js";
 import voiceNoteModel from "../models/voiceNote.model.js";
 import generateChunksAndEmbeddings from "./embedding.service.js";
 import streamToBuffer from "../utils/streamToBuffer.js";
-import {File} from "node:buffer";
 
 const s3 = new S3Client({ region: env.aws_region });
 
-const client = new OpenAI({ apiKey: env.openai_api_key });
+const genAI = new GoogleGenerativeAI(env.google_api_key);
 
 const startTranscriptionJob = async (voiceNoteId, userId) => {
 	let voiceNoteInstance;
@@ -40,17 +39,26 @@ const startTranscriptionJob = async (voiceNoteId, userId) => {
 			throw new Error("Voice note file not found in S3");
 		}
 
-		const file = new File([voiceNoteBuffer], voiceNoteInstance.filename || "audio.webm", { type: voiceNoteInstance.contentType });
+		// Use Gemini Flash for audio transcription
+		const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-		const response = await client.audio.transcriptions.create({
-			file: file,
-			model: "gpt-4o-transcribe",
-		});
+		const audioBase64 = voiceNoteBuffer.toString("base64");
+		const mimeType = voiceNoteInstance.contentType || "audio/webm";
 
-		const transcription = response.text;
+		const result = await model.generateContent([
+			{
+				inlineData: {
+					mimeType,
+					data: audioBase64,
+				},
+			},
+			"Transcribe this audio recording accurately. Return only the transcription text, no additional commentary or formatting.",
+		]);
+
+		const transcription = result.response.text()?.trim();
 
 		if (!transcription) {
-			throw new Error("Transcription failed");
+			throw new Error("Transcription failed - empty response");
 		}
 
 		const transcriptionInstance = new transcriptionModel({

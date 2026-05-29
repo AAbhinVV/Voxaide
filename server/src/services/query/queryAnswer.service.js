@@ -1,10 +1,10 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import TranscriptionChunk from "../../models/chunks.model.js";
 import env from "../../config/env.js";
 
-const queryAnsweringService = async ({ userId, question, chunkIds }) => {
-	const openai = new OpenAI({ apiKey: env.openai_api_key });
+const genAI = new GoogleGenerativeAI(env.google_api_key);
 
+const queryAnsweringService = async ({ userId, question, chunkIds }) => {
 	const chunkTexts = await TranscriptionChunk.find({
 		_id: { $in: chunkIds },
 		userId,
@@ -27,15 +27,14 @@ const queryAnsweringService = async ({ userId, question, chunkIds }) => {
 
 	const userPrompt = `Context: ${context} Question: ${question}`;
 
-	const response = await openai.responses.create({
-		model: "gpt-4.1-mini",
-		input: [
-			{ role: "system", content: systemPrompt },
-			{ role: "user", content: userPrompt },
-		],
-	});
+	const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-	const answer = response.output_text?.trim();
+	const result = await model.generateContent([
+		{ text: systemPrompt },
+		{ text: userPrompt },
+	]);
+
+	const answer = result.response.text()?.trim();
 
 	return {
 		answer,

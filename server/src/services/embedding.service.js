@@ -1,7 +1,6 @@
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { encoding_for_model } from "tiktoken";
 import env from "../config/env.js";
 import TranscriptionChunk from "../models/chunks.model.js";
 
@@ -18,19 +17,13 @@ const generateChunksAndEmbeddings = async ({
 	transcriptionText,
 }) => {
 	//********************************************chunking the text************************************************
-	const encoder = encoding_for_model("text-embedding-3-large");
-
 	const splitter = new RecursiveCharacterTextSplitter({
 		chunkSize: 600,
 		chunkOverlap: 120,
 		separators: ["\n\n", "\n", " ", ""],
-		lengthFunction: (text) => {
-			return encoder.encode(text).length;
-		},
 	});
 
 	const chunks = await splitter.splitText(transcriptionText);
-	encoder.free();
 
 	if (!chunks || chunks.length === 0) {
 		throw new Error("No chunks generated from the transcription text");
@@ -46,8 +39,9 @@ const generateChunksAndEmbeddings = async ({
 	const savedChunks = await TranscriptionChunk.insertMany(chunkDocs);
 
 	//**********************************creating embeddings for each chunk**************************************
-	const embeddings = new OpenAIEmbeddings({
-		modelName: "text-embedding-3-large",
+	const embeddings = new GoogleGenerativeAIEmbeddings({
+		modelName: "text-embedding-004",
+		apiKey: env.google_api_key,
 	});
 
 	//********************************************storing in pinecone************************************************
@@ -59,7 +53,7 @@ const generateChunksAndEmbeddings = async ({
 
 	const vectorStore = await Promise.all(
 		savedChunks.map(async (chunk) => {
-			const embedding = await embeddings.embedDocuments(chunk.text);
+			const embedding = await embeddings.embedDocuments([chunk.text]);
 
 			return {
 				id: chunk._id.toString(),

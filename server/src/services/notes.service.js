@@ -1,6 +1,6 @@
 import noteModel from "../models/note.model.js";
 import transcriptionModel from "../models/transcription.model.js";
-import { generateNotes } from "../utils/openAI_func.js";
+import { generateNotes } from "../utils/gemini_func.js";
 
 const notesGenerator = async (transcriptionId, userId) => {
 	const transcription = await transcriptionModel.findOne({

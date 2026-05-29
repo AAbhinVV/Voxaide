@@ -1,4 +1,4 @@
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import env from "../../config/env.js"
 import {querySchema} from "../../config/zod.js"
@@ -12,8 +12,9 @@ const retrieveRelevantChunks = async ({ userId, question }) => {
 		console.log("Query validated");
 	}
 
-	const embeddings = new OpenAIEmbeddings({
-		modelName: "text-embedding-3-large",
+	const embeddings = new GoogleGenerativeAIEmbeddings({
+		modelName: "text-embedding-004",
+		apiKey: env.google_api_key,
 	});
 
 	const queryEmbeddings = await embeddings.embedQuery(question);
