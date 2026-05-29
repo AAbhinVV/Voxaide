@@ -127,10 +127,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../hooks/AuthContext.jsx";
 import { useAudioContext } from "../hooks/AudioContext.jsx";
+import { useLocation, Link } from "react-router-dom";
 
 export function SidebarDemo({ children }) {
   const [open, setOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("/dashboard");
+  const location = useLocation();
+  const activeLink = location.pathname;
   const { voiceNotes } = useAudioContext();
 
   const links = [
@@ -157,13 +159,13 @@ export function SidebarDemo({ children }) {
   return (
     <motion.div
       		className={cn(
-			"flex w-full divide-x-2 flex-1 flex-col overflow-hidden bg-transparent md:flex-row dark:bg-transparent",
+			"flex w-full flex-1 flex-col overflow-hidden bg-transparent md:flex-row dark:bg-transparent",
 			// for your use case, use `h-screen` instead of `h-[60vh]`
 			"h-screen"
 		)}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10 bg-gradient-to-b from-[#5B21B6] via-[#4C1D95] to-[#3B0F7F] shadow-2xl">
+        <SidebarBody className="justify-between gap-10 bg-gradient-to-b from-[#5B21B6] via-[#4C1D95] to-[#3B0F7F] dark:from-[#1a1035] dark:via-[#130a28] dark:to-[#0d0520] shadow-2xl">
           {/* Top Section */}
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {/* Logo with animation */}
@@ -177,9 +179,8 @@ export function SidebarDemo({ children }) {
                 <NavLink
                   key={idx}
                   link={link}
-                  isActive={activeLink === link.href}
+                  isActive={activeLink === link.href || (link.href !== '/dashboard' && activeLink.startsWith(link.href))}
                   isOpen={open}
-                  onClick={() => setActiveLink(link.href)}
                   delay={idx * 0.1}
                 />
               ))}
@@ -228,7 +229,7 @@ export function SidebarDemo({ children }) {
 }
 
 // Enhanced Navigation Link Component
-const NavLink = ({ link, isActive, isOpen, onClick, delay }) => {
+const NavLink = ({ link, isActive, isOpen, delay }) => {
   const Icon = link.icon;
   
   return (
@@ -237,9 +238,8 @@ const NavLink = ({ link, isActive, isOpen, onClick, delay }) => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay }}
     >
-      <a
-        href={link.href}
-        onClick={onClick}
+      <Link
+        to={link.href}
         className={cn(
           "group relative flex items-center gap-3 rounded-xl px-3 py-3 transition-all duration-200",
           "hover:bg-white/10",
@@ -300,7 +300,7 @@ const NavLink = ({ link, isActive, isOpen, onClick, delay }) => {
             <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
           </div>
         )}
-      </a>
+      </Link>
     </motion.div>
   );
 };
@@ -308,8 +308,8 @@ const NavLink = ({ link, isActive, isOpen, onClick, delay }) => {
 // Secondary Link Component (Settings, Notifications, etc.)
 const SecondaryLink = ({ icon: Icon, label, href, isOpen, badge }) => {
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-white/60 transition-all hover:bg-white/5 hover:text-white/90"
     >
       <Icon className="h-5 w-5 transition-transform group-hover:scale-110" />
@@ -336,7 +336,7 @@ const SecondaryLink = ({ icon: Icon, label, href, isOpen, badge }) => {
           <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
         </div>
       )}
-    </a>
+    </Link>
   );
 };
 
