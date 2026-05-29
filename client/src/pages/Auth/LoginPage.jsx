@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Input } from "../../components/exports";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginSchema } from "../../config/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginRequest, meRequest } from "../../apis/auth/apis";
+import { loginRequest } from "../../apis/auth/apis";
 import { useAuth } from "../../hooks/AuthContext";
 
 
@@ -17,14 +17,6 @@ function LoginPage() {
     const [hoverButton, setHoverButton] = useState(false); 
     const [isLoading, setIsLoading] = useState(false);
     
-
-    
-
-    useEffect(()=> {
-      meRequest()
-        .then(() => navigate("/dashboard"))
-        .catch(() => {})
-    }, [navigate]);
 
       const onSubmit = async (data) => {
         if(isLoading) return;

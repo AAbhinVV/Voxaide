@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 function Button({
     className = "",
     children,
-    type = "button",
+    type = "submit",
     onHover,
     ...props
 }) {

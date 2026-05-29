@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../../config';
 
 const baseURL = API_BASE_URL;
 
@@ -16,14 +16,19 @@ customAxios.interceptors.response.use(
         const originalRequest = error?.config;
         const status = error?.response?.status;
 
+        // Don't intercept auth endpoints — they handle their own errors
+        const url = originalRequest?.url || '';
+        if (url.includes('/auth/')) {
+            return Promise.reject(error);
+        }
+
         if ((status === 401 || status === 403) && originalRequest && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
                 await requestRefreshToken();
                 return customAxios(originalRequest);
             } catch (refreshError) {
-                await customAxios.post('/auth/logout', {}, { withCredentials: true });
-                window.location.href = '/login'
+                // Don't redirect here — let ProtectedRoute handle it
                 return Promise.reject(refreshError);
             }
         }

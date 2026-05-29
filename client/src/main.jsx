@@ -8,9 +8,8 @@ import {
 	Route,
 	RouterProvider,
 } from "react-router-dom";
-import App from "./App.jsx";
-import NotesDashboard from "./pages/Dashboards/NotesDashboard.jsx";
 import Home from "./pages/Home.jsx";
+import NotesDashboard from "./pages/Dashboards/NotesDashboard.jsx";
 import LoginPage from "./pages/Auth/LoginPage.jsx";
 import SingupPage from "./pages/Auth/SingupPage.jsx";
 import Dashboard from "./pages/Dashboards/Dashboard.jsx";
@@ -19,6 +18,14 @@ import UserProfile from "./pages/Profile/UserProfile.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { AuthProvider, ThemeProvider, AudioProvider } from "./hooks/exports.js"
 import PublicOnlyRoute from "./routes/PublicOnlyRoute.jsx";
+import Verify from "./pages/Verify.jsx";
+import RecordingsList from "./pages/Recordings/RecordingsList.jsx";
+import VoiceNoteDetail from "./pages/Recordings/VoiceNoteDetail.jsx";
+import Settings from "./pages/Settings/Settings.jsx";
+import QueryChat from "./pages/Query/QueryChat.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -32,11 +39,11 @@ const router = createBrowserRouter(
 			<Route
 				path="/dashboard"
 				element={
-					// <ProtectedRoute>
+					<ProtectedRoute>
 						<SidebarLayout>
 							<Dashboard />
 						</SidebarLayout>
-					// </ProtectedRoute>
+					</ProtectedRoute>
 				}
 			/>
 
@@ -50,6 +57,57 @@ const router = createBrowserRouter(
 					</ProtectedRoute>
 				}
 			/>
+			<Route
+				path="/profile"
+				element={
+					<ProtectedRoute>
+						<SidebarLayout>
+							<UserProfile />
+						</SidebarLayout>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
+				path="/settings"
+				element={
+					<ProtectedRoute>
+						<SidebarLayout>
+							<Settings />
+						</SidebarLayout>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
+				path="/recordings"
+				element={
+					<ProtectedRoute>
+						<SidebarLayout>
+							<RecordingsList />
+						</SidebarLayout>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
+				path="/recordings/:id"
+				element={
+					<ProtectedRoute>
+						<SidebarLayout>
+							<VoiceNoteDetail />
+						</SidebarLayout>
+					</ProtectedRoute>
+				}
+			/>
+			<Route
+				path="/query"
+				element={
+					<ProtectedRoute>
+						<SidebarLayout>
+							<QueryChat />
+						</SidebarLayout>
+					</ProtectedRoute>
+				}
+			/>
+			<Route path="/verify/:token" element={<Verify />} />
 			<Route path="/login" element={
 				<PublicOnlyRoute>
 					<LoginPage />
@@ -66,12 +124,15 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<AuthProvider>
-			<ThemeProvider>
-				<AudioProvider>
-					<RouterProvider router={router} />
-				</AudioProvider>
-			</ThemeProvider>
-		</AuthProvider>
+		<ErrorBoundary>
+			<AuthProvider>
+				<ThemeProvider>
+					<AudioProvider>
+						<RouterProvider router={router} />
+						<ToastContainer position="bottom-right" theme="colored" />
+					</AudioProvider>
+				</ThemeProvider>
+			</AuthProvider>
+		</ErrorBoundary>
 	</StrictMode>,
 );

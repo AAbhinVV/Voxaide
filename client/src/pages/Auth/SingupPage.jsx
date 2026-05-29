@@ -24,7 +24,7 @@ function SingupPage() {
       clearErrors("root");
       try{
       const result = await signupRequest({
-        username: data.displayNames ?? data.displayName ?? data.username,
+        username: data.displayName,
         email: data.email,
         password: data.password,
       });
@@ -217,7 +217,7 @@ function SingupPage() {
             type="text" 
             placeholder="Enter your display name" 
             className="border-2 focus:border-brand-primary outline-none rounded-lg"
-            {...register("displayNames")}
+            {...register("displayName")}
             />
             {errors.displayName && <p className="text-danger mt-8 text-center">{errors.displayName.message}</p> }
 
