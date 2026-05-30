@@ -1,7 +1,10 @@
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import env from "../../config/env.js"
 import {querySchema} from "../../config/zod.js"
+
+const genAI = new GoogleGenerativeAI(env.google_api_key);
+const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
 const retrieveRelevantChunks = async ({ userId, question }) => {
 	//retrieve query and create query embedding
@@ -12,15 +15,13 @@ const retrieveRelevantChunks = async ({ userId, question }) => {
 		console.log("Query validated");
 	}
 
-	const embeddings = new GoogleGenerativeAIEmbeddings({
-		modelName: "text-embedding-004",
-		apiKey: env.google_api_key,
+	const result = await embeddingModel.embedContent({
+		content: { parts: [{ text: question }] },
+		outputDimensionality: 1024,
 	});
-
-	const queryEmbeddings = await embeddings.embedQuery(question);
+	const queryEmbeddings = result.embedding.values;
 
 	//search pinecone for top k chunks using userId filter
-
 	const pinecone = new Pinecone({
 		apiKey: env.pinecone_api_key,
 	});

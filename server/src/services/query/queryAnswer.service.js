@@ -27,7 +27,7 @@ const queryAnsweringService = async ({ userId, question, chunkIds }) => {
 
 	const userPrompt = `Context: ${context} Question: ${question}`;
 
-	const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+	const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 	const result = await model.generateContent([
 		{ text: systemPrompt },

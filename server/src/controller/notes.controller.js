@@ -22,6 +22,18 @@ const createNotes = async (req, res) => {
 	}
 };
 
+const getAllNotes = async (req, res) => {
+	try {
+		const notes = await noteModel
+			.find({ userId: req.user._id })
+			.sort({ createdAt: -1 });
+
+		return res.status(200).json({ success: true, data: notes });
+	} catch (error) {
+		return res.status(500).json({ success: false, message: error.message });
+	}
+};
+
 const getNoteById = async (req, res) => {
 	try {
 		const noteId = req.params.id;
@@ -45,4 +57,4 @@ const getNoteById = async (req, res) => {
 	}
 };
 
-export default { createNotes, getNoteById };
+export default { createNotes, getAllNotes, getNoteById };

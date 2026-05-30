@@ -1,15 +1,29 @@
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import env from "../config/env.js";
 import TranscriptionChunk from "../models/chunks.model.js";
 
+const genAI = new GoogleGenerativeAI(env.google_api_key);
+const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
+
 /**
- * @param {ObjectId} mongoDocId - MongoDB document _id
- * @param {string} text - transcription or document text
- * @param {Object} extraMetadata - optional metadata
- * @param {ObjectId} userId
+ * Generate embedding for a text using Google's text-embedding-004
+ * @param {string} text
+ * @returns {Promise<number[]>}
+ */
+async function embedText(text) {
+	const result = await embeddingModel.embedContent({
+		content: { parts: [{ text }] },
+		outputDimensionality: 1024,
+	});
+	return result.embedding.values;
+}
+
+/**
  * @param {ObjectId} transcriptionId
+ * @param {ObjectId} userId
+ * @param {string} transcriptionText
  */
 const generateChunksAndEmbeddings = async ({
 	transcriptionId,
@@ -38,12 +52,6 @@ const generateChunksAndEmbeddings = async ({
 
 	const savedChunks = await TranscriptionChunk.insertMany(chunkDocs);
 
-	//**********************************creating embeddings for each chunk**************************************
-	const embeddings = new GoogleGenerativeAIEmbeddings({
-		modelName: "text-embedding-004",
-		apiKey: env.google_api_key,
-	});
-
 	//********************************************storing in pinecone************************************************
 	const pinecone = new PineconeClient({
 		apiKey: env.pinecone_api_key,
@@ -53,11 +61,11 @@ const generateChunksAndEmbeddings = async ({
 
 	const vectorStore = await Promise.all(
 		savedChunks.map(async (chunk) => {
-			const embedding = await embeddings.embedDocuments([chunk.text]);
+			const embedding = await embedText(chunk.text);
 
 			return {
 				id: chunk._id.toString(),
-				values: embedding[0],
+				values: embedding,
 				metadata: {
 					userId: userId.toString(),
 					transcriptionId: transcriptionId.toString(),

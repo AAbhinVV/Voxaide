@@ -99,20 +99,26 @@ export const deleteVoiceNoteFile = async (voiceNoteId, userId) => {
 	});
 
 	if (transcription) {
+		// Get chunk IDs from MongoDB before deleting them
+		const chunks = await TranscriptionChunk.find({
+			transcriptionId: transcription._id,
+			userId,
+		}).select("_id");
+
+		const chunkIds = chunks.map((c) => c._id.toString());
+
 		await TranscriptionChunk.deleteMany({
 			transcriptionId: transcription._id,
 			userId,
 		});
 
-		try {
-			await pineconeIndex.deleteMany({
-				filter: {
-					userId: userId.toString(),
-					transcriptionId: transcription._id.toString(),
-				},
-			});
-		} catch (e) {
-			console.error("Pinecone deleteMany failed:", e);
+		// Delete from Pinecone by vector IDs (serverless indexes don't support metadata filters)
+		if (chunkIds.length > 0) {
+			try {
+				await pineconeIndex.deleteMany(chunkIds);
+			} catch (e) {
+				console.error("Pinecone deleteMany failed:", e);
+			}
 		}
 
 		await transcriptionModel.deleteOne({ _id: transcription._id });
