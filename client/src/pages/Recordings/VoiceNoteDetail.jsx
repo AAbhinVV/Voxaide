@@ -3,16 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
     ArrowLeft, Play, Pause, Loader2, FileText,
-    Clock, CheckCircle, XCircle, RefreshCw, Sparkles
+    Clock, CheckCircle, XCircle, RefreshCw, Sparkles,
+    MessageSquare, ArrowRight, CheckSquare
 } from "lucide-react";
 import { getVoiceNoteByIdRequest, getVoiceNoteMetaByIdRequest } from "../../apis/recording/apis";
 import { getTranscriptionByIdRequest } from "../../apis/transcription/apis";
-import { generateNotesRequest, getNoteByIdRequest } from "../../apis/notes/apis";
+import { generateNotesRequest } from "../../apis/notes/apis";
 
 const STATUS_COLORS = {
-    UPLOADED: { bg: "bg-yellow-100", text: "text-yellow-700", icon: Clock },
-    TRANSCRIBED: { bg: "bg-green-100", text: "text-green-700", icon: CheckCircle },
-    FAILED: { bg: "bg-red-100", text: "text-red-700", icon: XCircle },
+    UPLOADED: { bg: "bg-yellow-100 dark:bg-yellow-500/20", text: "text-yellow-700 dark:text-yellow-400", icon: Clock },
+    TRANSCRIBED: { bg: "bg-green-100 dark:bg-green-500/20", text: "text-green-700 dark:text-green-400", icon: CheckCircle },
+    FAILED: { bg: "bg-red-100 dark:bg-red-500/20", text: "text-red-700 dark:text-red-400", icon: XCircle },
 };
 
 function VoiceNoteDetail() {
@@ -53,11 +54,10 @@ function VoiceNoteDetail() {
             const vnMeta = data.data || data;
             setMeta(vnMeta);
 
-            // If transcribed, fetch transcription
+            // If transcribed, fetch transcription and try loading existing notes
             if (vnMeta.status === "TRANSCRIBED") {
                 await loadTranscription();
             } else if (vnMeta.status === "UPLOADED") {
-                // Start polling for transcription completion
                 startPolling();
             }
         } catch (err) {
@@ -88,7 +88,7 @@ function VoiceNoteDetail() {
             } catch (err) {
                 console.error("Polling error:", err);
             }
-        }, 5000); // Poll every 5 seconds
+        }, 5000);
     };
 
     const loadTranscription = async () => {
@@ -97,10 +97,28 @@ function VoiceNoteDetail() {
             const data = await getTranscriptionByIdRequest(id);
             const txn = data.transcriptions?.[0] || data.data || data;
             setTranscription(txn);
+
+            // Auto-load existing notes (generateNotesRequest returns cached notes if already generated)
+            if (txn?._id) {
+                await tryLoadNotes(txn._id);
+            }
         } catch (err) {
             console.error("Failed to load transcription:", err);
         } finally {
             setTranscriptionLoading(false);
+        }
+    };
+
+    // Try to load existing notes without showing loading state
+    const tryLoadNotes = async (transcriptionId) => {
+        try {
+            const data = await generateNotesRequest(transcriptionId);
+            const noteData = data.data || data;
+            if (noteData?.title) {
+                setNotes(noteData);
+            }
+        } catch {
+            // Notes don't exist yet, that's fine
         }
     };
 
@@ -110,7 +128,6 @@ function VoiceNoteDetail() {
                 const blob = await getVoiceNoteByIdRequest(id);
                 const url = URL.createObjectURL(blob);
                 setAudioUrl(url);
-                // Wait for state to update, then play
                 setTimeout(() => {
                     if (audioRef.current) {
                         audioRef.current.src = url;
@@ -169,7 +186,7 @@ function VoiceNoteDetail() {
         return (
             <div className="flex flex-col items-center justify-center h-full py-20">
                 <XCircle className="h-12 w-12 text-red-400 mb-4" />
-                <p className="text-gray-500">Voice note not found.</p>
+                <p className="text-gray-500 dark:text-gray-400">Voice note not found.</p>
                 <button onClick={() => navigate("/recordings")} className="mt-4 text-purple-600 hover:underline">
                     ← Back to Recordings
                 </button>
@@ -195,7 +212,7 @@ function VoiceNoteDetail() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 onClick={() => navigate("/recordings")}
-                className="flex items-center gap-2 text-sm text-gray-500 hover:text-purple-600 transition mb-6 w-fit"
+                className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition mb-6 w-fit"
             >
                 <ArrowLeft className="h-4 w-4" /> Back to Recordings
             </motion.button>
@@ -205,11 +222,10 @@ function VoiceNoteDetail() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="rounded-2xl bg-white border border-black/5 shadow-sm p-6 mb-6"
+                className="rounded-2xl bg-white dark:bg-[#16163a] border border-black/5 dark:border-purple-500/10 shadow-sm p-6 mb-6"
             >
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
-                        {/* Play Button */}
                         <button
                             onClick={handlePlayPause}
                             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white hover:bg-purple-700 transition shadow-lg"
@@ -222,7 +238,7 @@ function VoiceNoteDetail() {
                         </button>
 
                         <div>
-                            <h1 className="text-2xl font-headings font-bold">
+                            <h1 className="text-2xl font-headings font-bold dark:text-white">
                                 {meta.filename || "Voice Recording"}
                             </h1>
                             <p className="text-sm text-gray-400 mt-1">
@@ -231,7 +247,6 @@ function VoiceNoteDetail() {
                         </div>
                     </div>
 
-                    {/* Status Badge */}
                     <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${StatusInfo.bg} ${StatusInfo.text}`}>
                         <StatusIcon className="h-4 w-4" />
                         {meta.status}
@@ -245,10 +260,10 @@ function VoiceNoteDetail() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="rounded-2xl bg-white border border-black/5 shadow-sm p-6 mb-6"
+                className="rounded-2xl bg-white dark:bg-[#16163a] border border-black/5 dark:border-purple-500/10 shadow-sm p-6 mb-6"
             >
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                    <h2 className="text-lg font-semibold flex items-center gap-2 dark:text-white">
                         <FileText className="h-5 w-5 text-purple-500" />
                         Transcription
                     </h2>
@@ -256,7 +271,7 @@ function VoiceNoteDetail() {
                         <button
                             onClick={loadTranscription}
                             disabled={transcriptionLoading}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-500/30 transition"
                         >
                             {transcriptionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                             Load
@@ -285,7 +300,7 @@ function VoiceNoteDetail() {
 
                 {transcription && !transcriptionLoading && (
                     <div className="prose prose-sm max-w-none">
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
                             {transcription.text || transcription.transcriptionText || "No text available."}
                         </p>
                     </div>
@@ -298,10 +313,10 @@ function VoiceNoteDetail() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="rounded-2xl bg-white border border-black/5 shadow-sm p-6"
+                    className="rounded-2xl bg-white dark:bg-[#16163a] border border-black/5 dark:border-purple-500/10 shadow-sm p-6 mb-6"
                 >
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <h2 className="text-lg font-semibold flex items-center gap-2 dark:text-white">
                             <Sparkles className="h-5 w-5 text-indigo-500" />
                             AI Notes
                         </h2>
@@ -330,32 +345,30 @@ function VoiceNoteDetail() {
                     {notes && (
                         <div className="prose prose-sm max-w-none">
                             {notes.title && (
-                                <h3 className="text-xl font-bold text-gray-800 mb-3">{notes.title}</h3>
+                                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3">{notes.title}</h3>
                             )}
                             {notes.summary && (
-                                <div className="mb-4 p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-                                    <p className="text-gray-700">{notes.summary}</p>
-                                </div>
-                            )}
-                            {notes.content && (
-                                <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                    {notes.content}
+                                <div className="mb-4 p-4 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20">
+                                    <p className="text-gray-700 dark:text-gray-300">{notes.summary}</p>
                                 </div>
                             )}
                             {notes.bulletPoints && notes.bulletPoints.length > 0 && (
-                                <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                                <ul className="list-none pl-0 space-y-2 text-gray-700 dark:text-gray-300">
                                     {notes.bulletPoints.map((point, i) => (
-                                        <li key={i}>{point}</li>
+                                        <li key={i} className="flex items-start gap-2">
+                                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-500" />
+                                            {point}
+                                        </li>
                                     ))}
                                 </ul>
                             )}
                             {notes.actionItems && notes.actionItems.length > 0 && (
                                 <div className="mt-4">
-                                    <h4 className="font-semibold text-gray-800 mb-2">Action Items</h4>
+                                    <h4 className="font-semibold text-gray-800 dark:text-white mb-2">Action Items</h4>
                                     <ul className="list-none space-y-1.5">
                                         {notes.actionItems.map((item, i) => (
-                                            <li key={i} className="flex items-start gap-2 text-gray-700">
-                                                <span className="text-indigo-500 mt-0.5">☐</span>
+                                            <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                                <CheckSquare className="h-4 w-4 shrink-0 text-indigo-500 mt-0.5" />
                                                 {item}
                                             </li>
                                         ))}
@@ -366,11 +379,33 @@ function VoiceNoteDetail() {
                     )}
 
                     {!notes && !notesLoading && (
-                        <p className="text-gray-400 text-center py-6">
+                        <p className="text-gray-400 dark:text-gray-500 text-center py-6">
                             Click "Generate Notes" to create AI-powered notes from your transcription.
                         </p>
                     )}
                 </motion.div>
+            )}
+
+            {/* Ask Questions CTA */}
+            {meta.status === "TRANSCRIBED" && transcription && (
+                <motion.button
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    onClick={() => navigate(`/query?voiceNoteId=${id}`)}
+                    className="group flex items-center justify-between w-full rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-5 shadow-lg hover:shadow-xl transition-all"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                            <MessageSquare className="h-5 w-5" />
+                        </div>
+                        <div className="text-left">
+                            <span className="text-lg font-semibold">Ask Questions</span>
+                            <p className="text-sm text-white/70">Chat with AI about this recording</p>
+                        </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </motion.button>
             )}
         </div>
     );
