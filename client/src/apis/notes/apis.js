@@ -9,6 +9,14 @@ export const generateNotesRequest = async (transcriptionId) => {
     return response.data;
 };
 
+export const getAllNotesRequest = async () => {
+    const response = await customAxios.get(
+        '/notes',
+        { withCredentials: true }
+    );
+    return response.data;
+};
+
 export const getNoteByIdRequest = async (id) => {
     const response = await customAxios.get(
         `/notes/${id}`,
