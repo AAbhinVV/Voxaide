@@ -36,7 +36,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
 	cors({
-		origin: env.frontend_url,
+		origin: [
+			env.frontend_url,
+			'http://voxaide.vercel.app'
+		],
 		credentials: true,
 	}),
 );
