@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 // import path from "path";
-import { createClient } from "redis";
+import {Redis} from '@upstash/redis';
 import { connectDB } from "./src/config/db/connectDB.js"
 import adminRoutes from "./src/routes/admin.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
@@ -25,7 +25,10 @@ if (!redisUrl) {
 	process.exit(1);
 }
 
-export const redisClient = createClient({ url: env.redis_url });
+export const redisClient = new Redis({
+	url: env.redis_url,
+	token: env.redis_token
+});
 
 await redisClient
 	.connect()

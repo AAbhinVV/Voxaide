@@ -16,6 +16,8 @@ const requiredEnvVars = [
 	"PINECONE_INDEX_NAME",
 	"AWS_REGION",
 	"S3_BUCKET_NAME",
+	"UPSTASH_REDIS_REST_TOKEN",
+	"UPSTASH_REDIS_REST_URL"
 ]
 
 requiredEnvVars.forEach((varName) => {
@@ -37,6 +39,8 @@ const env = Object.freeze({
 	pinecone_index_name: process.env.PINECONE_INDEX_NAME,
 	aws_region: process.env.AWS_REGION,
 	aws_bucket_name: process.env.S3_BUCKET_NAME,
+	redis_token: process.env.UPSTASH_REDIS_REST_TOKEN,
+	redis_url: process.env.UPSTASH_REDIS_REST_URL,
 });
 
 export default env;
