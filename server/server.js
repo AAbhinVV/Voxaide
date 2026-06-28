@@ -18,33 +18,23 @@ dotenv.config();
 const app = express();
 const PORT = env.port || 5000;
 
-const redisUrl = env.redis_url;
-
-if (!redisUrl) {
-	console.error("missing redis url");
-	process.exit(1);
-}
-
 export const redisClient = new Redis({
-	url: env.redis_url,
-	token: env.redis_token
+	url: env.upstash_redis_url,
+	token: env.upstash_redis_token,
 });
 
-await redisClient
-	.connect()
-	.then(() => console.log("Connected to Redis"))
-	.catch(console.error);
+console.log("Redis client initialized (Upstash)");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
 	cors({
-		origin: [
-			env.frontend_url,
-			'http://voxaide.vercel.app'
-		],
-		credentials: true,
-	}),
+  origin: [
+    env.frontend_url,
+    'https://voxaide.vercel.app'  
+  ],
+  credentials: true,
+})
 );
 app.use(cookieParser(env.cookie_secret));
 
