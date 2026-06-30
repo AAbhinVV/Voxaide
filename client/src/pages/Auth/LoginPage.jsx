@@ -149,7 +149,7 @@ function LoginPage() {
             initial = {{opacity:0, x:-10}}
             animate={{opacity:1, x:0}}
             transition={{ delay: 0.5, duration: 1 }}
-            className=" text-lg text-text-secondary">Continue Recording</motion.h3>
+            className=" text-lg text-white/50">Continue Recording</motion.h3>
           <motion.div 
             initial = {{opacity: 0, width: 0}}
             animate={{ width: "80%",opacity: 1}}
@@ -164,7 +164,7 @@ function LoginPage() {
           transition = {{delay: 0.5, duration: 0.5}}
           onMouseEnter={() => setHoverButton(true)}
           onMouseLeave={() => setHoverButton(false)}
-          className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
+          className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative [&_label]:!text-white/70 [&_input]:!text-white [&_input::placeholder]:!text-white/30">
 
        
         <AnimatePresence>

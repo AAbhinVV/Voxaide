@@ -45,7 +45,7 @@ function SingupPage() {
     }
     
   return (
-    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center bg-bg-page relative">
+    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center bg-[#050510] text-white relative">
       {/* Animated decorative blurred circles with bounce effect */}
       <motion.div
         className="absolute w-72 h-72 bg-brand-primary/50 rounded-full blur-3xl"
@@ -133,7 +133,7 @@ function SingupPage() {
       />
 
       <motion.div className="inline-block z-10">
-        <h1 className="font-headings text-[64px] font-bold">
+        <h1 className="font-headings text-[64px] font-bold text-text-primary">
           <motion.span 
             initial={{opacity: 0, x: -20}}
             animate={{opacity: 1, x: 0}}
@@ -168,7 +168,7 @@ function SingupPage() {
         transition = {{delay: 0.5, duration: 0.5}}
         onMouseEnter={() => setHoverButton(true)}
         onMouseLeave={() => setHoverButton(false)}
-        className="border border-white/20 h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
+        className="border border-border h-auto w-auto px-20 shadow-xl font-body rounded-2xl backdrop-blur-lg z-10 my-10 relative">
 
       
         <AnimatePresence>

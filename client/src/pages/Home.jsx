@@ -1,102 +1,391 @@
-import { motion } from "framer-motion";
-import React from "react";
+import { motion, useInView } from "framer-motion";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import TestImage from "../assets/testimage.jpg";
+import HeroMockup from "../assets/hero_mockup.png";
 import { LandingNavbar } from "../components/LandingNavbar.jsx";
 import { FlipWords } from "../components/ui/flip-words.jsx";
-import { HoverBorderGradient } from "../components/ui/hover-border-gradient.jsx";
-import { InteractiveHoverButton } from "../components/ui/interactive-hover-button.jsx";
-import { LayoutTextFlip } from "../components/ui/layout-text-flip.jsx";
 import { ShimmerButton } from "../components/ui/shimmer-button.jsx";
-import {NoiseBackground} from "../components/ui/noise-background.jsx";
 
-export default function Home() {
-	const words = ["clean notes", "summaries", "action items"];
+/* ─── animation helpers ─── */
+const fadeUp = {
+	hidden: { opacity: 0, y: 30 },
+	visible: (i = 0) => ({
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.6, delay: i * 0.15, ease: [0.25, 0.46, 0.45, 0.94] },
+	}),
+};
 
+function AnimatedSection({ children, className, id }) {
+	const ref = useRef(null);
+	const inView = useInView(ref, { once: true, margin: "-80px" });
 	return (
-		<div className="flex flex-col h-screen w-screen overflow-x-hidden px-6 sm:px-12 md:px-24 lg:px-50 ">
-			<section className="border-[0.3px] rounded-b-2xl border-black/25 border-t-0">
-				<div className="flex w-full h-[100px] items-center justify-center mt-7">
-					<LandingNavbar />
-				</div>
-				<div className="w-full h-full inline-block my-20">
-					<section className="flex flex-col justify-center align-center bg-brand-page mt-14 h-auto">
-						<div className="text-center ">
-							<div className="inline-block bg-gradient-to-r from-black via-brand-secondary to-brand-primary bg-clip-text text-transparent">
-								<div>
-									<h1 className="text-7xl text-center font-headings font-extrabold">
-										Never Miss A Thought
-									</h1>
-								</div>
-								<div>
-									<h1 className="text-6xl text-center font-headings mt-2 font-medium ">
-										Never Lose An Idea
-									</h1>
-								</div>
-							</div>
-							<div className="text-black/75 my-10 text-lg tracking-wide font-body">
-								<h1>
-									Turn your voice into structured knowledge
-									<FlipWords
-										className="text-2xl font-medium"
-										words={["Record", "Transcribe", "Summarize", "Remember"]}
-									/>
-								</h1>
-							</div>
-						</div>
-						<div className="flex flex-row gap-4 justify-center mt-6 mb-20">
-							{/* <button className="p-[3px] relative">
-								<div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl" />
-								<div className="px-8 py-2  bg-black rounded-2xl relative group transition duration-200 text-white hover:bg-transparent">
-									Lit up borders
-								</div>
-							</button> */}
-							<NoiseBackground
-								containerClassName="w-fit p-2 rounded-full"
-								gradientColors={[
-								"#6366F1",
-								"#7C3AED",
-								"#AA47FF",
-								]}
-							>
-								<Link to="/signup" className="h-full w-full cursor-pointer rounded-full bg-black px-4 py-2 text-white shadow-[0px_2px_0px_0px_var(--color-neutral-50)_inset,0px_0.5px_1px_0px_var(--color-neutral-400)] transition-all duration-100 active:scale-98 dark:from-black dark:via-black dark:to-neutral-900 dark:text-white dark:shadow-[0px_1px_0px_0px_var(--color-neutral-950)_inset,0px_1px_0px_0px_var(--color-neutral-800)]">
-								Start publishing &rarr;
-								</Link>
-								
-							</NoiseBackground>
+		<section ref={ref} id={id} className={className}>
+			<motion.div
+				initial="hidden"
+				animate={inView ? "visible" : "hidden"}
+				variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
+			>
+				{children}
+			</motion.div>
+		</section>
+	);
+}
 
-							{/* <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-							<span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-							<span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-								Border Magic
-							</span>
-							</button> */}
+/* ─── feature data ─── */
+const features = [
+	{
+		icon: (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+				<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+				<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+				<line x1="12" x2="12" y1="19" y2="22" />
+			</svg>
+		),
+		title: "Real-time Transcription",
+		description:
+			"Record your lectures, meetings, or brainstorms and watch your words appear as perfectly formatted text — instantly.",
+	},
+	{
+		icon: (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+				<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+				<polyline points="14 2 14 8 20 8" />
+				<line x1="16" x2="8" y1="13" y2="13" />
+				<line x1="16" x2="8" y1="17" y2="17" />
+				<line x1="10" x2="8" y1="9" y2="9" />
+			</svg>
+		),
+		title: "AI Summaries & Notes",
+		description:
+			"Voxaide's AI distills your recordings into clean notes, key takeaways, and actionable items — so you focus on thinking, not typing.",
+	},
+	{
+		icon: (
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+				<circle cx="11" cy="11" r="8" />
+				<path d="m21 21-4.3-4.3" />
+				<path d="M11 8v6" />
+				<path d="M8 11h6" />
+			</svg>
+		),
+		title: "Smart Search & Query",
+		description:
+			"Ask questions about any recording. Our AI searches across all your voice notes and surfaces the exact answers you need.",
+	},
+];
 
-							<Link to="/signup">
-								<ShimmerButton className="ml-6 px-8 py-2 rounded-2xl">
-									Get Started
-								</ShimmerButton>
-							</Link>
-						</div>
-					</section>
-				</div>
-			</section>
-			<section className="flex-wrap flex-row border-[0.3px] border-black/25 rounded-2xl p-10 h-auto ">
-				<div className="font-body font-normal flex flex-col">
-					<motion.div className="relative flex flex-col items-center gap-4 text-center sm:mx-0 sm:mb-0 sm:flex-row my-14">
-						<LayoutTextFlip
-							text="Voxaide transforms your spoken ideas into"
-							words={words}
+/* ─── steps data ─── */
+const steps = [
+	{
+		num: "01",
+		title: "Record",
+		description: "Capture your voice with a single tap. Lectures, meetings, or spontaneous ideas — just speak.",
+	},
+	{
+		num: "02",
+		title: "Transcribe",
+		description: "AI converts your speech to text in real-time with high accuracy, handling accents and jargon.",
+	},
+	{
+		num: "03",
+		title: "Organize",
+		description: "Get auto-generated summaries, action items, and searchable notes — your second brain, powered by AI.",
+	},
+];
+
+/* ─────────────────── MAIN COMPONENT ─────────────────── */
+export default function Home() {
+	return (
+		<div className="relative min-h-screen w-full bg-[#050510] text-white overflow-x-hidden">
+			{/* ── global ambient gradients ── */}
+			<div className="pointer-events-none fixed inset-0 z-0">
+				<div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-brand-primary/[0.07] blur-[120px]" />
+				<div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-brand-tertiary/[0.05] blur-[120px]" />
+			</div>
+
+			<LandingNavbar />
+
+			{/* ═══════════════════ HERO ═══════════════════ */}
+			<section className="relative z-10 pt-32 pb-20 sm:pt-40 sm:pb-28 px-6 sm:px-8 max-w-7xl mx-auto">
+				{/* Floating badge */}
+				<motion.div
+					initial={{ opacity: 0, y: 16 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7, delay: 0.15 }}
+					className="flex justify-center mb-8"
+				>
+					<span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-md text-xs font-medium text-white/70 tracking-wide shadow-lg shadow-black/20">
+						<span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+						AI-Powered Voice Notes
+					</span>
+				</motion.div>
+
+				{/* Headline */}
+				<motion.div
+					initial={{ opacity: 0, y: 24 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7, delay: 0.3 }}
+					className="text-center"
+				>
+					<h1 className="text-5xl sm:text-6xl lg:text-7xl font-headings font-extrabold leading-[1.08] tracking-tight">
+						<span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
+							Never Miss A Thought
+						</span>
+						<br />
+						<span className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-tertiary bg-clip-text text-transparent">
+							Never Lose An Idea
+						</span>
+					</h1>
+				</motion.div>
+
+				{/* Subheadline */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6, delay: 0.5 }}
+					className="mt-7 text-center"
+				>
+					<p className="text-lg sm:text-xl text-white/50 font-body max-w-2xl mx-auto leading-relaxed">
+						Turn your voice into structured knowledge —{" "}
+						<FlipWords
+							className="text-lg sm:text-xl font-semibold text-white/90"
+							words={["Record", "Transcribe", "Summarize", "Remember"]}
+							duration={2500}
 						/>
-					</motion.div>
-					<h3 className="text-2xl my-4 tracking-tight font-normal"> - so you can focus on thinking, not typing.</h3>
-					<span className="text-lg mt-2 font-body italic tracking-wide text-black/50">Built for students, creators, and professionals who think faster than they type <br/>Just speak — Voxaide handles the rest.</span>
-				</div>
-				<img
-					src={TestImage}
-					className="w-1/3 h-auto ml-20 rounded-3xl shadow-2xl shadow-black/10 border-2"
-				/>
+					</p>
+				</motion.div>
+
+				{/* CTAs */}
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6, delay: 0.65 }}
+					className="flex flex-col sm:flex-row gap-4 justify-center mt-12"
+				>
+					<Link to="/signup">
+						<ShimmerButton
+							className="px-8 py-3.5 rounded-full text-base font-semibold"
+							shimmerColor="#a78bfa"
+							background="linear-gradient(135deg, #6366F1, #7C3AED)"
+							shimmerSize="0.08em"
+						>
+							Get Started Free &rarr;
+						</ShimmerButton>
+					</Link>
+					<a
+						href="#how-it-works"
+						className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/[0.1] bg-white/[0.04] backdrop-blur-sm text-base font-medium text-white/80 hover:text-white hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300"
+					>
+						See How It Works
+					</a>
+				</motion.div>
+
+				{/* Hero Mockup */}
+				<motion.div
+					initial={{ opacity: 0, y: 50, scale: 0.95 }}
+					animate={{ opacity: 1, y: 0, scale: 1 }}
+					transition={{ duration: 0.9, delay: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+					className="mt-20 relative max-w-5xl mx-auto"
+				>
+					{/* Glow behind mockup */}
+					<div className="absolute inset-0 -z-10 translate-y-8">
+						<div className="w-full h-full rounded-3xl bg-gradient-to-b from-brand-primary/20 via-brand-secondary/10 to-transparent blur-3xl" />
+					</div>
+					<div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm p-2 shadow-2xl shadow-brand-primary/10">
+						<img
+							src={HeroMockup}
+							alt="Voxaide Dashboard — Voice transcription and AI-powered notes"
+							className="w-full h-auto rounded-xl"
+						/>
+					</div>
+				</motion.div>
 			</section>
+
+			{/* ═══════════════════ SOCIAL PROOF ═══════════════════ */}
+			<AnimatedSection className="relative z-10 py-16 px-6 border-y border-white/[0.04]">
+				<motion.div variants={fadeUp} className="text-center">
+					<p className="text-sm font-medium uppercase tracking-[0.2em] text-white/30 font-body">
+						Trusted by students, creators, and professionals
+					</p>
+					<div className="mt-8 flex flex-wrap justify-center gap-x-12 gap-y-4 items-center">
+						{["1,200+ Users", "50K+ Notes Generated", "98% Accuracy", "4.9★ Rating"].map(
+							(stat, i) => (
+								<motion.span
+									key={stat}
+									variants={fadeUp}
+									custom={i}
+									className="text-lg sm:text-xl font-headings font-bold bg-gradient-to-r from-white/80 to-white/40 bg-clip-text text-transparent"
+								>
+									{stat}
+								</motion.span>
+							),
+						)}
+					</div>
+				</motion.div>
+			</AnimatedSection>
+
+			{/* ═══════════════════ FEATURES ═══════════════════ */}
+			<AnimatedSection
+				id="features"
+				className="relative z-10 py-24 sm:py-32 px-6 sm:px-8 max-w-7xl mx-auto"
+			>
+				<motion.div variants={fadeUp} className="text-center mb-16">
+					<span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary mb-4 font-body">
+						Features
+					</span>
+					<h2 className="text-3xl sm:text-4xl lg:text-5xl font-headings font-bold tracking-tight">
+						<span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+							Everything you need to capture ideas
+						</span>
+					</h2>
+					<p className="mt-4 text-white/40 text-lg max-w-xl mx-auto font-body">
+						From recording to organized notes — Voxaide handles the entire pipeline.
+					</p>
+				</motion.div>
+
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+					{features.map((f, i) => (
+						<motion.div
+							key={f.title}
+							variants={fadeUp}
+							custom={i}
+							className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm p-8 hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-500"
+						>
+							{/* Hover glow */}
+							<div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-brand-primary/[0.06] to-transparent pointer-events-none" />
+							<div className="relative z-10">
+								<div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 border border-brand-primary/20 flex items-center justify-center text-brand-primary mb-6 group-hover:shadow-lg group-hover:shadow-brand-primary/10 transition-shadow duration-500">
+									{f.icon}
+								</div>
+								<h3 className="text-xl font-headings font-bold text-white mb-3">
+									{f.title}
+								</h3>
+								<p className="text-white/45 leading-relaxed font-body text-[15px]">
+									{f.description}
+								</p>
+							</div>
+						</motion.div>
+					))}
+				</div>
+			</AnimatedSection>
+
+			{/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
+			<AnimatedSection
+				id="how-it-works"
+				className="relative z-10 py-24 sm:py-32 px-6 sm:px-8 max-w-6xl mx-auto"
+			>
+				<motion.div variants={fadeUp} className="text-center mb-20">
+					<span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-brand-secondary mb-4 font-body">
+						How It Works
+					</span>
+					<h2 className="text-3xl sm:text-4xl lg:text-5xl font-headings font-bold tracking-tight">
+						<span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+							Three steps to your second brain
+						</span>
+					</h2>
+				</motion.div>
+
+				<div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+					{/* Connecting line (desktop only) */}
+					<div className="hidden md:block absolute top-14 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-brand-primary/30 via-brand-secondary/30 to-brand-tertiary/30" />
+
+					{steps.map((s, i) => (
+						<motion.div
+							key={s.num}
+							variants={fadeUp}
+							custom={i}
+							className="relative flex flex-col items-center text-center"
+						>
+							{/* Step number circle */}
+							<div className="relative z-10 w-14 h-14 rounded-full bg-[#0c0c1a] border border-white/[0.08] flex items-center justify-center mb-8 shadow-lg shadow-black/40">
+								<span className="text-sm font-headings font-bold bg-gradient-to-b from-brand-primary to-brand-tertiary bg-clip-text text-transparent">
+									{s.num}
+								</span>
+							</div>
+							<h3 className="text-2xl font-headings font-bold text-white mb-3">
+								{s.title}
+							</h3>
+							<p className="text-white/40 font-body text-[15px] leading-relaxed max-w-xs">
+								{s.description}
+							</p>
+						</motion.div>
+					))}
+				</div>
+			</AnimatedSection>
+
+			{/* ═══════════════════ FINAL CTA ═══════════════════ */}
+			<AnimatedSection
+				id="cta"
+				className="relative z-10 py-24 sm:py-32 px-6 sm:px-8 max-w-5xl mx-auto"
+			>
+				<motion.div
+					variants={fadeUp}
+					className="relative rounded-3xl border border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent p-12 sm:p-16 text-center overflow-hidden"
+				>
+					{/* Background glow */}
+					<div className="absolute inset-0 -z-10">
+						<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-brand-primary/[0.08] blur-[80px]" />
+					</div>
+
+					<h2 className="text-3xl sm:text-4xl lg:text-5xl font-headings font-bold tracking-tight mb-6">
+						<span className="bg-gradient-to-r from-white via-white to-white/50 bg-clip-text text-transparent">
+							Ready to transform your
+						</span>
+						<br />
+						<span className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-tertiary bg-clip-text text-transparent">
+							voice into knowledge?
+						</span>
+					</h2>
+					<p className="text-white/40 text-lg max-w-lg mx-auto mb-10 font-body">
+						Join thousands of students, creators, and professionals who think faster than they type.
+					</p>
+					<div className="flex flex-col sm:flex-row gap-4 justify-center">
+						<Link to="/signup">
+							<ShimmerButton
+								className="px-10 py-4 rounded-full text-base font-semibold"
+								shimmerColor="#a78bfa"
+								background="linear-gradient(135deg, #6366F1, #7C3AED)"
+								shimmerSize="0.08em"
+							>
+								Start Free — No Credit Card
+							</ShimmerButton>
+						</Link>
+						<Link
+							to="/login"
+							className="inline-flex items-center justify-center px-8 py-4 rounded-full border border-white/[0.1] bg-white/[0.04] text-base font-medium text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-300"
+						>
+							Sign In
+						</Link>
+					</div>
+				</motion.div>
+			</AnimatedSection>
+
+			{/* ═══════════════════ FOOTER ═══════════════════ */}
+			<footer className="relative z-10 border-t border-white/[0.04] py-12 px-6 sm:px-8">
+				<div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+					<div className="flex items-center gap-2.5">
+						<div className="w-7 h-7 rounded-md bg-gradient-to-br from-brand-primary to-brand-tertiary flex items-center justify-center">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+								<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+								<line x1="12" x2="12" y1="19" y2="22" />
+							</svg>
+						</div>
+						<span className="text-sm font-headings font-semibold text-white/60">
+							Voxaide
+						</span>
+					</div>
+					<div className="flex items-center gap-8">
+						<a href="#features" className="text-xs text-white/30 hover:text-white/60 transition-colors font-body">Features</a>
+						<a href="#how-it-works" className="text-xs text-white/30 hover:text-white/60 transition-colors font-body">How It Works</a>
+						<Link to="/login" className="text-xs text-white/30 hover:text-white/60 transition-colors font-body">Log In</Link>
+					</div>
+					<p className="text-xs text-white/20 font-body">
+						&copy; {new Date().getFullYear()} Voxaide. All rights reserved.
+					</p>
+				</div>
+			</footer>
 		</div>
 	);
 }
